@@ -123,7 +123,7 @@ export function useGame() {
       const state = createRun(id, world);
       expose(state);
       if (!temporary) {
-        await commit(state, null);
+        expose(await commit(state, null));
         durableRevision.current = state.view.revision;
         setCanRetry(false);
         setStatus("Saved on this device");
@@ -157,7 +157,7 @@ export function useGame() {
       expose(result.state);
       setStatus("Saving…");
       if (!temporary) {
-        await commit(result.state, durableRevision.current);
+        expose(await commit(result.state, durableRevision.current));
         durableRevision.current = result.state.view.revision;
         setCanRetry(false);
         setStatus("Saved on this device");
@@ -201,9 +201,9 @@ export function useGame() {
         throw Error(
           "Export and finish the current case before importing another.",
         );
-      if (!temporary) await commit(state, null);
+      const restored = temporary ? state : await commit(state, null);
       durableRevision.current = temporary ? null : state.view.revision;
-      expose(state);
+      expose(restored);
       setStatus(
         temporary ? "Temporary session — not saved" : "Saved on this device",
       );
@@ -220,7 +220,7 @@ export function useGame() {
     locked.current = true;
     setBusy(true);
     try {
-      await commit(engine.current, durableRevision.current);
+      expose(await commit(engine.current, durableRevision.current));
       durableRevision.current = engine.current.view.revision;
       setCanRetry(false);
       setTemporary(false);

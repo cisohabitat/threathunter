@@ -7,6 +7,7 @@ import {
   exportSave,
   importSave,
 } from "../persistence/saves";
+import { markCommitted } from "../persistence/format";
 import { createRun, processCommand } from "../engine/engine";
 beforeEach(async () => {
   await database.runs.clear();
@@ -14,7 +15,7 @@ beforeEach(async () => {
 it("atomically saves and restores an active run", async () => {
   const run = createRun("saved", "B");
   await commit(run, null);
-  expect(await load()).toEqual(run);
+  expect(await load()).toEqual(markCommitted(run));
 });
 it("rejects a second-tab stale write without replacing the saved state", async () => {
   const first = createRun("saved", "M");
@@ -28,9 +29,9 @@ it("rejects a second-tab stale write without replacing the saved state", async (
   }).state;
   await commit(next, 0);
   await expect(commit(next, 0)).rejects.toThrow("Another tab");
-  expect(await load()).toEqual(next);
+  expect(await load()).toEqual(markCommitted(next));
   const row = await database.runs.get("active");
-  expect(row?.previous).toEqual(exportSave(first));
+  expect(row?.previous).toEqual(exportSave(markCommitted(first)));
 });
 it("does not replace a different active case on new-run or import", async () => {
   await commit(createRun("one", "B"), null);
@@ -40,9 +41,9 @@ it("does not replace a different active case on new-run or import", async () => 
 });
 it("rejects corrupt, incompatible and unsafe saves", () => {
   const save = exportSave(createRun("save", "B"));
-  expect(() => importSave(JSON.stringify({ ...save, world: "M" }))).toThrow(
-    "checksum",
-  );
+  expect(() =>
+    importSave(JSON.stringify({ ...save, runId: "changed" })),
+  ).toThrow("checksum");
   expect(() =>
     importSave(JSON.stringify({ ...save, ruleset: "9.0" })),
   ).toThrow();
@@ -65,12 +66,12 @@ it("offers only a validated previous save and preserves the damaged original on 
   await database.runs.update("active", { "current.hash": "00000000" });
   const inspected = await inspectSave();
   expect(inspected.state).toBeNull();
-  expect(inspected.issue?.previous).toEqual(first);
+  expect(inspected.issue?.previous).toEqual(markCommitted(first));
   expect(await database.runs.get("recovery-original")).toBeUndefined();
   expect(await resolveRecovery(inspected.issue!.original, "previous")).toEqual(
-    first,
+    markCommitted(first),
   );
-  expect(await load()).toEqual(first);
+  expect(await load()).toEqual(markCommitted(first));
   expect((await database.runs.get("recovery-original"))?.current.hash).toBe(
     "00000000",
   );
@@ -129,10 +130,14 @@ it("rolls back a quota failure and retries the prepared state without replaying 
     .mockRejectedValueOnce(new DOMException("Full", "QuotaExceededError"));
   await expect(commit(next, 0)).rejects.toThrow("Full");
   write.mockRestore();
-  expect(await load()).toEqual(first);
-  await commit(next, 0);
+  expect(next.receipts.once.receipt.durability).toBe("memory_only");
+  expect(next.persistence.committedRevision).toBeNull();
+  expect(await load()).toEqual(markCommitted(first));
+  const acknowledged = await commit(next, 0);
+  expect(acknowledged.receipts.once.receipt.durability).toBe("committed");
+  expect(next.receipts.once.receipt.durability).toBe("memory_only");
   const resumed = await load();
-  expect(resumed).toEqual(next);
+  expect(resumed).toEqual(markCommitted(next));
   expect(resumed?.commands).toHaveLength(1);
   expect(resumed?.view.tick).toBe(1);
 });

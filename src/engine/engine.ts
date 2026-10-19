@@ -15,6 +15,8 @@ export type EngineState = {
   schemaVersion: 1;
   ruleset: "4.0.0";
   world: World;
+  // Storage acknowledgement only; excluded from gameplay hashes and projections.
+  persistence: { committedRevision: number | null };
   view: PlayerView;
   facts: Record<string, string>;
   cache: Record<string, boolean>;
@@ -80,6 +82,7 @@ export function createRun(runId: string, world: World): EngineState {
     schemaVersion: 1,
     ruleset: "4.0.0",
     world,
+    persistence: { committedRevision: null },
     view: {
       runId,
       revision: 0,
