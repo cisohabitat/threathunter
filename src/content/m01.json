@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "id": "M01",
+  "ruleset": "4.0.0",
+  "title": "The Midnight Login",
+  "initialTick": 0,
+  "responseDelay": 2,
+  "objectiveTick": 8,
+  "responseWindow": 2,
+  "scope": {
+    "identity": "U-01",
+    "session": "S-01",
+    "service": "FIN-01"
+  },
+  "queryRules": {
+    "cost": 1,
+    "capture": "request_start",
+    "delivery": "completion",
+    "staticCacheCost": 0
+  },
+  "verification": {
+    "cost": 1,
+    "dueOffset": 3,
+    "duplicatePendingCost": 0,
+    "channel": "directory_callback"
+  },
+  "queries": {
+    "Q-H": {
+      "label": "Compare sign-in history",
+      "source": "identity",
+      "static": true
+    },
+    "Q-D": {
+      "label": "Check device registration",
+      "source": "registry",
+      "static": true
+    },
+    "Q-C": {
+      "label": "Check approved work",
+      "source": "change_record",
+      "static": true
+    },
+    "Q-F": {
+      "label": "Follow session activity",
+      "source": "application_audit",
+      "static": false
+    }
+  },
+  "initialFacts": [
+    "anomalous_session"
+  ],
+  "commonFacts": {
+    "Q-H": "daytime_baseline"
+  },
+  "recordByFact": {
+    "anomalous_session": {
+      "id": "EV-01",
+      "source": "identity",
+      "text": "A successful finance session began at 02:13 from an unfamiliar client.",
+      "lineageGroup": "identity_session_opening"
+    },
+    "daytime_baseline": {
+      "id": "EV-02",
+      "source": "identity",
+      "text": "Collected sign-ins over the previous 14 days normally used daytime hours and a registered client.",
+      "lineageGroup": "identity_history_baseline"
+    },
+    "device_match": {
+      "id": "EV-03",
+      "source": "registry",
+      "text": "The observed client maps to a newly enrolled organisation device assigned to the account holder.",
+      "lineageGroup": "registry_session_mapping"
+    },
+    "device_no_match": {
+      "id": "EV-03",
+      "source": "registry",
+      "text": "The registry has no organisation-managed device matching this session client; this does not establish who used it.",
+      "lineageGroup": "registry_session_mapping"
+    },
+    "device_gap": {
+      "id": "EV-03",
+      "source": "registry",
+      "text": "The device-registration mapping is unavailable for the session identifier.",
+      "lineageGroup": "registry_session_mapping"
+    },
+    "approval_match": {
+      "id": "EV-04",
+      "source": "change_record",
+      "text": "A verified work record matches this person, client, time window and finance task.",
+      "lineageGroup": "work_authorisation_record"
+    },
+    "approval_absent": {
+      "id": "EV-04",
+      "source": "change_record",
+      "text": "The complete applicable work register contains no approval for this session and task.",
+      "lineageGroup": "work_authorisation_record"
+    },
+    "approval_gap": {
+      "id": "EV-04",
+      "source": "change_record",
+      "text": "The relevant approval archive is unavailable; authorisation cannot be checked from this source.",
+      "lineageGroup": "work_authorisation_record"
+    },
+    "scope_expected": {
+      "id": "EV-05",
+      "source": "application_audit",
+      "text": "Recorded activity stays within the finance task and access scope described in the work record.",
+      "lineageGroup": "application_scope_observation"
+    },
+    "scope_unexpected": {
+      "id": "EV-05",
+      "source": "application_audit",
+      "text": "The session attempted to access sensitive reports outside this user role and its ordinary workflow.",
+      "lineageGroup": "application_scope_observation"
+    },
+    "scope_gap": {
+      "id": "EV-05",
+      "source": "collection_status",
+      "text": "Application-audit collection is missing for this session interval; access scope is not observable.",
+      "lineageGroup": "application_collection_health"
+    },
+    "scope_empty": {
+      "id": "EV-05",
+      "source": "application_audit",
+      "text": "No matching follow-on activity is recorded through this query cutoff; later activity is not covered.",
+      "lineageGroup": "application_query_coverage"
+    },
+    "owner_confirms": {
+      "id": "EV-06",
+      "source": "directory_callback",
+      "text": "The account holder, reached through the verified directory contact, confirms the session and task details.",
+      "lineageGroup": "verified_owner_check"
+    },
+    "owner_denies": {
+      "id": "EV-06",
+      "source": "directory_callback",
+      "text": "The account holder, reached through the verified directory contact, denies using this session.",
+      "lineageGroup": "verified_owner_check"
+    },
+    "owner_timeout": {
+      "id": "EV-06",
+      "source": "directory_callback",
+      "text": "The account holder did not respond within this check window; no explanation was verified.",
+      "lineageGroup": "verified_owner_check"
+    }
+  },
+  "worlds": {
+    "B": {
+      "worldClass": "benign",
+      "visibility": "complete",
+      "facts": {
+        "Q-D": "device_match",
+        "Q-C": "approval_match",
+        "Q-F": "scope_expected",
+        "VERIFY": "owner_confirms"
+      }
+    },
+    "M": {
+      "worldClass": "misuse",
+      "visibility": "complete",
+      "facts": {
+        "Q-D": "device_no_match",
+        "Q-C": "approval_absent",
+        "Q-F": "scope_unexpected",
+        "VERIFY": "owner_denies"
+      }
+    },
+    "U-B": {
+      "worldClass": "benign",
+      "visibility": "sparse",
+      "facts": {
+        "Q-D": "device_gap",
+        "Q-C": "approval_gap",
+        "Q-F": "scope_gap",
+        "VERIFY": "owner_timeout"
+      }
+    },
+    "U-M": {
+      "worldClass": "misuse",
+      "visibility": "sparse",
+      "facts": {
+        "Q-D": "device_gap",
+        "Q-C": "approval_gap",
+        "Q-F": "scope_gap",
+        "VERIFY": "owner_timeout"
+      }
+    }
+  },
+  "adversaryEvents": [
+    {
+      "tick": 2,
+      "kind": "session_scope_attempt"
+    },
+    {
+      "tick": 5,
+      "kind": "prepare_reports"
+    },
+    {
+      "tick": 8,
+      "kind": "objective_transfer"
+    }
+  ],
+  "sufficientSets": {
+    "explained": [
+      [
+        "device_match",
+        "approval_match"
+      ],
+      [
+        "owner_confirms",
+        "approval_match"
+      ]
+    ],
+    "likely_misuse": [
+      [
+        "owner_denies",
+        "scope_unexpected"
+      ],
+      [
+        "device_no_match",
+        "approval_absent",
+        "scope_unexpected"
+      ]
+    ],
+    "unresolved": [
+      [
+        "scope_gap",
+        "owner_timeout",
+        "approval_gap"
+      ],
+      [
+        "anomalous_session",
+        "scope_unexpected"
+      ]
+    ]
+  },
+  "expectedNext": {
+    "explained": "close_explained",
+    "likely_misuse": "handoff_revoke_session",
+    "unresolved": "handoff_review_monitor"
+  },
+  "confidenceAllowed": {
+    "explained": [
+      "medium",
+      "high"
+    ],
+    "likely_misuse": [
+      "medium"
+    ],
+    "unresolved": [
+      "low"
+    ]
+  },
+  "alternativeEvidence": {
+    "misuse_weakened": [
+      "device_match",
+      "approval_match",
+      "owner_confirms"
+    ],
+    "approved_work_weakened": [
+      "approval_absent",
+      "owner_denies"
+    ],
+    "approved_work_unresolved": [
+      "approval_gap",
+      "owner_timeout"
+    ]
+  },
+  "caveatEvidence": {
+    "anomaly_not_proof": [
+      "anomalous_session"
+    ],
+    "registration_not_authorship": [
+      "device_match",
+      "device_no_match",
+      "device_gap"
+    ],
+    "approval_not_authorship": [
+      "approval_match",
+      "approval_absent",
+      "approval_gap"
+    ],
+    "collection_gap": [
+      "scope_gap"
+    ],
+    "owner_unavailable": [
+      "owner_timeout"
+    ],
+    "needs_identity_verification": [
+      "scope_unexpected"
+    ]
+  },
+  "qualityWeights": {
+    "evidence": 0.3,
+    "reasoning": 0.25,
+    "decision": 0.3,
+    "report": 0.15
+  },
+  "publicTruthFieldsForbidden": [
+    "worldClass",
+    "worldKey",
+    "sufficientSets",
+    "adversaryEvents"
+  ],
+  "businessEvents": [
+    {
+      "tick": 2,
+      "kind": "approved_finance_activity"
+    },
+    {
+      "tick": 5,
+      "kind": "validate_finance_task"
+    },
+    {
+      "tick": 8,
+      "kind": "complete_finance_task"
+    }
+  ],
+  "nextStepPackages": {
+    "close_explained": {
+      "nextOwnerRole": "none",
+      "reviewWithinTicks": null,
+      "followupTrigger": "routine_monitoring"
+    },
+    "handoff_revoke_session": {
+      "nextOwnerRole": "response_team",
+      "reviewWithinTicks": 2,
+      "followupTrigger": "confirm_revocation_and_assess_scope"
+    },
+    "handoff_review_monitor": {
+      "nextOwnerRole": "response_team",
+      "reviewWithinTicks": 4,
+      "followupTrigger": "new_suspicious_activity_or_verification_result"
+    }
+  },
+  "truthNarrative": {
+    "B": "The real account holder performs approved finance work using the matching enrolled device.",
+    "M": "An unauthorised actor uses session S-01. No other foothold exists in this authored case.",
+    "U-B": "The real account holder performs approved finance work, but source outages hide the mapping, authorisation and application activity from this hunt.",
+    "U-M": "An unauthorised actor uses session S-01. The same source outages and owner timeout as U-B hide distinguishing observations."
+  }
+}
