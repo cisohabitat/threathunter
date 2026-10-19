@@ -35,3 +35,12 @@ Read `docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md` before changing gameplay.
 - Debrief findings, pending checks and investigation history are frozen by the engine on close. Evidence-linked feedback uses decision-time observations and rubric predicates, never hidden actor identity or operational damage.
 - “What I knew then” filters by record delivery step, not event timestamp. Selecting an earlier step must hide later observations without recomputing the original score. Keep numeric grading optional and separate from operational outcome.
 - Enriched debrief data is reconstructed from existing version-1 command-log saves; do not change gameplay ruleset or sufficient-evidence predicates solely for presentation changes.
+
+## Voice and sound conventions
+
+- `cues.json` is the canonical narration text. Generated MP3 assets and `manifest.json` must match its scripts and checksums. Keep source attribution, exact model hash, generation method and honest listening-review status in `docs/audio/PRODUCTION.md`; never mark an unreviewed pack approved.
+- Generate speech only at content-production time. Do not add runtime TTS, user-voice cloning, API keys or microphone permissions for the shipped pack. Keep model weights and lossless masters outside `public/`.
+- The Howler mixer is lazy-loaded on explicit opt-in. Prepare all active-mission clips, including every alternative debrief, before claiming Voice pack ready; never fetch a secret branch-specific subset.
+- Audio consumes public deliveries and closed-case report classes only. It must never dispatch gameplay commands, change clocks, revise scores, reveal testimony early or leak hidden world identifiers through cues or filenames. Sparse twins share reasoning narration; outcome narration is separate and post-close only.
+- Fresh sessions are silent until explicit consent. Maintain captions/transcripts, skip/replay, independent channels, master mute, a screen-reader-friendly mode and safe media failure. Stop obsolete speech on navigation and all playback on backgrounding without replaying a backlog.
+- Preserve immutable approved asset versions when replacing a pack, and update its version/paths, source record and tests together. Keep the Vercel SPA rewrite from rewriting `/audio/` assets.

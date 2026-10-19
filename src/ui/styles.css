@@ -1462,3 +1462,121 @@ summary {
     font-size: 18px;
   }
 }
+
+.audio-controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0b1422f5;
+  border-bottom: 1px solid var(--stroke-subtle);
+  padding: 8px 4vw;
+  font-size: 13px;
+}
+.audio-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.audio-toolbar > span {
+  flex: 1;
+  color: var(--text-secondary);
+}
+.audio-toolbar button {
+  font-size: 13px;
+  padding: 6px 12px;
+}
+.audio-toolbar button[aria-pressed="true"] {
+  border-color: var(--accent-cyan);
+}
+.audio-settings {
+  max-height: 62vh;
+  overflow: auto;
+  padding: 20px 0;
+}
+.audio-settings p {
+  max-width: 900px;
+  font-size: 14px;
+}
+.audio-settings fieldset {
+  border: 0;
+  padding: 16px 0;
+  margin: 12px 0;
+}
+.audio-settings legend {
+  font-size: 14px;
+}
+.audio-settings button {
+  font-size: 13px;
+}
+.audio-levels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 20px 0;
+}
+.audio-levels label {
+  display: block;
+}
+.audio-levels input[type="range"] {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  min-height: 30px;
+  accent-color: var(--accent-cyan);
+}
+.audio-check {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  min-height: 44px;
+}
+.audio-check input {
+  accent-color: var(--accent-cyan);
+  width: 18px;
+  height: 18px;
+}
+.voice-caption {
+  border-left: 2px solid var(--accent-cyan);
+  padding: 8px 12px;
+  margin: 8px 0;
+  max-height: 16vh;
+  overflow: auto;
+  font-size: 14px;
+}
+.voice-transcript summary {
+  font-size: 12px;
+  min-height: 30px;
+  padding: 4px 0;
+  color: var(--text-secondary);
+}
+.voice-transcript p {
+  max-height: 16vh;
+  overflow: auto;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.audio-error {
+  color: var(--accent-amber);
+  font-size: 13px;
+  margin: 8px 0;
+}
+@media (max-width: 740px) {
+  .audio-controls {
+    padding: 6px 16px;
+  }
+  .audio-toolbar {
+    gap: 8px;
+  }
+  .audio-toolbar > span {
+    font-size: 10px;
+  }
+  .audio-toolbar button {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  .audio-levels {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}

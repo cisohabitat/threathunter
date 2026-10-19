@@ -19,6 +19,14 @@ Reading, navigation and evidence citation are free. New acquisitions, verificati
 
 Use **Hide guidance** / **How to play** to change assistance at any time. The game remembers that preference; independent mode uses the same facts, costs and scoring.
 
+## Optional voice and sound
+
+Open **Voice & sound → Enable voice and sound**. The complete M01 pack loads separately from the text game (about 1 MB). Once **Voice pack ready** appears, it can play offline for that loaded session. Choose **Play briefing**, a Morgan guidance topic, or—after closure—**Read my debrief** and **Read operational outcome**. All 16 spoken clips, four interface sounds and the ambience loop are pre-generated static assets; no runtime speech service, microphone or account is needed.
+
+Use **Skip speech**, **Replay last line**, the always-reachable **Mute all**, and separate master/voice/effects/ambience levels. Captions default on; a transcript remains available when captions are hidden. **Screen-reader-friendly audio** disables unsolicited speech while keeping on-demand playback. Fresh sessions start muted; level and accessibility preferences persist separately from saves. Navigation clears stale speech and backgrounding stops playback.
+
+This is a **candidate synthetic voice pack, pending human listening/device review**. See the [production and rights record](docs/audio/PRODUCTION.md). If audio cannot load or play, continue with the same text and game rules.
+
 ## Authoritative design
 
 [Game Design Document v4.3](docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md) is the implementation baseline. The uploaded document is preserved unchanged. Sections 8, 9 and 13 govern commands, scheduling and scoring; Appendix A governs M01 fixtures. `src/content/m01.json` is extracted directly from Appendix A; gameplay ruleset remains `4.0.0`. Presentation and save formats are versioned separately.
@@ -47,7 +55,7 @@ npx playwright install --with-deps chromium
 npm run test:e2e
 ```
 
-Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 38 engine/persistence tests and 14 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
+Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 41 unit/asset tests and 18 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 
 ## Architecture
 
@@ -56,7 +64,7 @@ Engine and persistence tests cover all ten Appendix B golden traces, source cuto
 - Zustand stores navigation only. Components receive permitted `PlayerView` projections; hidden truth appears only in the closed-case debrief.
 - Zod command/import schemas; Dexie transactions, expected-revision checks, previous-save retention and replay-based portable JSON exports.
 - Web Locks restrict writes to one tab where supported. A failed save is shown as **Not saved**; temporary mode is an explicit choice, with export available.
-- Motion provides nonessential, reduced-motion-aware presentation. Howler is pinned for the required future reviewed voice pack; recordings and its playback integration are not implemented yet.
+- Motion provides nonessential, reduced-motion-aware presentation. Howler is loaded on opt-in and plays a complete, pre-generated candidate voice/sound pack. All scripts, checksums, source attribution and delivery metadata are versioned. Human listening and physical-device audio review are still pending.
 
 After the application is loaded, all active-case text and rules are local. Offline cold-start is not promised. Saves belong to one browser origin and do not follow a different device or deployment URL; export first. The checksum detects accidental corruption, not tampering.
 

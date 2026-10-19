@@ -1,0 +1,66 @@
+{
+  "briefing": {
+    "text": "A finance session began at an unusual hour from an unfamiliar client. It may be approved work, or it may need investigation. Compare the records, test another explanation, and make a supported call. You can recommend action to the response team, but you cannot shut down systems yourself.",
+    "when": "player_requested_briefing"
+  },
+  "morgan-1": {
+    "text": "Before deciding what is unusual, compare this session with the account's normal pattern.",
+    "when": "player_requested_baseline_hint"
+  },
+  "morgan-2": {
+    "text": "Could approved work explain this? Check whether the record matches the person, device and task.",
+    "when": "player_requested_alternative_hint"
+  },
+  "morgan-3": {
+    "text": "Attach the observation to your explanation, and state what it supports. A fact is not the same as a conclusion.",
+    "when": "player_requested_evidence_hint"
+  },
+  "morgan-4": {
+    "text": "A source can have missing collection. If that happens, record the limit. Missing records do not establish that nothing happened.",
+    "when": "player_requested_collection_hint"
+  },
+  "morgan-5": {
+    "text": "State what you know, what remains uncertain, and the specific session you are handing over.",
+    "when": "player_requested_handoff_hint"
+  },
+  "morgan-6": {
+    "text": "When reviewing a case, consider the evidence you had when you made the call. Later information should not rewrite what you knew then.",
+    "when": "player_requested_reflection_hint"
+  },
+  "check-ready": {
+    "text": "Your requested check is ready to review.",
+    "when": "verified_check_result_delivered"
+  },
+  "report-submitted": {
+    "text": "Case report submitted. Review your investigation and the simulated outcome.",
+    "when": "case_closure_accepted"
+  },
+  "finding-explained": {
+    "text": "Your cited observations support a credible explanation for this session. Keep that conclusion scoped to the lead you investigated. Review the evidence, the limitations and your proposed next step separately from what happened in the simulation.",
+    "when": "closed_supported_explained_finding"
+  },
+  "finding-misuse": {
+    "text": "Your cited observations support likely misuse of this session. That is a bounded finding, not proof about every account or system. Review whether your confidence, recommendation and handoff timing match what the evidence established.",
+    "when": "closed_supported_likely_misuse_finding"
+  },
+  "finding-visibility": {
+    "text": "You documented missing visibility. Your cited observations support an unresolved finding, rather than an accusation or a clean bill of health. Review the collection limits and the owner of the next check. Hidden actor intent does not change the quality of this reasoning.",
+    "when": "closed_supported_visibility_limited_finding"
+  },
+  "finding-provisional": {
+    "text": "Your evidence supports a provisional finding about unexpected session activity, without establishing the operator's identity. Review the facts you cited, what remains uncertain and the follow-up you requested. A cautious handoff can be reasonable before every question has an answer.",
+    "when": "closed_supported_provisional_finding"
+  },
+  "finding-unsupported": {
+    "text": "The observations you cited did not establish the finding you selected. Review what you knew, which observations you actually used and what remained unknown. A stronger investigation may need another check, a better citation or a more carefully bounded claim.",
+    "when": "closed_unsupported_finding"
+  },
+  "outcome-occurred": {
+    "text": "After your finding was frozen, the simulated data objective occurred. This operational outcome is reported separately and does not change your investigation quality.",
+    "when": "closed_objective_achieved"
+  },
+  "outcome-not-occurred": {
+    "text": "After your finding was frozen, the simulated data objective did not occur. This operational outcome is reported separately and does not change your investigation quality.",
+    "when": "closed_objective_not_achieved"
+  }
+}

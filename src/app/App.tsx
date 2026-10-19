@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { AudioPanel } from "../ui/AudioPanel";
+import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { useGame } from "./controller";
 import { useNavigation, type Screen } from "../stores/view";
@@ -35,6 +37,11 @@ export default function App() {
   }
   const reduced = useReducedMotion();
   const v = game.view;
+  const audio = useMissionAudio(
+    v,
+    game.debrief,
+    game.debrief ? "debrief" : home ? "home" : screen,
+  );
   const blocked =
     game.busy || game.readOnly || Boolean(game.error && !game.temporary);
   const importFile = async (file: File | undefined) => {
@@ -89,9 +96,10 @@ export default function App() {
                 />
               </label>
             )}
-            <span>Text ready · voice pack pending production</span>
+            <span>Case ready · optional sound below</span>
           </div>
         </div>
+        <AudioPanel audio={audio} debrief={game.debrief} />
         {game.readOnly && !game.busy ? (
           <div className="notice">
             Read-only: another tab owns the active save. Close that tab and
@@ -227,7 +235,10 @@ export default function App() {
                     <button
                       key={s}
                       aria-current={screen === s ? "page" : undefined}
-                      onClick={() => setScreen(s)}
+                      onClick={() => {
+                        audio.effect("effect-select");
+                        setScreen(s);
+                      }}
                     >
                       <span>0{i + 1}</span>
                       {s}
@@ -241,7 +252,13 @@ export default function App() {
                     <br />
                     Only accepted actions move the world.
                   </p>
-                  <button onClick={() => setHint((hint + 1) % hints.length)}>
+                  <button
+                    onClick={() => {
+                      const next = (hint + 1) % hints.length;
+                      setHint(next);
+                      audio.play(`morgan-${next + 1}`);
+                    }}
+                  >
                     Ask Morgan · free
                   </button>
                   <button

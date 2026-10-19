@@ -2,6 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/((?!assets/|art/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|art/|audio/).*)", "destination": "/index.html" }
   ]
 }
