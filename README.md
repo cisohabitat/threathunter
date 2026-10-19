@@ -2,7 +2,22 @@
 
 A single-player cybersecurity investigation game for newcomers and cybersecurity generalists. Investigate fictional Northstar Services, test ordinary and suspicious explanations, and make a scoped, evidence-backed finding.
 
-**Status: internal M01 development build, not completed P0 or a public release.**
+**Live:** https://threathunter-rosy.vercel.app
+
+**Status: deployed internal M01 development build; completed-P0 acceptance is still pending.**
+
+## How to play
+
+1. Choose **Guided investigation** (recommended), then **Begin investigation** or **Resume investigation**.
+2. Morgan explains your role: investigate an unfamiliar finance login at 02:13 and decide what the evidence supports.
+3. Select **Compare sign-ins · 1 step**. Read the side-by-side comparison, then **Add these observations to Case File · free**.
+4. Choose your next check: approved work, device registration, session activity or verified-owner contact. The guide explains each choice; Explore keeps all sources available.
+5. Open **Case File**. Choose a finding and confidence, cite supporting observations, test an alternative explanation, record relevant limits and select a next step.
+6. Select **Review finding**, then **Confirm and close case** when ready. The debrief separates investigation quality from the simulated operational outcome.
+
+Reading, navigation and evidence citation are free. New acquisitions, verification requests and deliberately advancing the world consume simulation steps. There is no real-time countdown. An unresolved finding is valid when its limits and follow-up are explained.
+
+Use **Hide guidance** / **How to play** to change assistance at any time. The game remembers that preference; independent mode uses the same facts, costs and scoring.
 
 ## Authoritative design
 
@@ -32,7 +47,7 @@ npx playwright install --with-deps chromium
 npm run test:e2e
 ```
 
-Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. Browser tests cover case completion, reload/resume, offline continuation, free navigation and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
+Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 35 engine/persistence tests and 10 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 
 ## Architecture
 
@@ -47,6 +62,12 @@ After the application is loaded, all active-case text and rules are local. Offli
 
 ## Deployment and release
 
-`vercel.json` configures a static Vite build and SPA refresh. GitHub Actions runs lint, typecheck, unit tests, build and browser smoke tests. No deployment or production promotion is performed by this change.
+`vercel.json` configures a static Vite build and SPA refresh. The existing Vercel project `threathunter` is connected to this repository; pushes to `main` trigger production deployment at the live URL above. Verify that the deployment reaches **READY** and serves the intended commit before reporting success. Avoid creating a second deployment if Git integration has already started one.
+
+GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the observed CI runs were queued when last inspected.
 
 See [implementation status and release gates](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. M04, M07 and campaign expansion follow P0 acceptance.
+
+## Keeping documentation current
+
+Every task must review `AGENTS.md` and this README, updating relevant guidance in the same change as the implementation. Keep player instructions, commands, deployment details and limitations synchronized. Update [implementation status](docs/IMPLEMENTATION_STATUS.md) when capabilities or release evidence change. The full maintenance policy is in [AGENTS.md](AGENTS.md).

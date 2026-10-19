@@ -1,6 +1,6 @@
 # Implementation status — internal build 0.1
 
-The v4.3 GDD is preserved unchanged and controls this implementation. This is a reviewable first M01 build, not completed P0 and not a published game.
+The v4.3 GDD is preserved unchanged and controls this implementation. This is a deployed internal M01 build at https://threathunter-rosy.vercel.app. Completed-P0 acceptance remains pending.
 
 ## Implemented
 
@@ -27,7 +27,7 @@ The v4.3 GDD is preserved unchanged and controls this implementation. This is a 
 | Recovery UX      | Quota/private-mode behavior, abrupt process kill, imported-save replacement workflow and active-run transfer need additional browser tests.                                                                                                                                                                                               |
 | Performance      | First internal bundle has a Vite size warning; production bundle/CPU budgets and art/audio network budgets need measurement and tuning. No measured production performance is claimed.                                                                                                                                                    |
 | Human evaluation | No novice/generalist studies, listening review, visual acceptance or learning-outcome validation has occurred.                                                                                                                                                                                                                            |
-| Deployment       | Vercel configuration exists. No hosted preview or production deployment has been created.                                                                                                                                                                                                                                                 |
+| Deployment       | Production deployment is live and Git-connected to `main`. Guided onboarding deployed successfully at commit `8bff19b`. Physical-device and release-acceptance gates remain open.                                                                                                                                                         |
 
 Do not expand into M04/M07 until M01's required release evidence is complete. No public-release sign-off is implied by passing automated checks.
 
@@ -49,4 +49,4 @@ The first browser pass exposed a development-remount writer-lock race; the lock 
 
 Added the GDD Section 4 first-run assistance: equally available guided/independent modes, a remembered presentation preference, an explanation of the investigator’s goal and action-driven time, side-by-side sign-in comparison, an explicit free evidence-citation action, a choice of follow-up checks and plain-language Case File instructions. Guidance uses delivered public observations only, does not choose a finding or alter scoring, and can be hidden/restored at any time. Guided Leads defers the full source workbench to Explore to reduce the initial information load.
 
-Validation: lint, typecheck/build and all 35 engine/persistence tests pass. Browser coverage adds guided first acquisition, free citation, next-check choice and guidance preference/resume to the existing desktop/phone flows. Required voice production remains open; this update adds text guidance only.
+Validation: lint, typecheck/build and all 35 engine/persistence tests pass. All 10 browser checks passed, adding guided first acquisition, free citation, next-check choice and guidance preference/resume to the existing desktop/phone flows. Required voice production remains open; this update adds text guidance only.
