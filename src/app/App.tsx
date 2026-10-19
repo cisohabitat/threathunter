@@ -22,7 +22,8 @@ export default function App() {
     { screen, setScreen } = useNavigation(),
     [hint, setHint] = useState(-1),
     [home, setHome] = useState(true),
-    [replace, setReplace] = useState(false);
+    [replace, setReplace] = useState(false),
+    [confirmRecovery, setConfirmRecovery] = useState(false);
   const [guided, setGuided] = useState(readGuidancePreference);
   function chooseGuidance(value: boolean) {
     setGuided(value);
@@ -91,31 +92,134 @@ export default function App() {
                 <input
                   type="file"
                   accept="application/json"
-                  disabled={game.busy || game.readOnly}
+                  disabled={
+                    game.busy ||
+                    game.readOnly ||
+                    Boolean(game.recovery && !game.temporary)
+                  }
                   onChange={(e) => importFile(e.target.files?.[0])}
                 />
               </label>
             )}
+            {game.recovery || game.archived ? (
+              <button onClick={game.exportOriginal}>
+                Export recovery original
+              </button>
+            ) : null}
             <span>Case ready · optional sound below</span>
           </div>
         </div>
         <AudioPanel audio={audio} debrief={game.debrief} />
         {game.readOnly && !game.busy ? (
           <div className="notice">
-            Read-only: another tab owns the active save. Close that tab and
-            reload this one to take ownership.
+            Read-only: another tab owns the active save. Close that tab and this
+            one will refresh the saved case when ownership becomes available.
           </div>
         ) : null}
         {game.error ? (
           <div className="error" role="alert">
             <p>{game.error}</p>
-            <button onClick={game.enableTemporary}>
+            {v ? (
+              <div>
+                <p>
+                  For a write conflict, export this progress before reloading
+                  the saved case.
+                </p>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={confirmRecovery}
+                    onChange={(e) => setConfirmRecovery(e.target.checked)}
+                  />{" "}
+                  Discard unsaved progress in this tab.
+                </label>
+                <button
+                  disabled={!confirmRecovery || game.busy}
+                  onClick={() => window.location.reload()}
+                >
+                  Reload saved case
+                </button>
+              </div>
+            ) : !game.recovery ? (
+              <button
+                disabled={game.busy}
+                onClick={() => window.location.reload()}
+              >
+                Check stored save again
+              </button>
+            ) : null}
+            {game.canRetry && !game.recovery ? (
+              <button
+                disabled={game.busy || game.readOnly}
+                onClick={game.retrySave}
+              >
+                Retry saving retained progress
+              </button>
+            ) : null}
+            {game.recovery && !v ? (
+              <div>
+                <p>
+                  Export the original data before choosing. Recovery keeps a
+                  copy on this device and never changes the case rules. The
+                  original export is for inspection; use Export save after
+                  recovery for a portable save.
+                </p>
+                {game.recovery.previousStep !== null ? (
+                  <button
+                    disabled={game.busy || game.readOnly}
+                    onClick={() => game.recover("previous")}
+                  >
+                    Restore previous save · step {game.recovery.previousStep}
+                  </button>
+                ) : (
+                  <p>No valid previous save is available.</p>
+                )}
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={confirmRecovery}
+                    onChange={(e) => setConfirmRecovery(e.target.checked)}
+                  />{" "}
+                  I understand restarting removes the active case; the original
+                  is kept for export.
+                </label>
+                <button
+                  disabled={!confirmRecovery || game.busy || game.readOnly}
+                  onClick={() => game.recover("restart")}
+                >
+                  Restart after preserving original
+                </button>
+              </div>
+            ) : null}
+            <button
+              disabled={game.busy || game.readOnly}
+              onClick={game.enableTemporary}
+            >
               Continue explicitly without saving
             </button>
             <p>
               Export progress before leaving. Temporary progress does not
               overwrite the last durable save.
             </p>
+          </div>
+        ) : null}
+        {game.temporary ? (
+          <div className="notice">
+            Temporary progress is not saved.{" "}
+            {game.durableRevision === null
+              ? "No committed revision for this session."
+              : `Last saved revision: ${game.durableRevision}.`}
+            {game.view ? (
+              <button onClick={game.export}>Export temporary progress</button>
+            ) : null}
+            {game.view && !game.recovery ? (
+              <button
+                disabled={game.busy || game.readOnly}
+                onClick={game.retrySave}
+              >
+                Try saving this session
+              </button>
+            ) : null}
           </div>
         ) : null}
         <main id="main" tabIndex={-1}>
@@ -164,7 +268,11 @@ export default function App() {
                 <div className="actions">
                   <button
                     className="primary"
-                    disabled={game.busy || game.readOnly}
+                    disabled={
+                      game.busy ||
+                      game.readOnly ||
+                      Boolean(!v && game.error && !game.temporary)
+                    }
                     onClick={async () => {
                       if (!v) await game.start();
                       setHome(false);

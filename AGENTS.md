@@ -44,3 +44,12 @@ Read `docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md` before changing gameplay.
 - Audio consumes public deliveries and closed-case report classes only. It must never dispatch gameplay commands, change clocks, revise scores, reveal testimony early or leak hidden world identifiers through cues or filenames. Sparse twins share reasoning narration; outcome narration is separate and post-close only.
 - Fresh sessions are silent until explicit consent. Maintain captions/transcripts, skip/replay, independent channels, master mute, a screen-reader-friendly mode and safe media failure. Stop obsolete speech on navigation and all playback on backgrounding without replaying a backlog.
 - Preserve immutable approved asset versions when replacing a pack, and update its version/paths, source record and tests together. Keep the Vercel SPA rewrite from rewriting `/audio/` assets.
+
+## Persistence and recovery conventions
+
+- Preserve version-1 command-log import/export compatibility until an explicit, tested format migration exists. The current recovery work does not complete the GDD snapshot/trailing-log or committed-receipt requirements.
+- Track the last durable revision separately from volatile engine revision. Retrying storage must commit the retained state, never re-dispatch commands or merge over a different saved revision. Temporary restarts must not delete the durable case.
+- Inspect and validate stored command history, checksum and row revision before resuming or retaining it as the next backup. Offer only validated previous saves; never silently repair incompatible rulesets or discard a damaged current record.
+- Recovery compares the complete inspected row again inside its transaction. Archive the original under `recovery-original` before restoring/restarting. The raw recovery export is for inspection, separate from the normal portable save format; the most recent original remains exportable after recovery.
+- Waiting Web Lock owners must reload committed state when ownership transfers. Keep read-only enforcement and explicit export/discard controls for conflicts. Web Locks fallback/leases, abrupt device kill, eviction and full migration coverage remain release work.
+- Browser storage changes require actual stored-state assertions under failed writes, recovery and multiple tabs, alongside the existing offline and gameplay flows. Fault injection belongs in tests only.

@@ -27,6 +27,14 @@ Use **Skip speech**, **Replay last line**, the always-reachable **Mute all**, an
 
 This is a **candidate synthetic voice pack, pending human listening/device review**. See the [production and rights record](docs/audio/PRODUCTION.md). If audio cannot load or play, continue with the same text and game rules.
 
+## Saves and recovery
+
+**Saved on this device** appears only after a successful local transaction. If saving fails, your accepted action stays in memory. Use **Export save**, **Retry saving retained progress**, or explicitly continue without saving. Temporary mode shows the last committed revision; **Try saving this session** saves the retained actions together without charging their steps again. A write conflict preserves both versions: export your temporary progress, then explicitly reload the saved case.
+
+A damaged or incompatible save opens recovery choices instead of starting over silently. **Export recovery original** downloads the untouched stored record for inspection; it is not a portable import file. Restore a validated previous save when available, or confirm a restart. The most recent recovery original remains on this device and available for export after recovery. Export it elsewhere for a separate backup; browser storage can still be cleared or evicted. Normal **Export save** files remain portable and version-1 compatible.
+
+A waiting read-only tab refreshes the committed case when the writer tab closes. Reloading discards unsaved memory only after an explicit choice in the recovery controls. Physical browser termination and storage eviction still need device testing.
+
 ## Authoritative design
 
 [Game Design Document v4.3](docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md) is the implementation baseline. The uploaded document is preserved unchanged. Sections 8, 9 and 13 govern commands, scheduling and scoring; Appendix A governs M01 fixtures. `src/content/m01.json` is extracted directly from Appendix A; gameplay ruleset remains `4.0.0`. Presentation and save formats are versioned separately.
@@ -55,7 +63,7 @@ npx playwright install --with-deps chromium
 npm run test:e2e
 ```
 
-Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 41 unit/asset tests and 18 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
+Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 46 unit/asset tests and 26 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance, injected quota failure/retry, damaged-save recovery, incompatible-save restart, writer handoff and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 
 ## Architecture
 
@@ -63,7 +71,7 @@ Engine and persistence tests cover all ten Appendix B golden traces, source cuto
 - Pure authoritative engine and evidence-based scoring, isolated from rendering and wall-clock time. Post-close feedback links to delivered observations and a frozen copy of the finding; the M01 numeric rubric and source fixture remain unchanged.
 - Zustand stores navigation only. Components receive permitted `PlayerView` projections; hidden truth appears only in the closed-case debrief.
 - Zod command/import schemas; Dexie transactions, expected-revision checks, previous-save retention and replay-based portable JSON exports.
-- Web Locks restrict writes to one tab where supported. A failed save is shown as **Not saved**; temporary mode is an explicit choice, with export available.
+- Web Locks restrict writes to one tab where supported. A failed save is shown as **Not saved**; retry retains accepted actions, temporary mode is explicit, and damaged-save recovery preserves the original for export.
 - Motion provides nonessential, reduced-motion-aware presentation. Howler is loaded on opt-in and plays a complete, pre-generated candidate voice/sound pack. All scripts, checksums, source attribution and delivery metadata are versioned. Human listening and physical-device audio review are still pending.
 
 After the application is loaded, all active-case text and rules are local. Offline cold-start is not promised. Saves belong to one browser origin and do not follow a different device or deployment URL; export first. The checksum detects accidental corruption, not tampering.
