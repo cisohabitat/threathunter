@@ -2,10 +2,18 @@ import { useState } from "react";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { useGame } from "./controller";
 import { useNavigation, type Screen } from "../stores/view";
+import { InvestigationGuide } from "../ui/InvestigationGuide";
 import { CaseEditor } from "../ui/CaseEditor";
 import { Workbench } from "../ui/Workbench";
 import { Debrief } from "../ui/Debrief";
 import { briefing, hints } from "../presentation/voice/scripts";
+function readGuidancePreference() {
+  try {
+    return localStorage.getItem("threat-hunter-guidance-v1") !== "independent";
+  } catch {
+    return true;
+  }
+}
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
 export default function App() {
   const game = useGame(),
@@ -13,6 +21,18 @@ export default function App() {
     [hint, setHint] = useState(-1),
     [home, setHome] = useState(true),
     [replace, setReplace] = useState(false);
+  const [guided, setGuided] = useState(readGuidancePreference);
+  function chooseGuidance(value: boolean) {
+    setGuided(value);
+    try {
+      localStorage.setItem(
+        "threat-hunter-guidance-v1",
+        value ? "guided" : "independent",
+      );
+    } catch {
+      /* Guidance still works without preference storage. */
+    }
+  }
   const reduced = useReducedMotion();
   const v = game.view;
   const blocked =
@@ -114,6 +134,25 @@ export default function App() {
                   <br />
                   Find what the evidence actually supports.
                 </p>
+                <fieldset className="assistance-choice">
+                  <legend>How would you like to play?</legend>
+                  <div className="actions">
+                    <button
+                      aria-pressed={guided}
+                      onClick={() => chooseGuidance(true)}
+                    >
+                      Guided investigation{" "}
+                      <small>Recommended · Morgan explains each step</small>
+                    </button>
+                    <button
+                      aria-pressed={!guided}
+                      onClick={() => chooseGuidance(false)}
+                    >
+                      Independent investigation{" "}
+                      <small>Explore at your own pace</small>
+                    </button>
+                  </div>
+                </fieldset>
                 <div className="actions">
                   <button
                     className="primary"
@@ -227,11 +266,28 @@ export default function App() {
                             : "What happened, and when?"}
                     </h1>
                   </div>
-                  <span className="step-badge">
-                    STEP {v.tick}
-                    <small>No live countdown</small>
-                  </span>
+                  <div className="workspace-tools">
+                    <button
+                      aria-pressed={guided}
+                      onClick={() => chooseGuidance(!guided)}
+                    >
+                      {guided ? "Hide guidance" : "How to play"}
+                    </button>
+                    <span className="step-badge">
+                      STEP {v.tick}
+                      <small>No live countdown</small>
+                    </span>
+                  </div>
                 </div>
+                {guided ? (
+                  <InvestigationGuide
+                    view={v}
+                    screen={screen}
+                    busy={blocked}
+                    send={game.send}
+                    navigate={setScreen}
+                  />
+                ) : null}
                 {v.responseWindowOpenedAt !== null ? (
                   <div className="notice">
                     Out-of-role activity was delivered at step{" "}
@@ -308,7 +364,9 @@ export default function App() {
                         </p>
                       </article>
                     </div>
-                    <Workbench view={v} busy={blocked} send={game.send} />
+                    {!guided ? (
+                      <Workbench view={v} busy={blocked} send={game.send} />
+                    ) : null}
                   </>
                 ) : screen === "Explore" ? (
                   <>

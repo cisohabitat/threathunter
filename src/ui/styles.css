@@ -1110,3 +1110,126 @@ p {
     scroll-behavior: auto !important;
   }
 }
+
+/* Presentation-only first-run guidance; no simulation state is changed by navigation. */
+.investigation-guide {
+  border: 1px solid #52848d;
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 26px;
+  background: linear-gradient(115deg, #193545, #132338);
+}
+.investigation-guide h2 {
+  font-size: 28px;
+}
+.investigation-guide p {
+  max-width: 860px;
+}
+.guide-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+.guide-heading > span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.investigation-guide .guide-tip {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 20px 0 0;
+}
+.baseline-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+.baseline-comparison article {
+  background: var(--bg-deep);
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 6px;
+  padding: 20px;
+}
+.baseline-comparison small {
+  color: var(--accent-cyan);
+  font-size: 12px;
+}
+.baseline-comparison p {
+  margin: 12px 0 0;
+}
+.guide-checklist {
+  padding-left: 22px;
+  list-style: decimal;
+}
+.guide-checklist li {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+.guide-checklist strong {
+  color: var(--text-primary);
+}
+.workspace-tools {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.workspace-tools button {
+  font-size: 13px;
+}
+.assistance-choice {
+  border: 0;
+  margin: 0 0 28px;
+  padding: 0;
+}
+.assistance-choice legend {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.assistance-choice .actions {
+  gap: 12px;
+  align-items: stretch;
+}
+.assistance-choice button {
+  background: #0b1422cc;
+  font-size: 14px;
+}
+.assistance-choice button[aria-pressed="true"] {
+  border-color: var(--accent-cyan);
+  box-shadow: inset 3px 0 var(--accent-cyan);
+}
+.assistance-choice small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+@media (max-width: 740px) {
+  .investigation-guide {
+    padding: 20px 18px;
+  }
+  .investigation-guide h2 {
+    font-size: 25px;
+  }
+  .baseline-comparison {
+    grid-template-columns: 1fr;
+  }
+  .workspace-tools {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .workspace-tools button {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  .assistance-choice .actions {
+    flex-direction: column;
+  }
+  .hero-copy {
+    padding-top: 45px;
+  }
+}

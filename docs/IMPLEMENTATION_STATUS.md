@@ -44,3 +44,9 @@ Do not expand into M04/M07 until M01's required release evidence is complete. No
 - Original uploaded Markdown compared byte-for-byte with the GitHub copy: identical. Appendix A JSON extracted directly without rules changes.
 
 The first browser pass exposed a development-remount writer-lock race; the lock request now waits with an abortable lifetime and releases on cleanup. The corrected browser suite passed. These are local execution results, not an assertion that GitHub Actions or a Vercel preview has passed.
+
+## Guided onboarding update
+
+Added the GDD Section 4 first-run assistance: equally available guided/independent modes, a remembered presentation preference, an explanation of the investigator’s goal and action-driven time, side-by-side sign-in comparison, an explicit free evidence-citation action, a choice of follow-up checks and plain-language Case File instructions. Guidance uses delivered public observations only, does not choose a finding or alter scoring, and can be hidden/restored at any time. Guided Leads defers the full source workbench to Explore to reduce the initial information load.
+
+Validation: lint, typecheck/build and all 35 engine/persistence tests pass. Browser coverage adds guided first acquisition, free citation, next-check choice and guidance preference/resume to the existing desktop/phone flows. Required voice production remains open; this update adds text guidance only.
