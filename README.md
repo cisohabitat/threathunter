@@ -11,9 +11,9 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 1. Choose **Guided investigation** (recommended), then **Begin investigation** or **Resume investigation**.
 2. Morgan explains your role: investigate an unfamiliar finance login at 02:13 and decide what the evidence supports.
 3. Select **Compare sign-ins · 1 step**. Read the side-by-side comparison, then **Add these observations to Case File · free**.
-4. Choose your next check: approved work, device registration, session activity or verified-owner contact. The guide explains each choice; Explore keeps all sources available.
-5. Open **Case File**. Choose a finding and confidence, cite supporting observations, test an alternative explanation, record relevant limits and select a next step.
-6. Select **Review finding**, then **Confirm and close case** when ready. The debrief separates investigation quality from the simulated operational outcome.
+4. Choose your next check: approved work, device registration, session activity or verified-owner contact. Explore shows the newest observation first and keeps earlier snapshots available. Use **Cite in finding**, **Test another explanation**, or **Note a limitation** directly on an evidence card; all three are free.
+5. Open **Case File** and move through **Explanation → Evidence → Unknowns → Next step**. Your evidence-card choices carry over. Choose a finding/confidence, describe the alternative you tested, record relevant limits and select a next action. You can revisit any step and review at any time. Optional notes have an explicit save button and are also saved when reviewing.
+6. Select **Review finding**, then **Confirm and close case** when ready. The debrief explains your finding and separates it from the operational outcome. Use **What I knew then** to view only observations delivered by a selected step. Expand the optional quality breakdown for your score, specific feedback and links to the relevant observations.
 
 Reading, navigation and evidence citation are free. New acquisitions, verification requests and deliberately advancing the world consume simulation steps. There is no real-time countdown. An unresolved finding is valid when its limits and follow-up are explained.
 
@@ -47,12 +47,12 @@ npx playwright install --with-deps chromium
 npm run test:e2e
 ```
 
-Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 35 engine/persistence tests and 10 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
+Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 38 engine/persistence tests and 14 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 
 ## Architecture
 
 - React + TypeScript + Vite + Tailwind, using the GDD palette and an original SVG night-scene composition.
-- Pure authoritative engine and evidence-based scoring, isolated from rendering and wall-clock time.
+- Pure authoritative engine and evidence-based scoring, isolated from rendering and wall-clock time. Post-close feedback links to delivered observations and a frozen copy of the finding; the M01 numeric rubric and source fixture remain unchanged.
 - Zustand stores navigation only. Components receive permitted `PlayerView` projections; hidden truth appears only in the closed-case debrief.
 - Zod command/import schemas; Dexie transactions, expected-revision checks, previous-save retention and replay-based portable JSON exports.
 - Web Locks restrict writes to one tab where supported. A failed save is shown as **Not saved**; temporary mode is an explicit choice, with export available.

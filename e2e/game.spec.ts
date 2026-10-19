@@ -140,11 +140,19 @@ test("guided first investigation explains, compares, cites for free and offers a
   await expect(
     guide.getByRole("heading", { name: "Tell the story in four parts." }),
   ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Case File steps" })
+    .getByRole("button", { name: /Evidence/ })
+    .click();
   const evidence = page.getByRole("group", {
     name: "02 · Supporting and opposing facts",
   });
-  await expect(evidence.getByRole("checkbox").nth(0)).toBeChecked();
-  await expect(evidence.getByRole("checkbox").nth(1)).toBeChecked();
+  await expect(
+    evidence.getByRole("button", { name: "✓ Cited in finding" }).nth(0),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    evidence.getByRole("button", { name: "✓ Cited in finding" }).nth(1),
+  ).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".step-badge")).toContainText("STEP 2");
   expect(
     await page.evaluate(

@@ -269,6 +269,9 @@ export function processCommand(
               ? `Response queue accepts review and monitoring ownership at step ${start + 2}; no immediate revocation is modelled.`
               : "Only this lead is closed; routine monitoring continues.",
         decisionRecords: structuredClone(v.records),
+        finding: structuredClone(v.draft),
+        decisionHistory: structuredClone(v.history),
+        pendingChecks: structuredClone(v.pendingChecks),
       };
       v.phase = "closed";
       v.history.push({

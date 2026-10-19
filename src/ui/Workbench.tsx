@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { EvidenceCard } from "./EvidenceCard";
 import type { Action, PlayerView, QueryId } from "../domain/contracts";
 import { refKey } from "../domain/contracts";
 export const questions: {
@@ -46,19 +48,63 @@ export function Workbench({
   busy: boolean;
   send: (action: Action) => Promise<void>;
 }) {
+  const latest = view.records.at(-1)!;
+  const latestHeading = useRef<HTMLHeadingElement>(null);
+  const previousCount = useRef(view.records.length);
+  useEffect(() => {
+    if (view.records.length > previousCount.current) {
+      latestHeading.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "instant",
+      });
+      latestHeading.current?.focus({ preventScroll: true });
+    }
+    previousCount.current = view.records.length;
+  }, [view.records.length]);
   return (
     <section className="panel">
+      <div className="latest-evidence">
+        <p className="eyebrow">Read what you found</p>
+        <h2 ref={latestHeading} tabIndex={-1}>
+          Latest observation
+        </h2>
+        <EvidenceCard
+          record={latest}
+          draft={view.draft}
+          tick={view.tick}
+          busy={busy}
+          send={send}
+        />
+        {view.records.length > 1 ? (
+          <details className="earlier-records">
+            <summary>Earlier observations ({view.records.length - 1})</summary>
+            {view.records
+              .slice(0, -1)
+              .reverse()
+              .map((r) => (
+                <EvidenceCard
+                  key={refKey(r.ref)}
+                  record={r}
+                  draft={view.draft}
+                  tick={view.tick}
+                  busy={busy}
+                  send={send}
+                />
+              ))}
+          </details>
+        ) : null}
+      </div>
       <p className="eyebrow">Ask a better question</p>
-      <h2>Follow the evidence.</h2>
+      <h2>What would you check next?</h2>
       <p className="muted">
         Each new acquisition costs one step. Reading and comparing what you
         already have are free.
       </p>
       <div className="question-grid">
         {questions.map((q, i) => {
-          const record = view.records.find(
-            (r) => r.ref.recordId === `EV-0${i + 2}`,
-          );
+          const record = [...view.records]
+            .reverse()
+            .find((r) => r.ref.recordId === `EV-0${i + 2}`);
           const cached =
             record && (q.static || record.snapshotCutoff === view.tick);
           return (
@@ -81,7 +127,7 @@ export function Workbench({
                   ? "Reopen · free"
                   : `Collect through step ${view.tick} · 1 step`}
               </button>
-              {record ? <small>✓ Snapshot available below</small> : null}
+              {record ? <small>✓ Snapshot available above</small> : null}
             </article>
           );
         })}
@@ -114,30 +160,6 @@ export function Workbench({
               : "Request verification · 1 step"}
         </button>
       </article>
-      <h3 className="section-label">
-        Collected observations · {view.records.length}
-      </h3>
-      <div className="record-list">
-        {view.records.map((r) => (
-          <article className="record" key={refKey(r.ref)}>
-            <div className="record-top">
-              <span>
-                {r.ref.recordId} · {r.sourceId.replaceAll("_", " ")}
-              </span>
-              <span>
-                {r.collection === "unavailable"
-                  ? "Collection unavailable"
-                  : "Collected record"}
-              </span>
-            </div>
-            <p>{r.observation}</p>
-            <small>
-              U-01 / S-01 · collected through step {r.snapshotCutoff} ·
-              delivered at step {r.deliveredTick}
-            </small>
-          </article>
-        ))}
-      </div>
     </section>
   );
 }

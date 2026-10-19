@@ -45,8 +45,8 @@ export function InvestigationGuide({
               unresolved. Confidence describes how sure you are.
             </li>
             <li>
-              <strong>Evidence:</strong> tick the records you rely on. Test
-              another possible explanation with a record too.
+              <strong>Evidence:</strong> use “Cite in finding” on the records
+              you rely on. Test another possible explanation with a record too.
             </li>
             <li>
               <strong>Limits:</strong> choose a limitation and the record that

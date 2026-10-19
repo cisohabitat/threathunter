@@ -1,3 +1,4 @@
+import { explainRule } from "./explanations";
 import fixture from "../content/m01.json";
 import {
   refKey,
@@ -157,6 +158,16 @@ export function assess(
       ruleId,
       points: ok ? points : 0,
       explanation,
+      ...explainRule(
+        ruleId,
+        ok,
+        records,
+        facts,
+        draft,
+        tick,
+        urgency,
+        supported,
+      ),
     })),
   };
 }

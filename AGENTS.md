@@ -26,3 +26,12 @@ Read `docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md` before changing gameplay.
 - Existing Vercel project: `threathunter` (`prj_uz7WLOK0bffjodL77sxVDvot23tv`). Git-connected pushes to `main` trigger production deployment. Inspect that deployment instead of creating duplicate projects or deployments.
 - This is a deployed internal M01 build, not completed P0. Reviewed voice and the other documented acceptance gates remain open.
 - Guided investigation is the recommended first-run presentation. Its preference is stored separately from gameplay. Guide content must use public observations, remain optional, and never alter truth, timing, conclusions or scoring automatically.
+
+## Evidence and reporting conventions
+
+- `EvidenceCard` is the shared interaction surface in Explore and Case File. Citation, alternative checks and limitations issue validated, zero-tick `EDIT_CASE` commands using immutable acquisition references; do not maintain a second evidence list in presentation state.
+- The Case File has four freely navigable steps. Keep Review finding available throughout, allow incomplete findings, and require explicit final confirmation. Optional notes must be saved explicitly or flushed on review/close.
+- Keep the newest acquisition prominent and preserve earlier dynamic snapshots. Do not overwrite an empty earlier result when a refresh returns later activity.
+- Debrief findings, pending checks and investigation history are frozen by the engine on close. Evidence-linked feedback uses decision-time observations and rubric predicates, never hidden actor identity or operational damage.
+- “What I knew then” filters by record delivery step, not event timestamp. Selecting an earlier step must hide later observations without recomputing the original score. Keep numeric grading optional and separate from operational outcome.
+- Enriched debrief data is reconstructed from existing version-1 command-log saves; do not change gameplay ruleset or sufficient-evidence predicates solely for presentation changes.

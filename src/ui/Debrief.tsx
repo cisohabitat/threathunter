@@ -1,4 +1,31 @@
-import type { Debrief as DebriefData } from "../domain/contracts";
+import { useState } from "react";
+import { refKey, type Debrief as DebriefData } from "../domain/contracts";
+import {
+  alternativeLabels,
+  caveatLabels,
+  dispositionLabels,
+  nextLabels,
+  recordTitles,
+  sourceLabels,
+} from "./caseLanguage";
+const availableQuestions = [
+  [
+    "EV-02",
+    "Compare sign-in history",
+    "Establish the account’s usual pattern.",
+  ],
+  [
+    "EV-03",
+    "Check device registration",
+    "Test whether the unfamiliar client has an enrolled-device mapping.",
+  ],
+  ["EV-04", "Check approved work", "Test a matching business explanation."],
+  [
+    "EV-05",
+    "Follow session activity",
+    "Investigate access scope and collection coverage.",
+  ],
+] as const;
 export function Debrief({
   data,
   restart,
@@ -8,35 +35,105 @@ export function Debrief({
   restart: () => Promise<void>;
   busy: boolean;
 }) {
+  const [through, setThrough] = useState(data.closeTick);
+  const supported =
+    data.quality.reasons.find((r) => r.ruleId === "evidence.support")!.points >
+    0;
+  const cited = new Set(data.finding.evidence.map(refKey));
+  const alternative = new Set(data.finding.alternativeEvidence.map(refKey));
+  const unavailable = data.decisionRecords.filter(
+    (r) => r.collection === "unavailable",
+  );
+  const notChecked = availableQuestions.filter(
+    ([id]) => !data.decisionRecords.some((r) => r.ref.recordId === id),
+  );
+  const ticks = [
+    ...new Set([
+      0,
+      data.closeTick,
+      ...data.decisionRecords.map((r) => r.deliveredTick),
+      ...data.decisionHistory.map((h) => h.tick),
+    ]),
+  ].sort((a, b) => a - b);
+  const takeaways = data.quality.reasons
+    .filter(
+      (r) =>
+        r.points === 0 &&
+        ![
+          "reasoning.support",
+          "decision.authority",
+          "report.followup",
+        ].includes(r.ruleId),
+    )
+    .slice(0, 3);
+  const strengths = data.quality.reasons
+    .filter(
+      (r) =>
+        r.points > 0 &&
+        [
+          "evidence.baseline",
+          "reasoning.alternative",
+          "reasoning.limit",
+        ].includes(r.ruleId),
+    )
+    .slice(0, 3);
+  const anchor = (key: string) =>
+    `known-record-${data.decisionRecords.findIndex((r) => refKey(r.ref) === key)}`;
   return (
-    <main className="debrief">
-      <p className="eyebrow">Case M01 · investigation closed</p>
+    <section className="debrief" aria-label="Case debrief">
+      <p className="eyebrow">
+        CASE M01 · FINDING FROZEN AT STEP {data.closeTick}
+      </p>
       <h1>
-        A finding.
+        Your finding.
         <br />
-        <span>A defensible next step.</span>
+        <span>What it was built on.</span>
       </h1>
+      <section className="panel finding-verdict">
+        <p className="eyebrow">Your finding · S-01 only</p>
+        <h2>{dispositionLabels[data.finding.disposition]}</h2>
+        <p>
+          {data.finding.confidence} confidence · {data.finding.evidence.length}{" "}
+          cited observation(s)
+        </p>
+        <p className="verdict-summary">
+          {supported
+            ? "Your cited observations support this finding within the investigated session."
+            : "Your cited observations did not establish this finding. The useful next step is to strengthen the evidence or bound the claim."}
+        </p>
+        <p>{nextLabels[data.finding.nextStep]}</p>
+        <p className="muted">
+          This assessment uses the information available when you closed. The
+          hidden actor and later operational outcome do not change it.
+        </p>
+      </section>
       <div className="debrief-grid">
         <section className="panel">
-          <p className="eyebrow">Investigation quality</p>
-          <div className="score">
-            {data.quality.total}
-            <span>/100</span>
-          </div>
-          <p>
-            Assessed from your cited observations, reasoning and disclosed
-            policy. Hidden intent and operational damage do not change this
-            score.
-          </p>
-          {(["evidence", "reasoning", "decision", "report"] as const).map(
-            (k) => (
-              <div className="score-row" key={k}>
-                <span>{k}</span>
-                <meter min={0} max={100} value={data.quality[k]} />
-                <strong>{data.quality[k]}</strong>
-              </div>
-            ),
+          <p className="eyebrow">Your reasoning</p>
+          <h2>What you considered</h2>
+          <p>{alternativeLabels[data.finding.alternativeStatus]}</p>
+          <h3>Limits you recorded</h3>
+          {data.finding.caveats.length ? (
+            <ul>
+              {data.finding.caveats.map((c) => (
+                <li key={c.code}>{caveatLabels[c.code]}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">No limitations were recorded.</p>
           )}
+          {data.finding.optionalNotes ? (
+            <>
+              <h3>Your notes · not graded</h3>
+              <p className="preserve-lines">{data.finding.optionalNotes}</p>
+            </>
+          ) : null}
+          <h3>
+            {takeaways.length ? "Your next investigation" : "Keep doing this"}
+          </h3>
+          {(takeaways.length ? takeaways : strengths).map((r) => (
+            <p key={r.ruleId}>{r.feedback}</p>
+          ))}
         </section>
         <section className="panel">
           <p className="eyebrow">Operational outcome · separate from quality</p>
@@ -48,42 +145,199 @@ export function Debrief({
               : "The simulated data objective did not occur."}
           </p>
           <p className="muted">
-            Finding frozen at step {data.closeTick}. Continuation resolved
-            through step {data.resolvedThrough}. This is an authored simulation,
-            not a real-world response prediction.
+            Continuation resolved through step {data.resolvedThrough}. This is
+            an authored simulation, not a real-world response prediction.
           </p>
-          <h3>What the simulation knew</h3>
-          <p>{data.truth}</p>
-          <p className="muted">
-            These hidden facts were unavailable for grading your intent
-            judgement.
-          </p>
+          <details className="debrief-details">
+            <summary>Reveal the simulation’s hidden facts</summary>
+            <p>{data.truth}</p>
+            <p className="muted">
+              These facts were not available to establish your actor-intent
+              finding. An honestly unresolved case can still be excellent work.
+            </p>
+          </details>
         </section>
       </div>
       <section className="panel">
-        <p className="eyebrow">Reconstruction</p>
-        <h2>What you knew at the decision</h2>
-        {data.decisionRecords.map((r) => (
-          <p key={r.ref.acquisitionId}>
-            {r.observation}{" "}
-            <span className="muted">Through step {r.snapshotCutoff}.</span>
-          </p>
-        ))}
-        <h3>Feedback by rule</h3>
-        {data.quality.reasons.map((r) => (
-          <p key={r.ruleId} className={r.points ? "" : "muted"}>
-            {r.points ? "✓" : "○"} {r.explanation}{" "}
-            <strong>{r.points} points</strong>
-          </p>
-        ))}
+        <p className="eyebrow">Evidence reconstruction</p>
+        <h2>Known at your decision</h2>
+        <p>
+          Compare what reached you with what you used. Reading a record and
+          citing it are different actions.
+        </p>
+        <label>
+          What I knew then
+          <select
+            value={through}
+            onChange={(e) => setThrough(Number(e.target.value))}
+          >
+            {ticks.map((t) => (
+              <option key={t} value={t}>
+                Through step {t}
+                {t === data.closeTick ? " · decision snapshot" : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="muted">
+          Showing observations delivered by step {through}. Later observations
+          are hidden; the assessment remains frozen at step {data.closeTick}.
+        </p>
+        {data.decisionRecords
+          .filter((r) => r.deliveredTick <= through)
+          .map((r) => (
+            <article
+              className="record"
+              id={anchor(refKey(r.ref))}
+              key={refKey(r.ref)}
+            >
+              <div className="record-top">
+                <span>
+                  {recordTitles[r.ref.recordId]} ·{" "}
+                  {sourceLabels[r.sourceId] ?? r.sourceId}
+                </span>
+                <span>
+                  {cited.has(refKey(r.ref))
+                    ? "Cited in your finding"
+                    : "Not cited in your finding"}
+                </span>
+              </div>
+              <p>{r.observation}</p>
+              <small>
+                Collected through step {r.snapshotCutoff} · delivered at step{" "}
+                {r.deliveredTick}
+                {alternative.has(refKey(r.ref))
+                  ? " · used to test another explanation"
+                  : ""}
+              </small>
+            </article>
+          ))}
+        <details className="debrief-details">
+          <summary>Your investigation timeline</summary>
+          <ol className="timeline">
+            {data.decisionHistory
+              .filter((h) => h.tick <= through)
+              .map((h, i) => (
+                <li key={i}>
+                  <strong>{h.tick.toString().padStart(2, "0")}</strong>
+                  <p>{h.text}</p>
+                </li>
+              ))}
+          </ol>
+        </details>
       </section>
+      <div className="debrief-grid">
+        <section className="panel">
+          <p className="eyebrow">Could have been checked</p>
+          <h2>Other available questions</h2>
+          {notChecked.length ? (
+            notChecked.map(([, label, why]) => (
+              <p key={label}>
+                <strong>{label}.</strong> {why}
+              </p>
+            ))
+          ) : (
+            <p>
+              You checked each of the four available source questions. More
+              checks are not automatically better; whether their results support
+              your reasoning matters.
+            </p>
+          )}
+          {!data.decisionRecords.some((r) => r.ref.recordId === "EV-06") &&
+          !data.pendingChecks.length ? (
+            <p>
+              A verified-directory owner check was also available. Its result
+              would have taken three steps from request; a result is not assumed
+              before it arrives.
+            </p>
+          ) : null}
+          <p className="muted">
+            These were available enquiries, not a claim about what their hidden
+            results would have been. No optimal order or counterfactual outcome
+            is implied.
+          </p>
+        </section>
+        <section className="panel">
+          <p className="eyebrow">Not observable then</p>
+          <h2>Limits on what you could know</h2>
+          {unavailable.map((r) => (
+            <p key={refKey(r.ref)}>{r.observation}</p>
+          ))}
+          {data.pendingChecks.map((p) => (
+            <p key={p.requestId}>
+              Your owner check was due at step {p.dueTick}, after your decision
+              at step {data.closeTick}. No response can be treated as known
+              earlier.
+            </p>
+          ))}
+          <p>
+            Each activity snapshot covers only its stated cutoff. Later activity
+            and uncollected sources are not part of your decision-time
+            knowledge.
+          </p>
+        </section>
+      </div>
+      <details className="panel score-breakdown">
+        <summary>
+          Investigation quality · show score and evidence-linked feedback
+        </summary>
+        <div className="score">
+          {data.quality.total}
+          <span>/100</span>
+        </div>
+        <p>
+          Quality grades your evidence, reasoning, decision and report.
+          Operational damage is assessed separately.
+        </p>
+        {(["evidence", "reasoning", "decision", "report"] as const).map((k) => (
+          <div className="score-row" key={k}>
+            <span>{k}</span>
+            <meter
+              aria-label={`${k} score`}
+              min={0}
+              max={100}
+              value={data.quality[k]}
+            />
+            <strong>{data.quality[k]}</strong>
+          </div>
+        ))}
+        {data.quality.reasons.map((r) => (
+          <article className="rubric-feedback" key={r.ruleId}>
+            <h3>
+              {r.points ? "✓" : "○"} {r.explanation}
+            </h3>
+            <p>{r.feedback}</p>
+            <small>
+              {r.points} component points · rubric {data.quality.rubricVersion}
+            </small>
+            {r.evidence.length ? (
+              <div className="feedback-links" aria-label="Related observations">
+                {r.evidence.map((ref) => (
+                  <a
+                    key={refKey(ref)}
+                    href={`#${anchor(refKey(ref))}`}
+                    onClick={() => setThrough(data.closeTick)}
+                  >
+                    {recordTitles[ref.recordId]} ·{" "}
+                    {
+                      data.decisionRecords.find(
+                        (rec) => refKey(rec.ref) === refKey(ref),
+                      )?.snapshotCutoff
+                    }
+                  </a>
+                ))}
+              </div>
+            ) : null}
+          </article>
+        ))}
+      </details>
       <p className="transfer">
-        Take this with you: an anomaly starts a question. A finding needs
-        evidence, boundaries and an owner for the next check.
+        A finding is more than a verdict: show what supports it, what remains
+        uncertain and who owns the next step.
       </p>
       <button className="primary" disabled={busy} onClick={restart}>
         Try another approach →
       </button>
-    </main>
+    </section>
   );
 }

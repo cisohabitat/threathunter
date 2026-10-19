@@ -137,7 +137,13 @@ export type QualityReport = {
   decision: number;
   report: number;
   total: number;
-  reasons: { ruleId: string; points: number; explanation: string }[];
+  reasons: {
+    ruleId: string;
+    points: number;
+    explanation: string;
+    feedback: string;
+    evidence: EvidenceRef[];
+  }[];
 };
 export type Debrief = {
   quality: QualityReport;
@@ -148,6 +154,9 @@ export type Debrief = {
   sessionRevoked: boolean;
   response: string;
   decisionRecords: PublicRecord[];
+  finding: CaseDraft;
+  decisionHistory: PlayerView["history"];
+  pendingChecks: PendingCheck[];
 };
 export type Receipt = {
   commandId: string;

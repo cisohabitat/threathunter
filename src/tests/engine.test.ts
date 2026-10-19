@@ -276,3 +276,43 @@ describe("command, snapshot and time contracts", () => {
           expect(fixture.recordByFact).toHaveProperty(fact);
   });
 });
+
+describe("evidence-linked debrief feedback", () => {
+  it("distinguishes collected-but-uncited baseline from an unasked question", () => {
+    const s = route("B", ["Q-H"]);
+    const d = draft(s, "unresolved");
+    d.evidence = [s.view.records[0].ref];
+    const report = close(s, d);
+    const reason = report.quality.reasons.find(
+      (r) => r.ruleId === "evidence.baseline",
+    )!;
+    expect(reason.feedback).toContain("collected the sign-in baseline");
+    expect(reason.points).toBe(0);
+    expect(reason.evidence).toEqual([s.view.records[0].ref]);
+  });
+  it("freezes reasoning, knowledge and pending checks and reconstructs them on save replay", () => {
+    const s = route("M", ["V", "Q-H"]);
+    const d = draft(s, "unresolved");
+    const closed = act(s, { kind: "CLOSE_CASE", draft: d }).state;
+    expect(closed.debrief?.pendingChecks[0].dueTick).toBe(3);
+    expect(closed.debrief?.finding).toEqual(d);
+    expect(importSave(JSON.stringify(exportSave(closed))).debrief).toEqual(
+      closed.debrief,
+    );
+    d.evidence = [];
+    expect(closed.debrief?.finding.evidence.length).toBe(2);
+  });
+  it("feedback references only delivered observations and explains the disclosed late window", () => {
+    const s = route("M", ["Q-H", "Q-D", "Q-C", "Q-F", "+3"]);
+    const result = close(s, draft(s, "likely_misuse"));
+    const known = new Set(result.decisionRecords.map((r) => refKey(r.ref)));
+    for (const reason of result.quality.reasons)
+      for (const ref of reason.evidence)
+        expect(known.has(refKey(ref))).toBe(true);
+    expect(
+      result.quality.reasons.find((r) => r.ruleId === "decision.timing")
+        ?.feedback,
+    ).toContain("ended at step 6");
+    expect(result.quality.total).toBe(91);
+  });
+});
