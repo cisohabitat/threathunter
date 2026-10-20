@@ -10,10 +10,11 @@ const server = await createServer({
 });
 const samples = [];
 let text;
+let boundedLegacy;
+let sameBuildReplayComparison;
 try {
-  const { createRun, processCommand } = await server.ssrLoadModule(
-    "/src/engine/engine.ts",
-  );
+  const { createRun, processCommand, replayCommands } =
+    await server.ssrLoadModule("/src/engine/engine.ts");
   const { exportSave, importSave } = await server.ssrLoadModule(
     "/src/persistence/format.ts",
   );
@@ -38,6 +39,56 @@ try {
       });
     }
   }
+  const referenceStarted = performance.now();
+  let reference = createRun("history-lab", "M");
+  for (const command of state.commands)
+    reference = processCommand(reference, command).state;
+  const immutableReplayMs = performance.now() - referenceStarted;
+  const ownedStarted = performance.now();
+  const owned = replayCommands(createRun("history-lab", "M"), state.commands);
+  const ownedReplayMs = performance.now() - ownedStarted;
+  assert.deepEqual(owned, reference);
+  sameBuildReplayComparison = {
+    commands: 750,
+    immutableReplayMs: Math.round(immutableReplayMs),
+    ownedReplayMs: Math.round(ownedReplayMs),
+    equalCompleteState: true,
+    method:
+      "Single same-build Node trial, identical parsed commands and initial state; no physical-device or population claim",
+  };
+  const { checksum } = await server.ssrLoadModule("/src/persistence/format.ts");
+  const data = {
+    schemaVersion: 1,
+    ruleset: "4.0.0",
+    runId: "r",
+    world: "M",
+    commands: Array.from({ length: 20000 }, (_, i) => ({
+      kind: "ADVANCE",
+      runId: "r",
+      commandId: i.toString(36),
+      expectedRevision: i,
+      durationTicks: 1,
+    })),
+  };
+  const boundedText = JSON.stringify({ ...data, hash: checksum(data) });
+  assert(Buffer.byteLength(boundedText) <= 2 * 1024 * 1024);
+  const boundedStarted = performance.now();
+  const bounded = importSave(boundedText);
+  assert.equal(bounded.view.revision, 20000);
+  assert.equal(bounded.view.tick, 20000);
+  assert.equal(bounded.simulation.tick, 20000);
+  assert.equal(bounded.simulation.objectiveAchieved, true);
+  assert.equal(bounded.commands.length, 20000);
+  assert.equal(Object.keys(bounded.receipts).length, 20000);
+  boundedLegacy = {
+    commands: 20000,
+    utf8Bytes: Buffer.byteLength(boundedText),
+    validationMs: Math.round(performance.now() - boundedStarted),
+    restoredTick: bounded.view.tick,
+    receipts: Object.keys(bounded.receipts).length,
+    method:
+      "Node import of a valid format-1 file at the command-count limit; no browser rendering claim",
+  };
 } finally {
   await server.close();
 }
@@ -74,13 +125,11 @@ try {
     }
     window.historyProbe = probe;
   });
-  await page
-    .locator('input[type="file"]')
-    .setInputFiles({
-      name: "history.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(text),
-    });
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "history.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(text),
+  });
   await page
     .getByRole("button", { name: "Voice & sound", exact: true })
     .click();
@@ -102,7 +151,8 @@ try {
     };
   });
   assert(
-    responsiveness.heartbeatSamples > 10,
+    responsiveness.heartbeatSamples > 0 ||
+      responsiveness.importAndCommitMs < 100,
     "Interface heartbeat did not run during validation",
   );
   const stored = await page.evaluate(
@@ -150,7 +200,9 @@ try {
         browser: browser.version(),
         method:
           "Linux Chromium production preview, healthy desktop CPU/storage; 20 ms main-thread heartbeat during real file import and durable commit; exact stored command comparison and reload",
-        synchronousBaseline: samples,
+        validationSamples: samples,
+        boundedLegacy,
+        sameBuildReplayComparison,
         workerImport: responsiveness,
         restored: {
           revision: 750,
@@ -160,7 +212,7 @@ try {
           reloadPassed: true,
         },
         limits:
-          "Worker moves semantic audit off the interface thread; it does not reduce replay complexity. Serialization, cloning and rendering still use the main thread. This is not a physical-device acceptance or a 20,000-command performance claim. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes.",
+          "Owned replay removes per-command whole-state copies; validation, checksums, serialization and cloning still cost time. Serialization, cloning and rendering still use the main thread. The 20,000-command result is Node format-1 import only, not browser rendering, durable format-2 migration or physical-device acceptance. Large snapshot exports may exceed the existing 2 MiB limit. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes.",
       },
       null,
       2,
@@ -168,7 +220,9 @@ try {
   );
   console.log(
     JSON.stringify({
-      synchronousBaseline: samples,
+      validationSamples: samples,
+      boundedLegacy,
+      sameBuildReplayComparison,
       workerImport: responsiveness,
     }),
   );

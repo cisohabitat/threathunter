@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { importSave as readOldSnapshot } from "./legacyFormat";
 import fixture from "../content/m01.json";
-import { commandSchema, type Command } from "../domain/contracts";
+import { commandSchema } from "../domain/contracts";
 import {
   canonical,
   createRun,
-  processCommand,
+  replayCommands,
   type EngineState,
 } from "../engine/engine";
 
@@ -99,15 +99,6 @@ function acknowledge(
 export function markCommitted(state: EngineState) {
   return acknowledge(state, state.view.revision);
 }
-function replay(state: EngineState, commands: Command[]) {
-  for (const command of commands) {
-    const result = processCommand(state, command);
-    if (result.receipt.status !== "accepted" || result.receipt.replayed)
-      throw Error("Save command history is invalid.");
-    state = result.state;
-  }
-  return state;
-}
 export function exportLegacySave(state: EngineState): LegacySaveEnvelope {
   const data = {
     schemaVersion: 1 as const,
@@ -133,7 +124,7 @@ export function exportSave(
     throughRevision === state.view.revision
       ? structuredClone(state)
       : acknowledge(
-          replay(
+          replayCommands(
             createRun(state.view.runId, state.world),
             state.commands.slice(0, throughRevision),
           ),
@@ -208,7 +199,7 @@ export function importSave(text: string): EngineState {
   ) {
     const old = readOldSnapshot(text);
     const migrated = acknowledge(
-      replay(createRun(old.view.runId, old.world), old.commands),
+      replayCommands(createRun(old.view.runId, old.world), old.commands),
       old.persistence.committedRevision,
     );
     // This migration may add a causal ledger, never change any original fact,
@@ -234,7 +225,7 @@ export function importSave(text: string): EngineState {
   if (checksum(data) !== savedHash)
     throw Error("Save checksum does not match.");
   if (saved.schemaVersion === 1)
-    return replay(createRun(saved.runId, saved.world), saved.commands);
+    return replayCommands(createRun(saved.runId, saved.world), saved.commands);
   if (saved.manifest.fixtureHash !== fixtureHash)
     throw Error("Save case content is incompatible with this build.");
   const boundary = saved.snapshot.throughRevision;
@@ -249,7 +240,7 @@ export function importSave(text: string): EngineState {
   // nested field and reference, including hidden facts, draft, due ticks and receipts.
   // The audited prefix is not applied again to the restored snapshot.
   const audited = acknowledge(
-    replay(
+    replayCommands(
       createRun(saved.runId, saved.manifest.world),
       saved.commands.slice(0, boundary),
     ),
@@ -264,7 +255,7 @@ export function importSave(text: string): EngineState {
     throw Error("Save snapshot does not match its command history.");
   const checkpoint = structuredClone(saved.snapshot.state) as EngineState;
   const restored = acknowledge(
-    replay(checkpoint, saved.commands.slice(boundary)),
+    replayCommands(checkpoint, saved.commands.slice(boundary)),
     saved.latestCommittedRevision,
   );
   if (

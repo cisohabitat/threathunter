@@ -50,7 +50,7 @@ Executed 20 October 2026 on this Linux workspace:
 
 Baseline b3e309b reached Vercel production READY; live HTTPS entry/art/all 21 audio hashes matched. Its [GitHub Actions run](https://github.com/cisohabitat/threathunter/actions/runs/39349995606) completed successfully, including both cross-engine projects. The local Firefox host limitation does not imply a hosted Firefox failure. Physical-device, participant, creative and listening acceptance remains pending.
 
-## Current background-validation iteration
+## Background-validation baseline — 3328a92
 
 Executed 20 October 2026: lint, strict TypeScript, **82 unit/asset tests**, production build and initial payload budgets passed. The full reader-worker suite passed **50 Chromium** desktop/phone checks and **25 Linux WebKit** checks. After moving envelope/hash preparation into the worker, the focused storage/offline rerun passed **34 Chromium** checks; **17 WebKit** flows were verified across the main run and isolated reruns. Two WebKit checks reached their overall 30-second limit in the concurrent run, then passed in isolation (9.6 and 25.9 seconds); they are not described as a clean full rerun. The final validation/recovery file passed another **six Chromium** and **three WebKit** executions, including blocked startup/raw export. No local Firefox pass is claimed.
 
@@ -70,3 +70,17 @@ Abrupt-process recovery passed again with identical durable-row hashes and exact
 | Stored row → reload             | Exact 750-command comparison, committed revision 750 and unchanged zero tick after reload      |
 
 The game remains static with local IndexedDB; no backend/API credentials are required for these boundaries. See [save-history.json](save-history.json), [performance.json](performance.json), and [crash-recovery.json](crash-recovery.json). New publication and hosted-CI results require their own observed run. Physical-device, participant and listening/creative acceptance remain pending; see [the GDD ledger](../GDD_ACCEPTANCE.md).
+
+## Current owned-replay iteration
+
+Executed 20 October 2026: lint, strict TypeScript, **88 unit/asset tests**, **36 Chromium desktop/phone storage/offline flows**, and **18 Linux WebKit flows** passed. This WebKit run used one worker and passed cleanly. Unit evidence includes complete-state equality at every mixed-action prefix across four worlds/five seeds, closure, split checkpoints, rejected histories and frozen caller/payload isolation. Live command semantics, the GDD and save compatibility remain unchanged.
+
+In a single same-build Node trial using identical parsed commands and initial state, 750-command immutable replay took **2,108 ms** and owned replay took **24 ms**. Complete states were equal. The optimized full reader (including parsing, checksums and snapshot auditing) measured 84 / 379 / 302 ms for 100 / 350 / 750 commands. These are declared lab samples, not physical-device or population estimates.
+
+The production browser imported, committed and reloaded the exact 750-command history at step zero in **1,986 ms**. Its heartbeat had **25.0 ms p95** across 81 samples, with **396.6 ms maximum gap** and observed long-task durations of 376 ms. Remaining main-thread pauses still need attribution/profiling; no zero-jank claim is made.
+
+A valid **1,827,650-byte format-1 file with 20,000 commands** validated in **529 ms** in Node. Revision, tick and receipt count were 20,000, and authored adversary completion was verified. This checks the reader's count/size boundary; it does **not** test rendering a 20,000-entry browser history or durable format-2 migration. Large snapshot exports can exceed the existing 2 MiB bound and are rejected without writing. The frozen snapshot-1 reader is unchanged and retains its older replay cost.
+
+The final production lab recorded cold case-ready **2,058 ms**, ordinary synthetic interaction **35.6 ms p95**, and short-case durable command **98.1 ms p95**, with the same declared methods/limits. Initial entry plus validator JS totals **231,189 bytes gzip**; JS/CSS plus largest art totals **305,565 bytes**. Payload checks and abrupt-process recovery passed; the durable row survived unchanged and the pending check delivered once. Existing screen references remain baseline frames (`--no-screens` was used).
+
+Current reports: [save-history.json](save-history.json), [performance.json](performance.json), [crash-recovery.json](crash-recovery.json). The previous source build 3328a92's [hosted run](https://github.com/cisohabitat/threathunter/actions/runs/39354485679) passed; this new publication needs its own observed CI/deployment result. Physical-device, participant, listening/creative reviews, large-browser-history work and the GDD P1 gate remain open.

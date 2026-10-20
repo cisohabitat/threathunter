@@ -111,3 +111,11 @@ Added deterministic rechecksummed command/snapshot forgeries across all four wor
 The previous main build b3e309b was verified READY on Vercel with matching HTTPS JavaScript, responsive art and all 21 audio hashes. Its [hosted CI run](https://github.com/cisohabitat/threathunter/actions/runs/39349995606) passed all checks including Firefox/WebKit; the local Firefox startup limitation is specific to this managed host.
 
 Final worker-failure coverage includes a raw stored-data export when validation cannot start. This does not mark a healthy row corrupt or rewrite it, and explicit temporary play preserves the original. The current evidence ledger records final browser reruns, residual long-import tasks and the successful 750-command import/commit/reload.
+
+## Owned replay iteration — 20 October 2026
+
+Removed per-command whole-state copying from the current save audit path. Live commands keep immutable transitions; history replay owns one detached checkpoint and still runs all command/receipt/scope/revision checks. Rejected histories never change caller state. Added complete-state equivalence tests across four worlds, seeded mixed routes, split checkpoints, closure, invalid histories and payload isolation. The original GDD, scoring and snapshot compatibility remain unchanged; the frozen snapshot-1 reader is untouched.
+
+Current measurements and browser evidence are recorded in the verification ledger after execution. The new profiler includes same-build immutable versus owned replay and a bounded 20,000-command format-1 Node import. That test does not claim fast rendering of a 20,000-entry browser timeline. Human/device/creative gates and the Section 22.1 ordering for M04/M07 remain open.
+
+Verification: 88 unit/asset tests, 36 Chromium storage/offline flows and 18 one-worker Linux WebKit flows passed. Same-build 750-command replay measured 2,108 ms immutable versus 24 ms owned with complete-state equality. The browser imported/committed/reloaded 750 commands in 1,986 ms. The 20,000-command result is Node format-1 reading only; large format-2 snapshot export/migration and browser rendering remain separate size/performance work. See the report hashes and remaining pause measurements in the current ledger.

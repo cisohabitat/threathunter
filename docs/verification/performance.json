@@ -1,22 +1,22 @@
 {
-  "buildBundle": "/assets/index-rkCw7qzn.js",
-  "bundleSha256": "e0a7335a8ab6b295dc5f5a38a2d5b33a7f0a2e86dbbdd1c585cb78177f3d562c",
+  "buildBundle": "/assets/index-8VFyaZcl.js",
+  "bundleSha256": "e6be4607414699400e74b4aa0beb6282970fc56de2eec88d7b6ecc9991c60137",
   "browser": "156.0.8078.4",
   "profile": {
     "network": "4 Mbps down / 1 Mbps up / 100 ms RTT",
     "cpu": "4x Chromium emulation during cold load",
     "viewport": "390x844"
   },
-  "coldCaseReadyMs": 2767,
+  "coldCaseReadyMs": 2058,
   "interactions": {
     "samples": 100,
     "method": "Synthetic click to two animation frames, healthy local browser after load; includes frame wait",
-    "p95Ms": 35.30000000074506
+    "p95Ms": 35.59999999962747
   },
   "durableCommands": {
     "samples": 10,
     "method": "Playwright click to Saved label after IndexedDB transaction, healthy local storage; includes automation overhead",
-    "p95Ms": 191.47782800000004
+    "p95Ms": 98.08411299999989
   },
   "limits": "Linux Chromium lab measurement only. No reference physical phone or iPad; not a physical-device acceptance result. Long-task and actual touchscreen latency require device profiling."
 }

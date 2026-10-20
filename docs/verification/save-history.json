@@ -1,32 +1,47 @@
 {
-  "buildBundle": "/assets/index-rkCw7qzn.js",
-  "bundleSha256": "e0a7335a8ab6b295dc5f5a38a2d5b33a7f0a2e86dbbdd1c585cb78177f3d562c",
+  "buildBundle": "/assets/index-8VFyaZcl.js",
+  "bundleSha256": "e6be4607414699400e74b4aa0beb6282970fc56de2eec88d7b6ecc9991c60137",
   "browser": "156.0.8078.4",
   "method": "Linux Chromium production preview, healthy desktop CPU/storage; 20 ms main-thread heartbeat during real file import and durable commit; exact stored command comparison and reload",
-  "synchronousBaseline": [
+  "validationSamples": [
     {
       "commands": 100,
       "utf8Bytes": 183601,
-      "synchronousNodeValidationMs": 152
+      "synchronousNodeValidationMs": 84
     },
     {
       "commands": 350,
       "utf8Bytes": 631852,
-      "synchronousNodeValidationMs": 1146
+      "synchronousNodeValidationMs": 379
     },
     {
       "commands": 750,
       "utf8Bytes": 1349052,
-      "synchronousNodeValidationMs": 2521
+      "synchronousNodeValidationMs": 302
     }
   ],
+  "boundedLegacy": {
+    "commands": 20000,
+    "utf8Bytes": 1827650,
+    "validationMs": 529,
+    "restoredTick": 20000,
+    "receipts": 20000,
+    "method": "Node import of a valid format-1 file at the command-count limit; no browser rendering claim"
+  },
+  "sameBuildReplayComparison": {
+    "commands": 750,
+    "immutableReplayMs": 2108,
+    "ownedReplayMs": 24,
+    "equalCompleteState": true,
+    "method": "Single same-build Node trial, identical parsed commands and initial state; no physical-device or population claim"
+  },
   "workerImport": {
-    "importAndCommitMs": 7694,
-    "heartbeatSamples": 361,
-    "heartbeatP95Ms": 20.600000001490116,
-    "maximumHeartbeatGapMs": 464,
+    "importAndCommitMs": 1986,
+    "heartbeatSamples": 81,
+    "heartbeatP95Ms": 25,
+    "maximumHeartbeatGapMs": 396.59999999962747,
     "longTaskDurationsMs": [
-      452
+      376
     ]
   },
   "restored": {
@@ -36,5 +51,5 @@
     "committed": true,
     "reloadPassed": true
   },
-  "limits": "Worker moves semantic audit off the interface thread; it does not reduce replay complexity. Serialization, cloning and rendering still use the main thread. This is not a physical-device acceptance or a 20,000-command performance claim. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes."
+  "limits": "Owned replay removes per-command whole-state copies; validation, checksums, serialization and cloning still cost time. Serialization, cloning and rendering still use the main thread. The 20,000-command result is Node format-1 import only, not browser rendering, durable format-2 migration or physical-device acceptance. Large snapshot exports may exceed the existing 2 MiB limit. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes."
 }

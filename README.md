@@ -107,3 +107,5 @@ With a production preview running (`npm exec vite preview -- --host 127.0.0.1 --
 For performance-only reruns, `npm run verify:production -- --no-screens` keeps the existing visual reference frames; the default command still captures them.
 
 When browser validation cannot start for an existing save, offer an explicit raw stored-data recovery export without validating or rewriting it. Keep that recovery copy distinct from portable imports; temporary play must leave the original row unchanged.
+
+Save-history audits now replay into a detached engine state, avoiding a copy of the growing history for every command. Live commands remain immutable, and validation/migration rules are unchanged. `npm run verify:history` also checks complete-state equivalence against ordinary replay and a bounded 20,000-command Node import; large browser timeline rendering and physical-device performance remain separate acceptance work.

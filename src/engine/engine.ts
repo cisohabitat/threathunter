@@ -184,9 +184,30 @@ function advance(state: EngineState, n: number, complete?: () => void) {
     });
   }
 }
-export function processCommand(
+export function processCommand(current: EngineState, input: unknown) {
+  return transition(current, input, true);
+}
+
+// The only mutable path owns a detached state. Never expose the transition mode
+// to live callers or skip command validation/idempotency during history audits.
+export function replayCommands(
+  initial: EngineState,
+  commands: readonly Command[],
+) {
+  let owned = structuredClone(initial);
+  for (const command of commands) {
+    const result = transition(owned, command, false);
+    if (result.receipt.status !== "accepted" || result.receipt.replayed)
+      throw Error("Save command history is invalid.");
+    owned = result.state;
+  }
+  return owned;
+}
+
+function transition(
   current: EngineState,
   input: unknown,
+  copy: boolean,
 ): { state: EngineState; receipt: Receipt } {
   const fingerprint = canonical(input);
   const id =
@@ -236,7 +257,7 @@ export function processCommand(
     )
       return reject("INVALID_SCOPE");
   }
-  const state = structuredClone(current),
+  const state = copy ? structuredClone(current) : current,
     v = state.view,
     start = v.tick;
   if (cmd.kind === "ACQUIRE") {

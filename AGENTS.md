@@ -89,3 +89,10 @@ Waiting read-only tabs receive committed-save notifications where BroadcastChann
 - `npm run verify:history` profiles 100/350/750-command synthetic histories and the actual production import/commit/reload with an interface heartbeat. It requires preview on port 4173. Report replay complexity and serialization limits honestly; the worker is not a constant-time restore or physical-device performance claim.
 
 When browser validation cannot start for an existing save, offer an explicit raw stored-data recovery export without validating or rewriting it. Keep that recovery copy distinct from portable imports; temporary play must leave the original row unchanged.
+
+## Owned history replay
+
+- Live `processCommand` remains immutable. Its private transition mode must not become a public flag or a UI mutation API. `replayCommands` clones its caller's checkpoint once and owns that detached state for the whole audit.
+- Replay still validates every command, expected revision, authority/scope and receipt ID. Reject duplicate log entries, including idempotent repeats; on any invalid history, discard the owned copy without touching the supplied checkpoint or command payloads.
+- Prove complete-state equality with ordinary immutable transitions across worlds, mixed actions, closure and split checkpoints. Preserve sufficient sets, receipts, due ticks, debrief reconstruction and compatibility IDs. The frozen snapshot-1 reader stays unchanged.
+- `verify:history` now includes a same-build immutable/owned replay comparison and a 20,000-command format-1 Node import within the 2 MiB limit. This does not establish browser rendering speed for a 20,000-entry timeline or physical-device acceptance.
