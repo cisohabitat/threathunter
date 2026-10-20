@@ -1,5 +1,13 @@
 # Implementation status — internal build 0.1
 
+## Progress protection fixes — 20 October 2026
+
+M01 now warns before unloading accepted unsaved/temporary work and unfinished remembered Case File notes, including after leaving the editor. M04/M07 temporary replay requires a per-run export/discard acknowledgement before replacing the only in-memory finding; durable archival is unchanged. Expansion derives unfinished-note protection from the accepted finding and opens Review only after an accepted edit, with Review disabled while a command is pending. Engine rules, scoring, save schemas, workers and media remain unchanged.
+
+Local validation passed lint, typecheck, all **269 unit tests**, build, transfer budgets and the full **148 Chromium desktop/phone checks** (two workers, including twelve checks from the six new regression scenarios). Browser regressions cover exact retained rows and single-command retry, note warnings after navigation, both temporary P1 replays, busy/rejected expansion edits and typing during a pending note save. Initial fixture attempts used an incorrect M01 button selector, an unsupported M07 world and a deliberately delayed IndexedDB write that caused an early transaction commit; the final tests use supported fixtures and delay worker preparation before any write transaction instead. One initial selector run was interrupted. These failures were not relabelled as successful checks.
+
+The resulting application entry is `/assets/index-BWDfvk1p.js`, SHA-256 `96eaebf673cfd775e4f1a1ab215a298f3effdc32955afffe26eebcf893dc72be`. Historical reports continue to describe their captured builds. Publication uses the existing `main` → Vercel integration; the resulting commit needs its own observed hosted matrix and matching live assets/routes, separately from this local evidence. Overall startup, physical-device and deferred human gates remain open.
+
 The v4.3 GDD is preserved unchanged and controls this implementation. This is an internal twelve-case candidate plus constrained seeded free hunts at https://threathunter-rosy.vercel.app. Completed-P0 acceptance remains pending.
 
 ## Implemented

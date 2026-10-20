@@ -208,16 +208,17 @@ export function useExpansion(mission: storage.Slot) {
       setBusy(false);
     }
   }
-  async function send(action: Action) {
+  async function send(action: Action): Promise<boolean> {
     if (
       guard.current ||
       !engine.current ||
       (!temporary && (readOnly || !writerAvailable || error))
     )
-      return;
+      return false;
     guard.current = true;
     setBusy(true);
     setError("");
+    let accepted = false;
     try {
       const before = engine.current;
       const result = processCommand(before, {
@@ -230,9 +231,10 @@ export function useExpansion(mission: storage.Slot) {
         setRequestError(
           `Request not accepted: ${result.receipt.error}. No action or time was charged.`,
         );
-        return;
+        return false;
       }
       setRequestError("");
+      accepted = true;
       expose(result.state);
       await saveRetained(result.state);
     } catch (e) {
@@ -242,6 +244,7 @@ export function useExpansion(mission: storage.Slot) {
       guard.current = false;
       setBusy(false);
     }
+    return accepted;
   }
   async function retry() {
     if (!engine.current || guard.current || readOnly || !writerAvailable)

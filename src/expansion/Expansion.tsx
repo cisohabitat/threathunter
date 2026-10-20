@@ -67,8 +67,8 @@ export default function Expansion({
     [duration, setDuration] = useState(1),
     [windowDuration, setWindowDuration] = useState(2),
     [notes, setNotes] = useState(""),
-    [notesFor, setNotesFor] = useState(""),
-    [notesDirty, setNotesDirty] = useState(false);
+    [notesFor, setNotesFor] = useState("");
+  const notesDirty = Boolean(v && notes !== v.finding.notes);
   const heading = useRef<HTMLHeadingElement>(null),
     positions = useRef<Record<string, number>>({}),
     assistance = useRef<{
@@ -87,7 +87,6 @@ export default function Expansion({
     if (v && notesFor !== `${v.runId}:${game.resetKey}`) {
       setNotes(v.finding.notes);
       setNotesFor(`${v.runId}:${game.resetKey}`);
-      setNotesDirty(false);
       setSource("all");
       setReportStep(0);
       setRecordPages({ Explore: 0, "Case File": 0 });
@@ -99,11 +98,10 @@ export default function Expansion({
     }
   }, [v, notesFor, game.resetKey]);
   useEffect(() => {
-    if (v && game.readOnly) {
+    if (v && game.readOnly && !game.temporary) {
       setNotes(v.finding.notes);
-      setNotesDirty(false);
     }
-  }, [v, game.readOnly]);
+  }, [v, game.readOnly, game.temporary]);
   useEffect(() => {
     if (!notesDirty) return;
     const warn = (event: BeforeUnloadEvent) => {
@@ -171,10 +169,13 @@ export default function Expansion({
     );
   }
   async function reviewFinding() {
-    if (!v) return;
+    if (!v || game.blocked) return;
     if (notes !== v.finding.notes) {
-      await game.send({ kind: "EDIT_CASE", finding: { ...v.finding, notes } });
-      setNotesDirty(false);
+      const accepted = await game.send({
+        kind: "EDIT_CASE",
+        finding: { ...v.finding, notes },
+      });
+      if (!accepted) return;
     }
     setReview(true);
   }
@@ -1421,7 +1422,6 @@ export default function Expansion({
                               disabled={game.readOnly && !game.temporary}
                               onChange={(e) => {
                                 setNotes(e.target.value);
-                                setNotesDirty(true);
                               }}
                             />
                           </label>
@@ -1429,7 +1429,6 @@ export default function Expansion({
                             disabled={game.blocked || notes === f.notes}
                             onClick={() => {
                               update((f) => ({ ...f, notes }));
-                              setNotesDirty(false);
                             }}
                           >
                             Save optional notes · free
@@ -1443,6 +1442,7 @@ export default function Expansion({
                       ) : null}
                       <button
                         className="primary"
+                        disabled={game.blocked}
                         onClick={() => void reviewFinding()}
                       >
                         Review finding

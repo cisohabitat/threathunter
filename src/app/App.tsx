@@ -54,6 +54,23 @@ export default function App({
   const [guided, setGuided] = useState(readGuidancePreference);
   const [handledCaseRequest, setHandledCaseRequest] = useState(0);
   useEffect(() => {
+    const view = game.view;
+    if (!view) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      const editor = useNavigation.getState().editor;
+      if (
+        view.revision !== game.durableRevision ||
+        (editor?.runId === view.runId &&
+          editor.notes !== view.draft.optionalNotes)
+      ) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [game.view, game.durableRevision]);
+  useEffect(() => {
     if (caseRequest === handledCaseRequest || game.busy) return;
     setHandledCaseRequest(caseRequest);
     setHome(!game.view);

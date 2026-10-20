@@ -193,3 +193,13 @@ The reader-boundary candidate passed 34 selected local Chromium desktop/phone ch
 If a campaign case or free hunt cannot validate its save before Begin becomes available, restore connectivity if needed and choose **Retry saved-case inspection**. This works even before your first save and does not start a case or write progress. Temporary play remains an explicit separate choice. Once a case is loaded, use its retained-progress saving/recovery controls.
 
 The first-load follow-up passed eight local Chromium desktop/phone checks for empty-slot retry, exact saved-row preservation and existing-save recovery. The preceding `d5775d7` build passed [269 units and 260 browser checks in hosted CI](https://github.com/cisohabitat/threathunter/actions/runs/39445335185) and reached production READY with 124 matching live assets. One live M02 Begin attempt timed out; two fresh-profile complete repeats passed without application or timeout changes. Its cause remains unestablished. The new retry controls repair a separately reproduced recovery gap; they do not establish a startup-performance fix. See [the evidence ledger](docs/verification/RESULTS.md). Overall startup, named-device performance and deferred human reviews remain unpassed.
+
+## Protecting unfinished progress
+
+M01 asks before leaving with temporary progress, a failed save or unfinished Case File notes, including after navigating away from the editor. Save or export work you want to keep; a successful save clears the warning. Browser unload warnings cannot protect against a device kill or storage eviction.
+
+Before **Try another approach** replaces a temporary M04/M07 finding, acknowledge that you exported anything you want to keep. Each new closed run needs its own acknowledgement. Saved findings continue to be archived before replay.
+
+Expansion **Review finding** waits for the current command to finish and opens only after pending notes are accepted. A rejected edit or text typed during an earlier save keeps the unsaved-note warning and blocks backup replacement. Run `npx playwright test e2e/progress-protection.spec.ts --workers=1` for these browser regressions.
+
+This follow-up passed local lint, types, 269 unit checks, build/budgets and the full 148 Chromium desktop/phone checks. Hosted CI and production verification are separate results for the published commit; these checks do not promote deferred device or human acceptance.

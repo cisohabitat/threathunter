@@ -1,5 +1,12 @@
 # Threat Hunter repository instructions
 
+## Progress protection follow-up
+
+- M01 warns before unloading whenever accepted progress is not durable or its remembered Case File notes differ from the accepted draft. Read the navigation store at unload time so the warning survives leaving Case File or hiding M01 behind another destination. Saving successfully clears the warning; exports do not acknowledge durability.
+- M04/M07 temporary replay requires an explicit export/discard acknowledgement tied to the current run and import-reset epoch. Check it in the UI and controller, consume it on replay and require it again for the next closed run. Durable replay still archives the exact saved finding.
+- Expansion note dirtiness is derived from the buffer versus the accepted finding, never cleared merely because an async send returned. `useExpansion.send` returns whether the engine accepted the action, independently of persistence success. Review is blocked while a command is pending and does not open after a rejected note edit; edits typed during a pending save remain protected.
+- `e2e/progress-protection.spec.ts` covers unload guards, exact failed-write/retry rows, both temporary P1 replays, and expansion busy/rejected note edits. Preserve those storage and export assertions. These checks do not establish physical-device or human acceptance.
+
 Read `docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md` before changing gameplay. It is the authoritative product and implementation baseline. In particular, preserve Sections 8 (commands), 9 (scheduler), 13 (scoring) and Appendix A (M01 ruleset 4.0.0).
 
 - Keep hidden truth inside engine state; React and presentation consume permitted player projections. Never leak world identifiers through labels, loading states, sounds or defaults.

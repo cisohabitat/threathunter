@@ -328,10 +328,11 @@ export function useCampaign(mission: MissionId) {
       setBusy(false);
     }
   }
-  async function replay() {
+  async function replay(discardTemporary = false) {
     if (
       !engine.current?.debrief ||
       guard.current ||
+      (temporary && !discardTemporary) ||
       (!temporary && (readOnly || !writerAvailable))
     )
       return;

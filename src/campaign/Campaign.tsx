@@ -701,7 +701,9 @@ export default function Campaign({
     [screen, setScreen] = useState("Brief"),
     [notesDirty, setNotesDirty] = useState(false),
     [confirmRecovery, setConfirmRecovery] = useState(false),
-    [confirmReload, setConfirmReload] = useState(false);
+    [confirmReload, setConfirmReload] = useState(false),
+    [confirmedReplay, setConfirmedReplay] = useState<string | null>(null);
+  const replayIdentity = `${game.view?.runId}:${game.resetKey}`;
   const heading = useRef<HTMLHeadingElement>(null),
     scroll = useRef<Record<string, number>>({});
   const audio = useMissionAudio(
@@ -1024,12 +1026,33 @@ export default function Campaign({
               <CampaignDebrief
                 data={game.debrief}
                 missionId={missionId}
-                busy={game.blocked}
+                busy={
+                  game.blocked ||
+                  (game.temporary && confirmedReplay !== replayIdentity)
+                }
                 replay={async () => {
-                  await game.replay();
+                  const acknowledged = confirmedReplay === replayIdentity;
+                  if (game.temporary && !acknowledged) return;
+                  setConfirmedReplay(null);
+                  await game.replay(acknowledged);
                   navigate("Investigate");
                 }}
               />
+              {game.temporary ? (
+                <label className="audio-check">
+                  <input
+                    type="checkbox"
+                    checked={confirmedReplay === replayIdentity}
+                    onChange={(event) =>
+                      setConfirmedReplay(
+                        event.target.checked ? replayIdentity : null,
+                      )
+                    }
+                  />
+                  I exported the temporary closed finding I want to keep; replay
+                  replaces this in-memory run.
+                </label>
+              ) : null}
               <ContinueJourney
                 mission={missionId}
                 open={(mission) => {
