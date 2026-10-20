@@ -79,3 +79,13 @@ Read `docs/THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md` before changing gameplay.
 - Keep the human/device/audio CSV sheets blank/pending until actual sessions occur. Human sign-off must identify reviewer/build/device and evidence; never infer natural voice delivery, enjoyment or a >9 grade from automated checks.
 
 Waiting read-only tabs receive committed-save notifications where BroadcastChannel is available and may inspect the current case. Ownership transfer reloads durable state; read-only note buffers follow accepted notes even after returning from another screen, without replacing a writer’s local unfinished edits. Missing or rejected Web Locks access permits explicit temporary play and export, with durable writes disabled.
+
+## Background save-validation contract
+
+- Browser save inspection, imports, commit envelope/hash preparation, recovery and archives use `persistence/validation.ts` and the isolated `validationWorker.ts`. Keep the pure synchronous reader for non-browser tooling; never silently move a browser audit back onto the interface thread when workers fail.
+- Prepare the validator before case-ready so a loaded session can save offline. Count its initial JavaScript in the compressed/core budgets. Worker messages carry private engine state only to persistence/controller code; React still receives permitted projections.
+- Worker construction, messaging, decoding or 20-second deadline failure must retain stored and volatile progress, report unavailable validation, and support a fresh worker on retry. Such failures are not evidence that a stored row is corrupt.
+- Never await a worker inside a Dexie transaction. Validate the inspected row first, then compare its complete canonical bytes with the transaction's current row before writing or archiving; reject any change, even at the same revision.
+- `npm run verify:history` profiles 100/350/750-command synthetic histories and the actual production import/commit/reload with an interface heartbeat. It requires preview on port 4173. Report replay complexity and serialization limits honestly; the worker is not a constant-time restore or physical-device performance claim.
+
+When browser validation cannot start for an existing save, offer an explicit raw stored-data recovery export without validating or rewriting it. Keep that recovery copy distinct from portable imports; temporary play must leave the original row unchanged.

@@ -167,3 +167,31 @@ it("archives only the exact durably closed run and preserves its frozen report f
     { id: "completed:completed", closeTick: 0 },
   ]);
 });
+
+it("rejects a same-revision row replacement while validation is in progress", async () => {
+  const first = createRun("same-revision-race", "M");
+  await commit(first, null);
+  const next = processCommand(first, {
+    kind: "ADVANCE",
+    durationTicks: 1,
+    commandId: "advance",
+    runId: first.view.runId,
+    expectedRevision: 0,
+  }).state;
+  const read = database.runs.get.bind(database.runs);
+  const spy = vi.spyOn(database.runs, "get").mockImplementationOnce(() =>
+    database.transaction("rw", database.runs, async () => {
+      const original = await read("active");
+      await database.runs.update("active", { previous: exportSave(first) });
+      return original;
+    }),
+  );
+  try {
+    await expect(commit(next, 0)).rejects.toThrow("Another tab");
+  } finally {
+    spy.mockRestore();
+  }
+  const stored = await database.runs.get("active");
+  expect(stored?.revision).toBe(0);
+  expect(stored?.previous).toEqual(exportSave(first));
+});

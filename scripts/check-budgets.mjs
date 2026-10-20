@@ -6,7 +6,11 @@ const entry = html.match(/<script[^>]+src="([^"]+)"/)[1];
 const css = [...html.matchAll(/<link[^>]+href="([^"]+\.css)"/g)].map(
   (m) => m[1],
 );
-const core = [entry, ...css].map((path) => ({
+const workers = readdirSync("dist/assets")
+  .filter((name) => /^validationWorker-.*\.js$/.test(name))
+  .map((name) => "/assets/" + name);
+assert(workers.length === 1, "Expected the preloaded save-validation worker");
+const core = [entry, ...workers, ...css].map((path) => ({
   path,
   bytes: statSync("dist" + path).size,
   gzipBytes: gzipSync(readFileSync("dist" + path)).length,
@@ -16,7 +20,10 @@ const audio = JSON.parse(
   readFileSync("src/presentation/voice/manifest.json", "utf8"),
 );
 assert(
-  core[0].gzipBytes <= 400 * 1024,
+  core
+    .filter((item) => item.path.endsWith(".js"))
+    .reduce((sum, item) => sum + item.gzipBytes, 0) <=
+    400 * 1024,
   "Critical JavaScript exceeds 400 KiB compressed",
 );
 for (const item of art.compositions)

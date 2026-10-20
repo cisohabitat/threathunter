@@ -90,7 +90,7 @@ After the application is loaded, all active-case text and rules are local. Offli
 
 `vercel.json` configures a static Vite build and SPA refresh. The existing Vercel project `threathunter` is connected to this repository; pushes to `main` trigger production deployment at the live URL above. Verify that the deployment reaches **READY** and serves the intended commit before reporting success. Avoid creating a second deployment if Git integration has already started one.
 
-GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the observed CI runs were queued when last inspected.
+GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the [baseline b3e309b run](https://github.com/cisohabitat/threathunter/actions/runs/39349995606) passed, including Chromium, Firefox and WebKit. New commits require their own observed result.
 
 See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), and [implementation status](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. M04, M07 and campaign expansion follow P0 acceptance.
 
@@ -99,3 +99,11 @@ See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative hando
 Every task must review `AGENTS.md` and this README, updating relevant guidance in the same change as the implementation. Keep player instructions, commands, deployment details and limitations synchronized. Update [implementation status](docs/IMPLEMENTATION_STATUS.md) when capabilities or release evidence change. The full maintenance policy is in [AGENTS.md](AGENTS.md).
 
 Waiting read-only tabs receive committed-save notifications where BroadcastChannel is available and may inspect the current case. Ownership transfer reloads durable state; read-only note buffers follow accepted notes even after returning from another screen, without replacing a writer’s local unfinished edits. Missing or rejected Web Locks access permits explicit temporary play and export, with durable writes disabled.
+
+Long save histories are validated in an isolated browser worker, including imports, commit envelope/hash preparation and save recovery. The validator loads before case-ready and works offline for the loaded session. Failed or slow validation leaves stored data untouched; retry keeps the accepted in-memory action. See the [save-history lab evidence](docs/verification/save-history.json). The semantic audit still replays history; very large saves can take longer and have a 20-second validation deadline.
+
+With a production preview running (`npm exec vite preview -- --host 127.0.0.1 --port 4173`), run `npm run verify:history` to reproduce the save-history lab. `npm run verify:production` and `npm run verify:crash` reproduce the load/interaction and abrupt-process recovery checks.
+
+For performance-only reruns, `npm run verify:production -- --no-screens` keeps the existing visual reference frames; the default command still captures them.
+
+When browser validation cannot start for an existing save, offer an explicit raw stored-data recovery export without validating or rewriting it. Keep that recovery copy distinct from portable imports; temporary play must leave the original row unchanged.

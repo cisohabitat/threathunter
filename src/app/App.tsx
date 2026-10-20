@@ -175,6 +175,17 @@ export default function App() {
                 Check stored save again
               </button>
             ) : null}
+            {game.canExportStored && !v ? (
+              <div>
+                <button disabled={game.busy} onClick={game.exportStored}>
+                  Export stored recovery data
+                </button>
+                <p>
+                  This preserves the stored data without validation. It is a
+                  recovery copy, not a normal import file.
+                </p>
+              </div>
+            ) : null}
             {game.canRetry && game.writerAvailable && !game.recovery ? (
               <button
                 disabled={game.busy || game.readOnly}

@@ -15,11 +15,14 @@ import {
   subscribeSaveChanges,
   resolveRecovery,
   downloadStoredSave,
+  downloadActiveStoredSave,
+  hasStoredSave,
   type SaveInspection,
   clearSave,
   downloadSave,
-  importSave,
+  validateSave,
 } from "../persistence/saves";
+import { ValidationUnavailableError } from "../persistence/validation";
 export function useGame() {
   const replayWorld = useRef<EngineState["world"] | null>(null);
   const [completed, setCompleted] = useState<
@@ -77,7 +80,8 @@ export function useGame() {
     [temporary, setTemporary] = useState(false),
     [recovery, setRecovery] = useState<SaveInspection["issue"]>(null),
     [archived, setArchived] = useState(false),
-    [canRetry, setCanRetry] = useState(false);
+    [canRetry, setCanRetry] = useState(false),
+    [canExportStored, setCanExportStored] = useState(false);
   useEffect(() => {
     if (!readOnly) return;
     return subscribeSaveChanges(() => refreshSaved((value) => value + 1));
@@ -90,6 +94,7 @@ export function useGame() {
   useEffect(() => {
     let active = true;
     setBusy(true);
+    setCanExportStored(false);
     inspectSave()
       .then(({ state, issue, archived }) => {
         if (!active) return;
@@ -122,10 +127,21 @@ export function useGame() {
               : "",
         );
       })
-      .catch(() => {
+      .catch(async (error) => {
         if (active) {
-          setStatus("Not saved — device storage unavailable");
-          setError("Use a temporary session or export progress.");
+          const validationFailed = error instanceof ValidationUnavailableError;
+          setStatus(
+            validationFailed
+              ? "Not saved — save validation unavailable"
+              : "Not saved — device storage unavailable",
+          );
+          setError(
+            "Use a temporary session or export progress. Stored data has not been changed.",
+          );
+          if (validationFailed) {
+            const exists = await hasStoredSave().catch(() => false);
+            if (active) setCanExportStored(exists);
+          }
         }
       })
       .finally(() => {
@@ -246,7 +262,7 @@ export function useGame() {
     locked.current = true;
     setBusy(true);
     try {
-      const state = importSave(text);
+      const state = await validateSave(text);
       if (engine.current)
         throw Error(
           "Export and finish the current case before importing another.",
@@ -340,6 +356,18 @@ export function useGame() {
       : null,
     archived,
     canRetry,
+    canExportStored,
+    exportStored: async () => {
+      try {
+        await downloadActiveStoredSave();
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Stored data could not be exported.",
+        );
+      }
+    },
     retrySave,
     recover,
     exportOriginal: async () => {

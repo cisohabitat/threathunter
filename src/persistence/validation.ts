@@ -1,0 +1,110 @@
+import {
+  importSave,
+  exportSave,
+  markCommitted,
+  type SaveEnvelope,
+} from "./format";
+import type { EngineState } from "../engine/engine";
+
+export class ValidationUnavailableError extends Error {
+  constructor() {
+    super(
+      "Save validation is unavailable or took too long. Stored data has not been changed. Retry or export your progress.",
+    );
+    this.name = "ValidationUnavailableError";
+  }
+}
+type Result = { state?: EngineState; envelope?: SaveEnvelope };
+function prepare(state: EngineState): Result {
+  const acknowledged = markCommitted(state);
+  const envelope = exportSave(acknowledged);
+  importSave(JSON.stringify(envelope));
+  return { state: acknowledged, envelope };
+}
+let worker: Worker | null = null;
+let sequence = 0;
+const pending = new Map<
+  number,
+  {
+    resolve: (result: Result) => void;
+    reject: (error: Error) => void;
+    timer: ReturnType<typeof setTimeout>;
+  }
+>();
+function stop() {
+  worker?.terminate();
+  worker = null;
+  for (const job of pending.values()) {
+    clearTimeout(job.timer);
+    job.reject(new ValidationUnavailableError());
+  }
+  pending.clear();
+}
+function request(text?: string, state?: EngineState): Promise<Result> {
+  // Non-browser unit/authoring callers retain the same pure synchronous reader.
+  if (typeof Worker === "undefined" && typeof window !== "undefined")
+    return Promise.reject(new ValidationUnavailableError());
+  if (typeof Worker === "undefined")
+    return Promise.resolve().then(() =>
+      state
+        ? prepare(state)
+        : { state: text === undefined ? undefined : importSave(text) },
+    );
+  return new Promise((resolve, reject) => {
+    try {
+      if (!worker) {
+        worker = new Worker(new URL("./validationWorker.ts", import.meta.url), {
+          type: "module",
+        });
+        const activeWorker = worker;
+        const fail = () => {
+          if (worker === activeWorker) stop();
+        };
+        worker.onerror = fail;
+        worker.onmessageerror = fail;
+        worker.onmessage = (
+          event: MessageEvent<{
+            id: number;
+            state?: EngineState;
+            envelope?: SaveEnvelope;
+            error?: { name: string; message: string };
+          }>,
+        ) => {
+          const job = pending.get(event.data.id);
+          if (!job) return;
+          clearTimeout(job.timer);
+          pending.delete(event.data.id);
+          if (event.data.error) {
+            const error = new Error(event.data.error.message);
+            error.name = event.data.error.name;
+            job.reject(error);
+          } else
+            job.resolve({
+              state: event.data.state,
+              envelope: event.data.envelope,
+            });
+        };
+      }
+      const id = ++sequence;
+      pending.set(id, { resolve, reject, timer: setTimeout(stop, 20000) });
+      worker.postMessage({ id, text, state });
+    } catch {
+      stop();
+      reject(new ValidationUnavailableError());
+    }
+  });
+}
+export async function prepareSaveValidation() {
+  await request();
+}
+export async function validateSave(text: string): Promise<EngineState> {
+  const { state } = await request(text);
+  if (!state) throw new ValidationUnavailableError();
+  return state;
+}
+
+export async function prepareCommit(state: EngineState) {
+  const result = await request(undefined, state);
+  if (!result.state || !result.envelope) throw new ValidationUnavailableError();
+  return { state: result.state, envelope: result.envelope };
+}
