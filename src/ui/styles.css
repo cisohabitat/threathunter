@@ -1591,6 +1591,18 @@ summary {
   margin-top: 1rem;
   color: var(--accent-cyan);
 }
+.journey-cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 18px;
+  padding: 0;
+  list-style: none;
+}
+.journey-cases li {
+  border: 1px solid var(--stroke-subtle);
+  border-radius: var(--radius);
+  padding: 18px;
+}
 .field-guide dd {
   margin: 0.35rem 0 0;
   color: var(--text-secondary);

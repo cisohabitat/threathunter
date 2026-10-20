@@ -135,3 +135,11 @@ Each hunt has a complete candidate pre-generated voice pack with the same consen
 P1 exports use a separate versioned `threat-hunter-p1` envelope. Select the matching mission before importing; M01 files retain their existing format/readers. Durable receipt acknowledgement occurs only after the transaction succeeds. Failed writes keep accepted work for export/retry, damaged records retain an original recovery copy, and browsers without Web Locks require explicit temporary play. See [P1 rules and matrices](docs/P1_MISSIONS.md), [review deferral decision](docs/DESIGN_DECISIONS.md) and [save compatibility](docs/SAVE_FORMAT.md).
 
 `npm run verify:guidance` checks the production-preview P1 help flow, focus targets, separate assistance export and opted-in offline nudge without changing portable saves. It requires preview on port 4173 and writes a lab report and two help reference frames.
+
+## Your investigation journey
+
+On home, **Check saved progress** reads and validates the three cases already stored in this browser. Follow the recommended M01 → M04 → M07 order, or open any case directly. Completion drives the recommendation; no score threshold blocks continuation. Each debrief now offers the next investigation while retaining its saved or in-memory finding. The final case offers a return to M01.
+
+The overview distinguishes saved open/closed cases, preserved completed archives, recovery needs and unavailable validation. It checks at most five archives per mission and explicitly labels incomplete/unavailable checks. Recovery backups and temporary/unsaved closures do not count as saved completion. **Refresh saved progress** after saving or importing; where supported, save-change notifications mark an older snapshot as stale. Checking progress never repairs, rewrites, upgrades or removes a case, and creates no separate profile or cloud account.
+
+`npm run verify:journey` verifies production-preview continuation, low-score completion, a read-only progress check and unchanged prior-case export. It requires preview on port 4173 and writes a report and phone/tablet reference frames.

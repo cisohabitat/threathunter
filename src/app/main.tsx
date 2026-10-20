@@ -13,6 +13,7 @@ const Campaign = lazy(() => import("../campaign/Campaign"));
 function Root() {
   const [selected, setSelected] = useState<"M04" | "M07" | null>(null);
   const [visited, setVisited] = useState<("M04" | "M07")[]>([]);
+  const [homeRequest, setHomeRequest] = useState(0);
   function open(mission: "M04" | "M07") {
     setVisited((previous) =>
       previous.includes(mission) ? previous : [...previous, mission],
@@ -20,11 +21,16 @@ function Root() {
     setSelected(mission);
     window.scrollTo(0, 0);
   }
+  function returnHome() {
+    setHomeRequest((request) => request + 1);
+    setSelected(null);
+    window.scrollTo(0, 0);
+  }
   // Keep loaded investigations mounted: changing cases cannot discard volatile work.
   return (
     <>
       <div hidden={selected !== null}>
-        <App openCampaign={open} />
+        <App openCampaign={open} homeRequest={homeRequest} />
       </div>
       {visited.map((mission) => (
         <div key={mission} hidden={selected !== mission}>
@@ -32,17 +38,19 @@ function Root() {
             fallback={
               <main>
                 <h1>Preparing investigation…</h1>
-                <button onClick={() => setSelected(null)}>Return home</button>
+                <button onClick={returnHome}>Return home</button>
               </main>
             }
           >
             <Campaign
               missionId={mission}
               active={selected === mission}
-              onExit={() => {
-                setSelected(null);
+              onOpenMission={(next) => {
+                if (next === "M01") setSelected(null);
+                else open(next);
                 window.scrollTo(0, 0);
               }}
+              onExit={returnHome}
             />
           </Suspense>
         </div>

@@ -11,6 +11,8 @@ import { Workbench } from "../ui/Workbench";
 import { Debrief } from "../ui/Debrief";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { briefing, hints } from "../presentation/voice/scripts";
+import { Journey, ContinueJourney } from "../journey/Journey";
+import type { CaseId } from "../journey/contracts";
 function readGuidancePreference() {
   try {
     return localStorage.getItem("threat-hunter-guidance-v1") !== "independent";
@@ -21,8 +23,10 @@ function readGuidancePreference() {
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
 export default function App({
   openCampaign,
+  homeRequest = 0,
 }: {
   openCampaign?: (mission: "M04" | "M07") => void;
+  homeRequest?: number;
 }) {
   const game = useGame(),
     {
@@ -39,6 +43,11 @@ export default function App({
     [artReady, setArtReady] = useState(false),
     [artUnavailable, setArtUnavailable] = useState(false);
   const [guided, setGuided] = useState(readGuidancePreference);
+  const [handledHomeRequest, setHandledHomeRequest] = useState(homeRequest);
+  if (handledHomeRequest !== homeRequest) {
+    setHandledHomeRequest(homeRequest);
+    setHome(true);
+  }
   function chooseGuidance(value: boolean) {
     setGuided(value);
     try {
@@ -82,6 +91,16 @@ export default function App({
     }
     await game.restore(await file.text());
   };
+  async function openJourney(mission: CaseId) {
+    if (mission === "M01") {
+      if (!v) await game.start();
+      setHome(false);
+      setScreen("Leads");
+    } else {
+      audio.playMuted();
+      openCampaign?.(mission);
+    }
+  }
   return (
     <LazyMotion features={domAnimation}>
       <a href="#main" className="skip-link">
@@ -471,16 +490,31 @@ export default function App({
                   </div>
                 </section>
               ) : null}
+              {openCampaign ? (
+                <Journey
+                  ready={!game.busy}
+                  open={(mission) => void openJourney(mission)}
+                />
+              ) : null}
             </section>
           ) : game.debrief ? (
-            <Debrief
-              data={game.debrief}
-              restart={async () => {
-                await game.replay();
-                setHome(true);
-              }}
-              busy={blocked}
-            />
+            <>
+              <Debrief
+                data={game.debrief}
+                restart={async () => {
+                  await game.replay();
+                  setHome(true);
+                }}
+                busy={blocked}
+              />
+              {openCampaign ? (
+                <ContinueJourney
+                  mission="M01"
+                  open={(mission) => void openJourney(mission)}
+                  saved={game.durableRevision === v.revision}
+                />
+              ) : null}
+            </>
           ) : (
             <div className="workspace">
               <aside className="sidebar">

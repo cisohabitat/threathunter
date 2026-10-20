@@ -1,0 +1,20 @@
+{
+  "buildBundle": "/assets/index-DqQ7Hj2g.js",
+  "bundleSha256": "442165d9f41cc2536c1febb9471f75d0bc864abfb6a04bd41bb7253f3fb590aa",
+  "browser": "156.0.8078.4",
+  "method": "Linux Chromium production preview, phone/tablet and reduced motion. Real closed-file import, read-only overview, M01→M04→M07 navigation, low-score UI closure and home return; exported M01 bytes equal before/after. Lab automation, not human/device review.",
+  "completionCounts": [
+    1,
+    2
+  ],
+  "recommendations": [
+    "M04",
+    "M07"
+  ],
+  "lowScoreM04": 0,
+  "existingM01SaveUnchanged": true,
+  "screenshots": [
+    "22-journey-phone.png",
+    "23-case-continuation-tablet.png"
+  ]
+}

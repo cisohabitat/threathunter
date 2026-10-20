@@ -8,6 +8,8 @@ import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { audioPacks, cueMaps, findingCue } from "./audio";
 import { CampaignDebrief } from "./Debrief";
 import { CampaignGuide, CampaignFieldGuide } from "./Guide";
+import { ContinueJourney } from "../journey/Journey";
+import type { CaseId } from "../journey/contracts";
 
 import {
   claimLabels,
@@ -673,10 +675,12 @@ export default function Campaign({
   missionId,
   active,
   onExit,
+  onOpenMission,
 }: {
   missionId: MissionId;
   active: boolean;
   onExit: () => void;
+  onOpenMission: (mission: CaseId) => void;
 }) {
   const game = useCampaign(missionId),
     pack = packages[missionId],
@@ -956,15 +960,25 @@ export default function Campaign({
             </button>
           </section>
         ) : game.debrief ? (
-          <CampaignDebrief
-            data={game.debrief}
-            missionId={missionId}
-            busy={game.blocked}
-            replay={async () => {
-              await game.replay();
-              navigate("Investigate");
-            }}
-          />
+          <>
+            <CampaignDebrief
+              data={game.debrief}
+              missionId={missionId}
+              busy={game.blocked}
+              replay={async () => {
+                await game.replay();
+                navigate("Investigate");
+              }}
+            />
+            <ContinueJourney
+              mission={missionId}
+              open={(mission) => {
+                audio.playMuted();
+                onOpenMission(mission);
+              }}
+              saved={game.durableRevision === game.view.revision}
+            />
+          </>
         ) : (
           <>
             <nav
