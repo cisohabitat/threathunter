@@ -98,6 +98,28 @@ try {
     return values;
   });
   const commitMs = [];
+  // Measure the same commands inside the browser as well: Playwright's
+  // actionability waits and IPC belong in the original metric, not the app's
+  // event-to-durable-label latency. Require an observed Working transition.
+  await page.evaluate(() => {
+    window.durableTimings = [];
+    let started = null, saving = false;
+    document.addEventListener("click", (event) => {
+      const text = event.target.closest?.("button")?.textContent.trim();
+      if (!/^(Credible explanation|Likely session misuse)/.test(text ?? "")) return;
+      started = performance.now();
+      saving = false;
+    }, true);
+    new MutationObserver(() => {
+      if (started === null) return;
+      const text = document.querySelector('[aria-label="Save and readiness"] [role="status"]')?.textContent;
+      if (text === "Working…") saving = true;
+      if (saving && text === "Saved on this device") {
+        window.durableTimings.push(performance.now() - started);
+        started = null;
+      }
+    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+  });
   for (let i = 0; i < 10; i++) {
     const t = performance.now();
     await page
@@ -110,7 +132,9 @@ try {
       .filter({ hasText: "Saved on this device" })
       .waitFor();
     commitMs.push(performance.now() - t);
+    await page.waitForFunction((count) => window.durableTimings.length === count, i + 1);
   }
+  const browserCommitMs = await page.evaluate(() => window.durableTimings);
   await page
     .getByRole("button", { name: "Review finding →", exact: true })
     .last()
@@ -159,7 +183,8 @@ try {
   const p95 = (values) =>
     [...values].sort((a, b) => a - b)[Math.ceil(values.length * 0.95) - 1];
   await writeFile(
-    "docs/verification/performance.json",
+    process.argv.find((arg) => arg.startsWith("--output="))?.slice(9)
+      ?? "docs/verification/performance.json",
     JSON.stringify(
       {
         buildBundle: entry,
@@ -184,6 +209,12 @@ try {
           method:
             "Playwright click to Saved label after IndexedDB transaction, healthy local storage; includes automation overhead",
           p95Ms: p95(commitMs),
+        },
+        browserDurableCommands: {
+          samples: browserCommitMs.length,
+          method: "Captured DOM click to observed Working then Saved label; same ten commands, in-page clock, CPU throttle removed after cold load. Excludes Playwright actionability/IPC; still a lab measurement.",
+          valuesMs: browserCommitMs,
+          p95Ms: p95(browserCommitMs),
         },
         limits:
           "Linux Chromium lab measurement only. No reference physical phone or iPad; not a physical-device acceptance result. Long-task and actual touchscreen latency require device profiling.",

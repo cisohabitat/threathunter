@@ -15,6 +15,7 @@
     "lint": "eslint .",
     "check:budgets": "node scripts/check-budgets.mjs",
     "verify:production": "node scripts/verify-production.mjs",
+    "profile:startup": "node scripts/profile-startup.mjs",
     "test:e2e:cross": "playwright test --config playwright.cross.config.ts",
     "verify:crash": "node scripts/verify-crash.mjs",
     "verify:history": "node scripts/verify-save-history.mjs",

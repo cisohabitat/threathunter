@@ -1,0 +1,39 @@
+{
+  "buildBundle": "/assets/index-XejjUdLV.js",
+  "bundleSha256": "8dd6fea3d6eac72a59aee0b382bd14bec59f76da9b2cc4b3333ca9026037dca3",
+  "browser": "156.0.8078.4",
+  "profile": {
+    "network": "4 Mbps down / 1 Mbps up / 100 ms RTT",
+    "cpu": "4x Chromium emulation during cold load",
+    "viewport": "390x844"
+  },
+  "coldCaseReadyMs": 20200,
+  "interactions": {
+    "samples": 100,
+    "method": "Synthetic click to two animation frames, healthy local browser after load; includes frame wait",
+    "p95Ms": 272.5
+  },
+  "durableCommands": {
+    "samples": 10,
+    "method": "Playwright click to Saved label after IndexedDB transaction, healthy local storage; includes automation overhead",
+    "p95Ms": 294.94849899999826
+  },
+  "browserDurableCommands": {
+    "samples": 10,
+    "method": "Captured DOM click to observed Working then Saved label; same ten commands, in-page clock, CPU throttle removed after cold load. Excludes Playwright actionability/IPC; still a lab measurement.",
+    "valuesMs": [
+      117.29999999701977,
+      85.5,
+      78.20000000298023,
+      88.5,
+      72.39999999850988,
+      144.39999999850988,
+      110.60000000149012,
+      90.29999999701977,
+      116.70000000298023,
+      125.89999999850988
+    ],
+    "p95Ms": 144.39999999850988
+  },
+  "limits": "Linux Chromium lab measurement only. No reference physical phone or iPad; not a physical-device acceptance result. Long-task and actual touchscreen latency require device profiling."
+}
