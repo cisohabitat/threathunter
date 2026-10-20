@@ -191,7 +191,6 @@ test("M04 earns its relationship discovery, preserves billing, closes at 100 and
     ).violations,
   ).toEqual([]);
   await page.reload();
-  await page.getByRole("button", { name: /M04 ·/ }).click();
   await expect(
     shell(page).getByRole("region", { name: "M04 hunt debrief" }),
   ).toBeVisible();
@@ -392,7 +391,6 @@ test("P1 failed writes retain accepted work and corruption recovery archives the
     return database.rows.get("active:M04");
   });
   await page.reload();
-  await page.getByRole("button", { name: /M04 ·/ }).click();
   const recovered = shell(page);
   await expect(
     recovered.getByRole("heading", { name: "Recover this mission" }),
@@ -560,9 +558,6 @@ for (const mission of ["M04", "M07"] as const)
       help.getByRole("button", { name: "Ask for a nudge", exact: true }),
     ).toHaveCount(0);
     await page.reload();
-    await page
-      .getByRole("button", { name: new RegExp(`${mission} ·`) })
-      .click();
     const restored = shell(page, mission).getByRole("region", {
       name: `${mission} investigation help`,
     });
@@ -604,3 +599,59 @@ for (const mission of ["M04", "M07"] as const)
       ).violations,
     ).toEqual([]);
   });
+test("P1 unfinished notes survive navigation and block replacement until explicitly saved", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  const area = await open(page, "M04", "B");
+  const pending = page.waitForEvent("download");
+  await area
+    .getByRole("button", { name: "Export hunt save", exact: true })
+    .click();
+  const initial = await readFile(await (await pending).path(), "utf8");
+  await tab(area, "Case File");
+  await area
+    .getByRole("textbox", { name: "Optional notes · not graded", exact: true })
+    .fill("Keep this unfinished note");
+  const control = area.locator(".backup-import");
+  await control.locator("summary").first().click();
+  await expect(control.getByRole("checkbox")).toBeDisabled();
+  await tab(area, "Brief");
+  await expect(control.getByRole("checkbox")).toBeDisabled();
+  await tab(area, "Case File");
+  await expect(
+    area.getByRole("textbox", {
+      name: "Optional notes · not graded",
+      exact: true,
+    }),
+  ).toHaveValue("Keep this unfinished note");
+  await area
+    .getByRole("button", { name: "Save notes · free", exact: true })
+    .click();
+  await saved(area);
+  await expect(control.getByRole("checkbox")).toBeEnabled();
+  await control.getByRole("checkbox").check();
+  await control
+    .locator('input[type="file"]')
+    .setInputFiles({
+      name: "earlier.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(initial),
+    });
+  await saved(area);
+  await expect(
+    area.getByRole("textbox", {
+      name: "Optional notes · not graded",
+      exact: true,
+    }),
+  ).toHaveValue("");
+  const rows = await page.evaluate(async () => {
+    // @ts-expect-error Vite test module.
+    const { database } = await import("/src/campaign/storage.ts");
+    return database.rows.where("id").startsWith("replaced:M04:").toArray();
+  });
+  expect(rows).toHaveLength(1);
+  expect(rows[0].current.snapshot.state.view.finding.notes).toBe(
+    "Keep this unfinished note",
+  );
+});

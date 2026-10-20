@@ -42,7 +42,8 @@ const rows = async () =>
   JSON.stringify([await m01DB.runs.toArray(), await p1DB.rows.toArray()]);
 it("recommends M01 without inventing completion for empty storage", async () => {
   const progress = await loadProgress();
-  expect(progress.map((p) => p.active)).toEqual(["none", "none", "none"]);
+  expect(progress).toHaveLength(12);
+  expect(progress.every((p) => p.active === "none")).toBe(true);
   expect(progress.every((p) => !p.completed)).toBe(true);
   expect(nextCase(progress)).toBe("M01");
 });
@@ -72,10 +73,10 @@ it("recognises low-score closures in all three cases with no save mutation or pr
     });
   const before = await rows(),
     progress = await loadProgress();
-  expect(progress.every((p) => p.completed && p.active === "closed")).toBe(
-    true,
-  );
-  expect(nextCase(progress)).toBeNull();
+  expect(
+    progress.filter((p) => p.completed && p.active === "closed"),
+  ).toHaveLength(3);
+  expect(nextCase(progress)).toBe("M02");
   expect(await rows()).toBe(before);
   for (const p of progress)
     expect(Object.keys(p).sort()).toEqual([
@@ -192,4 +193,26 @@ it("distinguishes unavailable validation from corruption and leaves stored data 
     completed: false,
   });
   expect(await rows()).toBe(before);
+});
+
+it("unlocks the expanded path by completion without a score threshold, retaining independent/recovery access", async () => {
+  const { caseOrder, canOpenCase } = await import("../journey/contracts");
+  const progress = caseOrder.map((mission) => ({
+    mission,
+    active: "none" as const,
+    completed: false,
+    archivedCompletion: false,
+    archiveCheck: "complete" as const,
+  }));
+  expect(canOpenCase("M04", progress)).toBe(true);
+  expect(canOpenCase("M02", progress)).toBe(false);
+  progress.find((p) => p.mission === "M07")!.completed = true;
+  expect(canOpenCase("M02", progress)).toBe(true);
+  expect(canOpenCase("M03", progress)).toBe(false);
+  expect(caseOrder.every((id) => canOpenCase(id, progress, true))).toBe(true);
+  const damaged = progress.map((p) =>
+    p.mission === "M10" ? { ...p, active: "needs_recovery" as const } : p,
+  );
+  expect(canOpenCase("M10", damaged)).toBe(true);
+  expect(canOpenCase("M11", damaged)).toBe(false);
 });

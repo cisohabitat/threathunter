@@ -1,0 +1,636 @@
+{
+  "missionId": "M05",
+  "version": "1.0.0",
+  "rubricVersion": "expansion-1.0.0",
+  "policyVersion": "m05-scoped-response-1",
+  "title": "Stolen Identity",
+  "trigger": "Intelligence-led hypothesis",
+  "question": "What can credential-use evidence establish, and which person-attribution claims remain unsupported?",
+  "briefing": "A synthetic intelligence bulletin names a potentially exposed Northstar test credential. A corresponding organisation-controlled session exists. The bulletin does not identify the operator. Your authority is to acquire records and recommend a session-scoped response through Identity Response. You cannot approve your own control or disable an entire account or service.",
+  "lesson": "Attribution is the strength and scope of a claim about who acted; account attribution is narrower than person attribution.",
+  "worlds": [
+    "B",
+    "M",
+    "U-B",
+    "U-M"
+  ],
+  "entities": [
+    {
+      "id": "IDENTITY-S5",
+      "name": "Named identity-service session",
+      "purpose": "Named identity-service session",
+      "owner": "Identity Response",
+      "impact": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account.",
+      "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+      "dependency": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account."
+    },
+    {
+      "id": "OWNER-05",
+      "name": "OWNER-05 context",
+      "purpose": "Related context that must be assessed separately",
+      "owner": "Northstar Operations",
+      "impact": "Do not generalise the primary session finding to this separate scope.",
+      "capability": "Only the explicitly delivered relationship and source records.",
+      "dependency": "A separate task or observation does not supply approval for the primary session."
+    }
+  ],
+  "initialEntities": [
+    "OWNER-05"
+  ],
+  "initialScope": "OWNER-05",
+  "primaryTarget": "IDENTITY-S5",
+  "mechanic": {
+    "kind": "attribution",
+    "question": "What can credential-use evidence establish, and which person-attribution claims remain unsupported?",
+    "options": [
+      {
+        "id": "credential-not-person",
+        "label": "Attribute the observed action to the session; leave the person unresolved"
+      },
+      {
+        "id": "owner-did-it",
+        "label": "Name the credential owner as the operator"
+      },
+      {
+        "id": "address-proves-person",
+        "label": "Treat the source address as a person identifier"
+      }
+    ],
+    "supportedChoice": "credential-not-person",
+    "requires": [
+      "baseline"
+    ],
+    "claims": [
+      {
+        "id": "credential-use",
+        "label": "Credential use"
+      },
+      {
+        "id": "session-scope",
+        "label": "Session scope"
+      },
+      {
+        "id": "person-attribution",
+        "label": "Person attribution remains unresolved"
+      }
+    ],
+    "priorities": [
+      "IDENTITY-S5",
+      "OWNER-05"
+    ],
+    "unsupportedChoices": [
+      "owner-did-it",
+      "address-proves-person"
+    ]
+  },
+  "limits": [
+    {
+      "id": "scope",
+      "label": "Credential use does not identify the person, and a threat bulletin alone does not prove current misuse.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Unavailable collection does not establish that no activity occurred.",
+      "requires": [
+        "context_gap",
+        "activity_gap",
+        "independent_gap",
+        "verified_gap"
+      ]
+    },
+    {
+      "id": "operator",
+      "label": "The source identifies a session or credential, not a person or motive.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "separate",
+      "label": "Other scopes and their remaining questions need their own evidence.",
+      "requires": [
+        "baseline"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "baseline",
+      "label": "Establish the task and business consequence",
+      "sourceId": "scope_catalogue",
+      "source": "Scope and dependency catalogue",
+      "question": "What is this service for, and which consequences change investigation priority?",
+      "can": "Names the normal task, related scopes, owners and interruption consequence.",
+      "cannot": "Does not establish who performed the current action.",
+      "targets": [
+        "all"
+      ],
+      "static": true,
+      "factIds": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "context",
+      "label": "Check the exact work authorisation",
+      "sourceId": "work_register",
+      "source": "Work authorisation register",
+      "question": "Does approved work cover this session, task, target and period?",
+      "can": "Tests the specific business explanation.",
+      "cannot": "Does not prove the human operator or the activity that actually occurred.",
+      "targets": [
+        "IDENTITY-S5"
+      ],
+      "static": true,
+      "factIds": [
+        "context_B",
+        "context_M",
+        "context_gap"
+      ]
+    },
+    {
+      "id": "activity",
+      "label": "Inspect the scoped session activity",
+      "sourceId": "session_audit",
+      "source": "Session activity audit",
+      "question": "Which action was recorded for this named session within collection limits?",
+      "can": "Records session-level actions and the observed target.",
+      "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+      "targets": [
+        "IDENTITY-S5"
+      ],
+      "static": false,
+      "factIds": [
+        "activity_B",
+        "activity_M",
+        "activity_gap",
+        "later_activity_B",
+        "later_activity_M"
+      ]
+    },
+    {
+      "id": "independent",
+      "label": "Check the service transaction independently",
+      "sourceId": "service_journal",
+      "source": "Independent service journal",
+      "question": "Does the service-side transaction establish the same scoped operation?",
+      "can": "Tests the operation through a separately collected service transaction.",
+      "cannot": "A second card alone does not establish a sufficient explanation.",
+      "targets": [
+        "IDENTITY-S5"
+      ],
+      "static": false,
+      "factIds": [
+        "independent_B",
+        "independent_M",
+        "independent_gap",
+        "later_independent_B",
+        "later_independent_M"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "opening",
+      "recordId": "R00",
+      "title": "Starting observations",
+      "text": "A synthetic intelligence bulletin names a potentially exposed Northstar test credential. A corresponding organisation-controlled session exists. The bulletin does not identify the operator.",
+      "sourceId": "review_briefing",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "OWNER-05"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "review_briefing-R00",
+      "originId": "catalogue-review_briefing",
+      "caveats": []
+    },
+    {
+      "id": "baseline",
+      "recordId": "R01",
+      "title": "Task, scope and business consequence",
+      "text": "The credential belongs to a reconciliation role. Its approved session may read reconciliation summaries; person attribution needs evidence beyond a credential label or source address.",
+      "sourceId": "scope_catalogue",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5",
+        "OWNER-05"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "scope_catalogue-R01",
+      "originId": "catalogue-scope_catalogue",
+      "caveats": []
+    },
+    {
+      "id": "context_B",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The verified work record names the reconciliation session and summary endpoint. The bulletin concerns a retired test copy and does not itself establish current credential misuse.",
+      "sourceId": "work_register",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_B",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The session read only the reconciliation summary endpoint named in the work record. The current session evidence supports that scoped explanation.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_B",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The token-service audit independently associates the session with the approved summary audience and no additional grant in the covered interval.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_B",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The verified work record names the reconciliation session and summary endpoint. The bulletin concerns a retired test copy and does not itself establish current credential misuse. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_M",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The verified work register contains no approval for this session to request an additional access token or enumerate protected customer records.",
+      "sourceId": "work_register",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_M",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The session requested an additional access token and enumerated protected customer records outside the reconciliation role. This establishes credential/session use beyond approved scope, not the human actor.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_M",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The token-service audit independently records an additional grant request from this session for an audience absent from the approved reconciliation job.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_M",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The verified work register contains no approval for this session to request an additional access token or enumerate protected customer records. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_gap",
+      "recordId": "R02",
+      "title": "Work record unavailable",
+      "text": "The work-authorisation archive is unavailable for the named session and period. No approval or denial can be inferred.",
+      "sourceId": "work_register",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_gap",
+      "recordId": "R03",
+      "title": "Session collection unavailable",
+      "text": "The session-audit source did not collect the relevant historical interval. Absence of a record cannot establish the absence of activity.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "session_audit-R03",
+      "originId": "catalogue-session_audit",
+      "caveats": []
+    },
+    {
+      "id": "independent_gap",
+      "recordId": "R04",
+      "title": "Independent collection is limited",
+      "text": "The independent service journal lacks the target application operation for the historical interval. A different source name does not restore that capability.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "service_journal-R04",
+      "originId": "catalogue-service_journal",
+      "caveats": []
+    },
+    {
+      "id": "verified_gap",
+      "recordId": "VR01",
+      "title": "Verified check timed out",
+      "text": "The pre-established directory contact did not respond by the stated due step. This is a delivered limitation, not approval or a reason to wait indefinitely.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "directory_callback-VR01",
+      "originId": "catalogue-directory_callback",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_B",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_B",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_M",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "objective",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_M",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "IDENTITY-S5"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "objective",
+      "caveats": []
+    }
+  ],
+  "sufficient": {
+    "explained": [
+      [
+        "opening",
+        "baseline",
+        "context_B",
+        "activity_B"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_B",
+        "independent_B"
+      ]
+    ],
+    "misuse": [
+      [
+        "opening",
+        "baseline",
+        "context_M",
+        "activity_M"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_M",
+        "independent_M"
+      ]
+    ],
+    "visibility": [
+      [
+        "opening",
+        "baseline",
+        "context_gap",
+        "activity_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap",
+        "independent_gap"
+      ]
+    ],
+    "provisional": [
+      [
+        "opening",
+        "baseline",
+        "context_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap"
+      ]
+    ]
+  },
+  "response": {
+    "targetId": "IDENTITY-S5",
+    "owner": "Identity Response",
+    "delayTicks": 2,
+    "windowTicks": 2,
+    "control": "Restrict only the named organisation-controlled session",
+    "requiredFacts": [
+      "activity_M",
+      "independent_M"
+    ],
+    "objectiveTick": 8,
+    "objective": "A further out-of-scope operation completes through the same session if its access remains active.",
+    "dependency": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account."
+  },
+  "sensorEnabled": false,
+  "glossary": [
+    {
+      "term": "Attribution",
+      "definition": "Attribution is the strength and scope of a claim about who acted; account attribution is narrower than person attribution."
+    },
+    {
+      "term": "Source boundary",
+      "definition": "The target, operation and interval a source is capable of observing."
+    },
+    {
+      "term": "Scope",
+      "definition": "The explicitly named session or service covered by a claim and next action."
+    }
+  ],
+  "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+}

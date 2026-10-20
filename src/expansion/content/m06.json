@@ -1,0 +1,635 @@
+{
+  "missionId": "M06",
+  "version": "1.0.0",
+  "rubricVersion": "expansion-1.0.0",
+  "policyVersion": "m06-scoped-response-1",
+  "title": "Moving Quietly",
+  "trigger": "Proactive scope review",
+  "question": "Does a cross-system connection fit a specific management task or extend beyond it?",
+  "briefing": "A management identity connected from the orchestration service to an archive host. Cross-system administration is routine at Northstar; the connection alone is not a finding. Your authority is to acquire records and recommend a session-scoped response through Platform Operations. You cannot approve your own control or disable an entire account or service.",
+  "lesson": "A lateral access path describes one system reaching another; its legitimacy depends on task, target and authority.",
+  "worlds": [
+    "B",
+    "M",
+    "U-B",
+    "U-M"
+  ],
+  "entities": [
+    {
+      "id": "ARCHIVE-S6",
+      "name": "Archive-host management session",
+      "purpose": "Archive-host management session",
+      "owner": "Platform Operations",
+      "impact": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths.",
+      "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+      "dependency": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths."
+    },
+    {
+      "id": "ORCH-06",
+      "name": "ORCH-06 context",
+      "purpose": "Related context that must be assessed separately",
+      "owner": "Northstar Operations",
+      "impact": "Do not generalise the primary session finding to this separate scope.",
+      "capability": "Only the explicitly delivered relationship and source records.",
+      "dependency": "A separate task or observation does not supply approval for the primary session."
+    }
+  ],
+  "initialEntities": [
+    "ORCH-06"
+  ],
+  "initialScope": "ORCH-06",
+  "primaryTarget": "ARCHIVE-S6",
+  "mechanic": {
+    "kind": "path",
+    "question": "Does a cross-system connection fit a specific management task or extend beyond it?",
+    "options": [
+      {
+        "id": "all-admin-bad",
+        "label": "Treat all administrative cross-system access as misuse"
+      },
+      {
+        "id": "scoped-path",
+        "label": "Follow the acquired path and compare the actual target with the task"
+      },
+      {
+        "id": "tool-name",
+        "label": "Decide from the management tool name"
+      }
+    ],
+    "supportedChoice": "scoped-path",
+    "requires": [
+      "baseline"
+    ],
+    "claims": [
+      {
+        "id": "management-path",
+        "label": "Management path"
+      },
+      {
+        "id": "task-scope",
+        "label": "Task scope"
+      },
+      {
+        "id": "additional-access",
+        "label": "Additional access"
+      }
+    ],
+    "priorities": [
+      "ARCHIVE-S6",
+      "ORCH-06"
+    ],
+    "unsupportedChoices": [
+      "all-admin-bad"
+    ]
+  },
+  "limits": [
+    {
+      "id": "scope",
+      "label": "A management connection or tool name alone is not evidence of unauthorised movement.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Unavailable collection does not establish that no activity occurred.",
+      "requires": [
+        "context_gap",
+        "activity_gap",
+        "independent_gap",
+        "verified_gap"
+      ]
+    },
+    {
+      "id": "operator",
+      "label": "The source identifies a session or credential, not a person or motive.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "separate",
+      "label": "Other scopes and their remaining questions need their own evidence.",
+      "requires": [
+        "baseline"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "baseline",
+      "label": "Establish the task and business consequence",
+      "sourceId": "scope_catalogue",
+      "source": "Scope and dependency catalogue",
+      "question": "What is this service for, and which consequences change investigation priority?",
+      "can": "Names the normal task, related scopes, owners and interruption consequence.",
+      "cannot": "Does not establish who performed the current action.",
+      "targets": [
+        "all"
+      ],
+      "static": true,
+      "factIds": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "context",
+      "label": "Check the exact work authorisation",
+      "sourceId": "work_register",
+      "source": "Work authorisation register",
+      "question": "Does approved work cover this session, task, target and period?",
+      "can": "Tests the specific business explanation.",
+      "cannot": "Does not prove the human operator or the activity that actually occurred.",
+      "targets": [
+        "ARCHIVE-S6"
+      ],
+      "static": true,
+      "factIds": [
+        "context_B",
+        "context_M",
+        "context_gap"
+      ]
+    },
+    {
+      "id": "activity",
+      "label": "Inspect the scoped session activity",
+      "sourceId": "session_audit",
+      "source": "Session activity audit",
+      "question": "Which action was recorded for this named session within collection limits?",
+      "can": "Records session-level actions and the observed target.",
+      "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+      "targets": [
+        "ARCHIVE-S6"
+      ],
+      "static": false,
+      "factIds": [
+        "activity_B",
+        "activity_M",
+        "activity_gap",
+        "later_activity_B",
+        "later_activity_M"
+      ]
+    },
+    {
+      "id": "independent",
+      "label": "Check the service transaction independently",
+      "sourceId": "service_journal",
+      "source": "Independent service journal",
+      "question": "Does the service-side transaction establish the same scoped operation?",
+      "can": "Tests the operation through a separately collected service transaction.",
+      "cannot": "A second card alone does not establish a sufficient explanation.",
+      "targets": [
+        "ARCHIVE-S6"
+      ],
+      "static": false,
+      "factIds": [
+        "independent_B",
+        "independent_M",
+        "independent_gap",
+        "later_independent_B",
+        "later_independent_M"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "opening",
+      "recordId": "R00",
+      "title": "Starting observations",
+      "text": "A management identity connected from the orchestration service to an archive host. Cross-system administration is routine at Northstar; the connection alone is not a finding.",
+      "sourceId": "review_briefing",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ORCH-06"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "review_briefing-R00",
+      "originId": "catalogue-review_briefing",
+      "caveats": []
+    },
+    {
+      "id": "baseline",
+      "recordId": "R01",
+      "title": "Task, scope and business consequence",
+      "text": "The documented management path is ORCH-06 \u2192 archive service \u2192 restore-check dataset. The identity may validate restores but may not retrieve unrelated payroll archives.",
+      "sourceId": "scope_catalogue",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6",
+        "ORCH-06"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "scope_catalogue-R01",
+      "originId": "catalogue-scope_catalogue",
+      "caveats": []
+    },
+    {
+      "id": "context_B",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The maintenance work order explicitly covers the archive session, restore-check dataset and management path for this review period.",
+      "sourceId": "work_register",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_B",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The archive session followed the documented management path and read the restore-check dataset named in the work order.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_B",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The archive service independently logged the restore-check dataset request and the approved orchestration origin for the named session.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_B",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The maintenance work order explicitly covers the archive session, restore-check dataset and management path for this review period. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_M",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The maintenance work order covers restore checks only; it grants no access to payroll archives through the archive session.",
+      "sourceId": "work_register",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_M",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The archive session reached an additional payroll dataset outside the restore-check task. The source establishes this access path and target, not a general network-wide compromise.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_M",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The archive access audit independently recorded the payroll-dataset request from the named archive session, beyond the documented management route.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_M",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The maintenance work order covers restore checks only; it grants no access to payroll archives through the archive session. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_gap",
+      "recordId": "R02",
+      "title": "Work record unavailable",
+      "text": "The work-authorisation archive is unavailable for the named session and period. No approval or denial can be inferred.",
+      "sourceId": "work_register",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_gap",
+      "recordId": "R03",
+      "title": "Session collection unavailable",
+      "text": "The session-audit source did not collect the relevant historical interval. Absence of a record cannot establish the absence of activity.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "session_audit-R03",
+      "originId": "catalogue-session_audit",
+      "caveats": []
+    },
+    {
+      "id": "independent_gap",
+      "recordId": "R04",
+      "title": "Independent collection is limited",
+      "text": "The independent service journal lacks the target application operation for the historical interval. A different source name does not restore that capability.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "service_journal-R04",
+      "originId": "catalogue-service_journal",
+      "caveats": []
+    },
+    {
+      "id": "verified_gap",
+      "recordId": "VR01",
+      "title": "Verified check timed out",
+      "text": "The pre-established directory contact did not respond by the stated due step. This is a delivered limitation, not approval or a reason to wait indefinitely.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "directory_callback-VR01",
+      "originId": "catalogue-directory_callback",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_B",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_B",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_M",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "objective",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_M",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "ARCHIVE-S6"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "objective",
+      "caveats": []
+    }
+  ],
+  "sufficient": {
+    "explained": [
+      [
+        "opening",
+        "baseline",
+        "context_B",
+        "activity_B"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_B",
+        "independent_B"
+      ]
+    ],
+    "misuse": [
+      [
+        "opening",
+        "baseline",
+        "context_M",
+        "activity_M"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_M",
+        "independent_M"
+      ]
+    ],
+    "visibility": [
+      [
+        "opening",
+        "baseline",
+        "context_gap",
+        "activity_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap",
+        "independent_gap"
+      ]
+    ],
+    "provisional": [
+      [
+        "opening",
+        "baseline",
+        "context_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap"
+      ]
+    ]
+  },
+  "response": {
+    "targetId": "ARCHIVE-S6",
+    "owner": "Platform Operations",
+    "delayTicks": 2,
+    "windowTicks": 2,
+    "control": "Restrict only the named organisation-controlled session",
+    "requiredFacts": [
+      "activity_M",
+      "independent_M"
+    ],
+    "objectiveTick": 8,
+    "objective": "A further out-of-scope operation completes through the same session if its access remains active.",
+    "dependency": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths."
+  },
+  "sensorEnabled": false,
+  "glossary": [
+    {
+      "term": "Path",
+      "definition": "A lateral access path describes one system reaching another; its legitimacy depends on task, target and authority."
+    },
+    {
+      "term": "Source boundary",
+      "definition": "The target, operation and interval a source is capable of observing."
+    },
+    {
+      "term": "Scope",
+      "definition": "The explicitly named session or service covered by a claim and next action."
+    }
+  ],
+  "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+}

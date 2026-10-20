@@ -1,0 +1,66 @@
+{
+  "briefing": {
+    "text": "Does a cross-system connection fit a specific management task or extend beyond it? A management identity connected from the orchestration service to an archive host. Cross-system administration is routine at Northstar; the connection alone is not a finding. Acquire the sources, test another explanation and make a scoped finding. Response decisions belong to the authorised team.",
+    "when": "player_requested_briefing"
+  },
+  "morgan-1": {
+    "text": "Follow the acquired management path. Compare its actual target with the approved task before calling a cross-system connection suspicious.",
+    "when": "player_requested_baseline_hint"
+  },
+  "morgan-2": {
+    "text": "Could a specific approved task explain this action? Compare the target, operation and review period. Approval for one task does not explain a different action.",
+    "when": "player_requested_alternative_hint"
+  },
+  "morgan-3": {
+    "text": "Attach the acquired observation to the claim it actually supports or weakens. A source record and your interpretation are different things.",
+    "when": "player_requested_evidence_hint"
+  },
+  "morgan-4": {
+    "text": "Missing collection limits the conclusion. A successful future test proves only its stated target, capability and time. It cannot recover an unrecorded historical interval.",
+    "when": "player_requested_collection_hint"
+  },
+  "morgan-5": {
+    "text": "Name the narrow scope, the business consequence, the authorised owner and a concrete follow-up. An investigator recommends a response; they do not approve their own control.",
+    "when": "player_requested_handoff_hint"
+  },
+  "morgan-6": {
+    "text": "Review the observations available when you made the call. Keep later simulation facts separate, and identify the next source that would strengthen a similar investigation elsewhere.",
+    "when": "player_requested_reflection_hint"
+  },
+  "check-ready": {
+    "text": "Your requested business check is ready to review. Its response or timeout establishes only the stated business context and limits.",
+    "when": "verified_check_result_delivered"
+  },
+  "report-submitted": {
+    "text": "Case report submitted. Your finding is frozen. Review the evidence you had and the separate simulated outcome.",
+    "when": "case_closure_accepted"
+  },
+  "finding-explained": {
+    "text": "The cited observations support this specific approved-work explanation within the scope and period you investigated. That finding does not establish that every other system or session is clear.",
+    "when": "closed_supported_explained_finding"
+  },
+  "finding-misuse": {
+    "text": "The cited observations support activity outside the disclosed approved scope. This is a bounded session finding, not proof of a particular person or motive. Keep the response within the declared authority.",
+    "when": "closed_supported_likely_misuse_finding"
+  },
+  "finding-visibility": {
+    "text": "You established a useful visibility limit. Missing collection does not establish whether activity was benign or malicious. Assign restoration, a repeat check and a trigger for reviewing the remaining uncertainty.",
+    "when": "closed_supported_visibility_limited_finding"
+  },
+  "finding-provisional": {
+    "text": "Your preliminary finding has a bounded evidence basis and leaves important questions open. A named owner, review window and next source make that uncertainty actionable. Further review is still needed.",
+    "when": "closed_supported_provisional_finding"
+  },
+  "finding-unsupported": {
+    "text": "The cited observations do not establish the selected finding. Revisit the missing evidence question, test another explanation and keep the claim within what the delivered sources can support.",
+    "when": "closed_unsupported_finding"
+  },
+  "outcome-occurred": {
+    "text": "In the separately revealed simulation, the bounded out-of-scope objective completed. That operational result does not change the quality of reasoning from the evidence available when you submitted.",
+    "when": "closed_objective_achieved"
+  },
+  "outcome-not-occurred": {
+    "text": "In the separately revealed simulation, the bounded out-of-scope objective did not complete. This does not establish that the whole environment is clear. Operational outcome and investigation quality remain separate.",
+    "when": "closed_objective_not_achieved"
+  }
+}

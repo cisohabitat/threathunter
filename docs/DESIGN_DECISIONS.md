@@ -9,3 +9,7 @@ M01 remains pinned to its existing fixture, scoring and save readers. M04/M07 us
 ## 2026-10-20 — optional completion-based journey
 
 GDD Section 4.5 is implemented as an optional recommended M01→M04→M07 path. Existing direct access to the three shipped candidates is preserved; recommendations advance on validated saved completion without a quality-score threshold. This avoids adding new locks to cases already offered freely. Debrief continuation also remains available for temporary closures, with explicit unsaved status and retained mounted progress. The overview counts durable validated active/archive completions only, with bounded archive checks and no separate progression save. It is a read model, not an achievement system or proof of competency.
+
+## 2026-10-20 — full catalogue and constrained free-hunt development
+
+The user explicitly instructed “do until all of gdd completed”. Development therefore includes the nine remaining §11.3 cases and the constrained, validated §12.3/P3 free-hunt scope. Explicit non-goals and separately deferred products remain excluded. Human/device/creative/listening gates remain deferred and unpassed. New expansion packages use their own engine, rubric, content manifests and persistence namespace; existing M01 and P1 packages/readers remain unchanged. The complete worklist is in `GDD_COMPLETION.md`.

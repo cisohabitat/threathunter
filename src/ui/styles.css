@@ -1916,3 +1916,142 @@ html {
   color: var(--text-secondary);
   margin-bottom: 8px;
 }
+
+/* Expansion workspaces retain the same opaque surface and focus tokens. */
+.expansion-context {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 10px max(16px, env(safe-area-inset-left));
+  background: var(--surface-1);
+  border-block: 1px solid var(--stroke-subtle);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 16px;
+}
+.expansion-context p {
+  margin: 0;
+}
+.expansion-context .actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+}
+.expansion-shell main {
+  padding: clamp(14px, 3vw, 36px);
+  max-width: 1440px;
+  margin: auto;
+}
+.expansion-banner {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.45fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  margin: 12px 0 24px;
+}
+.expansion-banner picture {
+  height: 180px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.expansion-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 45%;
+}
+.expansion-shell label {
+  display: block;
+  margin-block: 12px;
+}
+.expansion-shell select,
+.expansion-shell textarea,
+.expansion-shell input:not([type="checkbox"]) {
+  width: 100%;
+  min-width: 0;
+}
+.expansion-shell textarea {
+  min-height: 130px;
+}
+.expansion-shell fieldset {
+  margin-block: 18px;
+  padding: 18px;
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 12px;
+}
+.expansion-shell .record h3 {
+  margin: 0;
+}
+.expansion-shell .record {
+  margin-block: 14px;
+}
+.expansion-shell .question-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.mechanic-columns,
+.scope-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.mechanic-columns > section,
+.scope-card,
+.claim-board > section {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 12px;
+  background: var(--surface-1);
+}
+.claim-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.priority-queue {
+  padding-inline-start: 28px;
+}
+.priority-queue > li {
+  padding: 14px;
+  margin-block: 12px;
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 12px;
+}
+.expansion-shell p,
+.expansion-shell h1,
+.expansion-shell h2,
+.expansion-shell h3,
+.expansion-shell button {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .mechanic-columns,
+  .scope-cards,
+  .claim-board,
+  .expansion-shell .question-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .expansion-banner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .expansion-banner picture {
+    height: 96px;
+  }
+  .expansion-context {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .expansion-context .actions {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .expansion-context .actions span {
+    display: none;
+  }
+  .expansion-shell fieldset {
+    padding: 12px;
+    min-width: 0;
+  }
+}

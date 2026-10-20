@@ -81,7 +81,7 @@ try {
         ].some(
           (el) =>
             el.textContent ===
-            `${expected} of 3 cases have a validated saved completion.`,
+            `${expected} of 12 cases have a validated saved completion.`,
         ),
       count,
     );

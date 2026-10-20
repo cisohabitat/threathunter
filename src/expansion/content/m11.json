@@ -1,0 +1,676 @@
+{
+  "missionId": "M11",
+  "version": "1.0.0",
+  "rubricVersion": "expansion-1.0.0",
+  "policyVersion": "m11-scoped-response-1",
+  "title": "The Unseen Adversary",
+  "trigger": "Multi-source hypothesis",
+  "question": "Do several suspicious observations share one explanation, or should their causal claims stay separate?",
+  "briefing": "A backup agent change and an unusual support session occurred in the same review period. Their timing overlaps; that does not establish that they belong to one event chain. Your authority is to acquire records and recommend a session-scoped response through Service Response. You cannot approve your own control or disable an entire account or service.",
+  "lesson": "A causal claim connects a specific action and consequence; overlapping timestamps alone are not a causal link.",
+  "worlds": [
+    "B",
+    "M",
+    "U-B",
+    "U-M"
+  ],
+  "entities": [
+    {
+      "id": "SUPPORT-S11",
+      "name": "Named support-service session",
+      "purpose": "Named support-service session",
+      "owner": "Service Response",
+      "impact": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path.",
+      "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+      "dependency": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path."
+    },
+    {
+      "id": "BACKUP-11",
+      "name": "BACKUP-11 context",
+      "purpose": "Related context that must be assessed separately",
+      "owner": "Northstar Operations",
+      "impact": "Do not generalise the primary session finding to this separate scope.",
+      "capability": "Only the explicitly delivered relationship and source records.",
+      "dependency": "A separate task or observation does not supply approval for the primary session."
+    }
+  ],
+  "initialEntities": [
+    "BACKUP-11"
+  ],
+  "initialScope": "BACKUP-11",
+  "primaryTarget": "SUPPORT-S11",
+  "mechanic": {
+    "kind": "causal",
+    "question": "Do several suspicious observations share one explanation, or should their causal claims stay separate?",
+    "options": [
+      {
+        "id": "one-attack",
+        "label": "Merge all nearby observations into one attack"
+      },
+      {
+        "id": "separate-claims",
+        "label": "Keep backup and support claims separate unless an acquired link joins them"
+      },
+      {
+        "id": "ignore-second",
+        "label": "Treat one benign explanation as clearing every other observation"
+      }
+    ],
+    "supportedChoice": "separate-claims",
+    "requires": [
+      "baseline"
+    ],
+    "claims": [
+      {
+        "id": "backup-work",
+        "label": "The backup work order"
+      },
+      {
+        "id": "support-session",
+        "label": "The separate support session"
+      },
+      {
+        "id": "unproven-link",
+        "label": "A shared causal link remains unproven"
+      }
+    ],
+    "priorities": [
+      "SUPPORT-S11",
+      "BACKUP-11"
+    ],
+    "unsupportedChoices": [
+      "one-attack",
+      "ignore-second"
+    ]
+  },
+  "limits": [
+    {
+      "id": "scope",
+      "label": "Shared timing does not establish a common actor, causal chain or explanation.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Unavailable collection does not establish that no activity occurred.",
+      "requires": [
+        "context_gap",
+        "activity_gap",
+        "independent_gap",
+        "verified_gap"
+      ]
+    },
+    {
+      "id": "operator",
+      "label": "The source identifies a session or credential, not a person or motive.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "separate",
+      "label": "Other scopes and their remaining questions need their own evidence.",
+      "requires": [
+        "baseline"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "baseline",
+      "label": "Establish the task and business consequence",
+      "sourceId": "scope_catalogue",
+      "source": "Scope and dependency catalogue",
+      "question": "What is this service for, and which consequences change investigation priority?",
+      "can": "Names the normal task, related scopes, owners and interruption consequence.",
+      "cannot": "Does not establish who performed the current action.",
+      "targets": [
+        "all"
+      ],
+      "static": true,
+      "factIds": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "context",
+      "label": "Check the exact work authorisation",
+      "sourceId": "work_register",
+      "source": "Work authorisation register",
+      "question": "Does approved work cover this session, task, target and period?",
+      "can": "Tests the specific business explanation.",
+      "cannot": "Does not prove the human operator or the activity that actually occurred.",
+      "targets": [
+        "SUPPORT-S11"
+      ],
+      "static": true,
+      "factIds": [
+        "context_B",
+        "context_M",
+        "context_gap"
+      ]
+    },
+    {
+      "id": "activity",
+      "label": "Inspect the scoped session activity",
+      "sourceId": "session_audit",
+      "source": "Session activity audit",
+      "question": "Which action was recorded for this named session within collection limits?",
+      "can": "Records session-level actions and the observed target.",
+      "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+      "targets": [
+        "SUPPORT-S11"
+      ],
+      "static": false,
+      "factIds": [
+        "activity_B",
+        "activity_M",
+        "activity_gap",
+        "later_activity_B",
+        "later_activity_M"
+      ]
+    },
+    {
+      "id": "independent",
+      "label": "Check the service transaction independently",
+      "sourceId": "service_journal",
+      "source": "Independent service journal",
+      "question": "Does the service-side transaction establish the same scoped operation?",
+      "can": "Tests the operation through a separately collected service transaction.",
+      "cannot": "A second card alone does not establish a sufficient explanation.",
+      "targets": [
+        "SUPPORT-S11"
+      ],
+      "static": false,
+      "factIds": [
+        "independent_B",
+        "independent_M",
+        "independent_gap",
+        "later_independent_B",
+        "later_independent_M"
+      ]
+    },
+    {
+      "id": "window",
+      "label": "Read the enabled future observation window",
+      "sourceId": "future_verification",
+      "source": "Future-only verification source",
+      "question": "Did the explicitly generated harmless event reach collection after activation?",
+      "can": "Tests this named source capability, target and future event time only.",
+      "cannot": "Cannot backfill any missing historical interval or prove broader coverage.",
+      "targets": [
+        "SUPPORT-S11"
+      ],
+      "static": false,
+      "factIds": [
+        "future_sample"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "opening",
+      "recordId": "R00",
+      "title": "Starting observations",
+      "text": "A backup agent change and an unusual support session occurred in the same review period. Their timing overlaps; that does not establish that they belong to one event chain.",
+      "sourceId": "review_briefing",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "BACKUP-11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "review_briefing-R00",
+      "originId": "catalogue-review_briefing",
+      "caveats": []
+    },
+    {
+      "id": "baseline",
+      "recordId": "R01",
+      "title": "Task, scope and business consequence",
+      "text": "The backup agent has its own signed restore-validation work order. The support session is a separate identity and source path. Temporal proximity alone does not connect their operators or purposes.",
+      "sourceId": "scope_catalogue",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11",
+        "BACKUP-11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "scope_catalogue-R01",
+      "originId": "catalogue-scope_catalogue",
+      "caveats": []
+    },
+    {
+      "id": "context_B",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The support work order separately approves this session\u2019s customer-case lookup. It is independent of the backup agent work order.",
+      "sourceId": "work_register",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_B",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The support session looked up the customer cases named in its own work order. The backup task and the support action have separate scoped explanations.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_B",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The customer application journal independently confirms the approved support-case lookups and shows no shared session identity with the backup job.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_B",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The support work order separately approves this session\u2019s customer-case lookup. It is independent of the backup agent work order. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_M",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The support work order permits case lookup only. It contains no approval for changing customer contact destinations through the support session; the backup work order supplies no such permission.",
+      "sourceId": "work_register",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_M",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The support session changed customer contact destinations outside its case-lookup role. The separately approved backup task does not explain this session action.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_M",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The customer application journal independently ties the contact-destination change to the support session, with no identity link to the backup job.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_M",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The support work order permits case lookup only. It contains no approval for changing customer contact destinations through the support session; the backup work order supplies no such permission. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_gap",
+      "recordId": "R02",
+      "title": "Work record unavailable",
+      "text": "The work-authorisation archive is unavailable for the named session and period. No approval or denial can be inferred.",
+      "sourceId": "work_register",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_gap",
+      "recordId": "R03",
+      "title": "Session collection unavailable",
+      "text": "The session-audit source did not collect the relevant historical interval. Absence of a record cannot establish the absence of activity.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "session_audit-R03",
+      "originId": "catalogue-session_audit",
+      "caveats": []
+    },
+    {
+      "id": "independent_gap",
+      "recordId": "R04",
+      "title": "Independent collection is limited",
+      "text": "The independent service journal lacks the target application operation for the historical interval. A different source name does not restore that capability.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "service_journal-R04",
+      "originId": "catalogue-service_journal",
+      "caveats": []
+    },
+    {
+      "id": "verified_gap",
+      "recordId": "VR01",
+      "title": "Verified check timed out",
+      "text": "The pre-established directory contact did not respond by the stated due step. This is a delivered limitation, not approval or a reason to wait indefinitely.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "directory_callback-VR01",
+      "originId": "catalogue-directory_callback",
+      "caveats": []
+    },
+    {
+      "id": "future_sample",
+      "recordId": "W01",
+      "title": "Future-only source verification",
+      "text": "A harmless verification event was collected after the enabled source window began. It establishes collection only for this target, capability and time; it cannot restore historical coverage.",
+      "sourceId": "future_verification",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "future-verification",
+      "originId": "future-test",
+      "caveats": [
+        "A successful test now does not establish historical coverage."
+      ]
+    },
+    {
+      "id": "later_activity_B",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_B",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_M",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "objective",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_M",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "SUPPORT-S11"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "objective",
+      "caveats": []
+    }
+  ],
+  "sufficient": {
+    "explained": [
+      [
+        "opening",
+        "baseline",
+        "context_B",
+        "activity_B"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_B",
+        "independent_B"
+      ]
+    ],
+    "misuse": [
+      [
+        "opening",
+        "baseline",
+        "context_M",
+        "activity_M"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_M",
+        "independent_M"
+      ]
+    ],
+    "visibility": [
+      [
+        "opening",
+        "baseline",
+        "context_gap",
+        "activity_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap",
+        "independent_gap"
+      ]
+    ],
+    "provisional": [
+      [
+        "opening",
+        "baseline",
+        "context_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap"
+      ]
+    ]
+  },
+  "response": {
+    "targetId": "SUPPORT-S11",
+    "owner": "Service Response",
+    "delayTicks": 2,
+    "windowTicks": 2,
+    "control": "Restrict only the named organisation-controlled session",
+    "requiredFacts": [
+      "activity_M",
+      "independent_M"
+    ],
+    "objectiveTick": 8,
+    "objective": "A further out-of-scope operation completes through the same session if its access remains active.",
+    "dependency": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path."
+  },
+  "sensorEnabled": true,
+  "glossary": [
+    {
+      "term": "Causal",
+      "definition": "A causal claim connects a specific action and consequence; overlapping timestamps alone are not a causal link."
+    },
+    {
+      "term": "Source boundary",
+      "definition": "The target, operation and interval a source is capable of observing."
+    },
+    {
+      "term": "Scope",
+      "definition": "The explicitly named session or service covered by a claim and next action."
+    }
+  ],
+  "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+}

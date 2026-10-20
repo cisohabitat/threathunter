@@ -93,3 +93,36 @@ it("projects matched sparse twins identically for all three missions and never p
     ).toContain("neither independent corroboration nor a sufficient finding");
   }
 });
+
+it("summarises only the latest acquired expansion view per source without replacing earlier snapshots", async () => {
+  const { latestViews } = await import("../expansion/observations");
+  const { fromExpansion } = await import("../comparison/model");
+  const base = {
+    ref: { acquisitionId: "a0", recordId: "R03" },
+    title: "Scoped observation",
+    text: "An earlier empty result",
+    sourceId: "audit",
+    entityIds: ["session"],
+    eventTick: null,
+    cutoffTick: 0,
+    deliveredTick: 1,
+    coverage: "covered" as const,
+    lineage: "same-origin",
+    caveats: [],
+  };
+  const records = Array.from({ length: 1200 }, (_, i) => ({
+    ...base,
+    ref: { acquisitionId: `a${i}`, recordId: "R03" },
+    cutoffTick: i,
+    deliveredTick: i + 1,
+  }));
+  const before = JSON.stringify(records),
+    summary = latestViews(records, ["audit"]);
+  expect(summary).toHaveLength(1);
+  expect(summary[0].ref.acquisitionId).toBe("a1199");
+  expect(JSON.stringify(records)).toBe(before);
+  const adapted = fromExpansion(records);
+  expect(adapted[0].cutoff).toBe(0);
+  expect(adapted.at(-1)!.cutoff).toBe(1199);
+  expect(adapted[0].key).not.toBe(adapted.at(-1)!.key);
+});

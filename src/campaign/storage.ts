@@ -1,6 +1,7 @@
+import { preserveArchive } from "../persistence/archive";
 import Dexie, { type Table } from "dexie";
 import type { MissionId } from "./contracts";
-import { acknowledge, canonical, type State } from "./engine";
+import { acknowledge, canonical, stateHash, type State } from "./engine";
 import type { Envelope } from "./format";
 import { request, ValidatorUnavailable } from "./validator";
 
@@ -128,16 +129,19 @@ export async function archiveCompleted(state: State) {
   if (
     !checked.debrief ||
     checked.view.runId !== state.view.runId ||
-    checked.view.revision !== state.view.revision
+    checked.view.revision !== state.view.revision ||
+    stateHash(checked) !== stateHash(state)
   )
     throw Error("Save the exact closed finding before replaying.");
   await database.transaction("rw", database.rows, async () => {
     if (canonical(await database.rows.get(id)) !== canonical(original))
       throw Error("Completed save changed before archival.");
-    await database.rows.put({
-      ...original,
-      id: `completed:${state.missionId}:${state.view.runId}`,
-    });
+    await preserveArchive(
+      database.rows,
+      `completed:${state.missionId}:${state.view.runId}`,
+      original,
+      canonical,
+    );
     await database.rows.delete(id);
   });
   changed();
@@ -175,4 +179,59 @@ export async function downloadRow(id: string, mission: MissionId, raw = false) {
       `threat-hunter-${mission}-recovery.json`,
     );
   else await download(await validateRow(row, mission));
+}
+
+export async function replaceImported(
+  state: State,
+  expectedRunId: string,
+  expectedRevision: number,
+) {
+  const slot = state.missionId,
+    id = activeKey(slot),
+    original = await database.rows.get(id);
+  if (!original)
+    throw Error(
+      "The active save changed before import. Reload before replacing it.",
+    );
+  const checked = await validateRow(original, slot);
+  if (
+    checked.view.runId !== expectedRunId ||
+    checked.view.revision !== expectedRevision
+  )
+    throw Error(
+      "The active save changed before import. Export retained progress and reload.",
+    );
+  const prepared = await request("commit", state);
+  if (!prepared.state || !prepared.envelope) throw new ValidatorUnavailable();
+  await database.transaction("rw", database.rows, async () => {
+    if (canonical(await database.rows.get(id)) !== canonical(original))
+      throw Error(
+        "The active save changed during import; neither version was replaced.",
+      );
+    await database.rows.add({
+      ...original,
+      id: `replaced:${slot}:${crypto.randomUUID()}`,
+    });
+    if (checked.debrief)
+      await preserveArchive(
+        database.rows,
+        `completed:${slot}:${checked.view.runId}`,
+        original,
+        canonical,
+      );
+    await database.rows.put({
+      id,
+      revision: state.view.revision,
+      current: prepared.envelope!,
+      previous: original.current,
+    });
+  });
+  changed();
+  return prepared.state;
+}
+export async function replacementBackups(slot: MissionId) {
+  return database.rows
+    .where("id")
+    .startsWith(`replaced:${slot}:`)
+    .primaryKeys();
 }

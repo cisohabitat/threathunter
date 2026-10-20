@@ -1,3 +1,4 @@
+import { preserveArchive } from "./archive";
 import Dexie, { type Table } from "dexie";
 import { canonical, type EngineState } from "../engine/engine";
 import { markCommitted, type SaveEnvelope } from "./format";
@@ -199,11 +200,12 @@ export async function archiveCompleted(runId: string, revision: number) {
       throw Error("The saved case changed. Reload before replaying.");
     if (!saved?.debrief || saved.view.phase !== "closed")
       throw Error("Save the closed finding before starting a replay.");
-    await database.runs.put({
-      ...row,
-      id: `completed:${runId}`,
-      previous: null,
-    });
+    await preserveArchive(
+      database.runs,
+      `completed:${runId}`,
+      { ...row, previous: null },
+      canonical,
+    );
     await database.runs.delete("active");
   });
   notifySaveChanges();

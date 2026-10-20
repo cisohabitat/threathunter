@@ -1,0 +1,124 @@
+{
+  "critical": [
+    {
+      "path": "/assets/index-BDL_5sTL.js",
+      "bytes": 555470,
+      "gzipBytes": 175607
+    },
+    {
+      "path": "/assets/schemas-Dzim_TYw.js",
+      "bytes": 93064,
+      "gzipBytes": 26095
+    },
+    {
+      "path": "/assets/validationWorker-BcOVUR-6.js",
+      "bytes": 140999,
+      "gzipBytes": 38278
+    },
+    {
+      "path": "/assets/index-DJwf1lnu.css",
+      "bytes": 39150,
+      "gzipBytes": 8492
+    }
+  ],
+  "criticalTotalWithLargestArt": 315416,
+  "voiceBytes": 981008,
+  "soundBytes": 52748,
+  "activeCaseProfiles": [
+    {
+      "name": "M01",
+      "gzipJavaScriptBytes": 239980,
+      "files": [
+        "assets/index-BDL_5sTL.js",
+        "assets/schemas-Dzim_TYw.js",
+        "assets/validationWorker-BcOVUR-6.js"
+      ]
+    },
+    {
+      "name": "P1 M04/M07",
+      "gzipJavaScriptBytes": 312176,
+      "files": [
+        "assets/BackupImport-G-Ten9t6.js",
+        "assets/Campaign-MaKD9XXh.js",
+        "assets/index-BDL_5sTL.js",
+        "assets/p1Worker-Dy-eUMu4.js",
+        "assets/schemas-Dzim_TYw.js",
+        "assets/storage-Bkct9YQt.js",
+        "assets/validationWorker-BcOVUR-6.js"
+      ]
+    },
+    {
+      "name": "Expansion/free hunts",
+      "gzipJavaScriptBytes": 344580,
+      "files": [
+        "assets/BackupImport-G-Ten9t6.js",
+        "assets/Expansion-q0fXTpu4.js",
+        "assets/expansionWorker-DY_EKLuh.js",
+        "assets/index-BDL_5sTL.js",
+        "assets/schemas-Dzim_TYw.js",
+        "assets/storage-BJXVXnc_.js",
+        "assets/validationWorker-BcOVUR-6.js"
+      ]
+    }
+  ],
+  "allShippedJavaScriptGzipBytes": 428515,
+  "budgetMethod": "400 KiB applies to the cold active-case text graph plus loaded workers; all shipped JavaScript is reported separately. Initial modulepreloads are included.",
+  "p1Packs": [
+    {
+      "mission": "m04",
+      "voiceBytes": 883990,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m07",
+      "voiceBytes": 918942,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m02",
+      "voiceBytes": 1137900,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m03",
+      "voiceBytes": 1140878,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m05",
+      "voiceBytes": 1145110,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m06",
+      "voiceBytes": 1129437,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m08",
+      "voiceBytes": 1135863,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m09",
+      "voiceBytes": 1119875,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m10",
+      "voiceBytes": 1119562,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m11",
+      "voiceBytes": 1145580,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m12",
+      "voiceBytes": 1154357,
+      "soundBytes": 52748
+    }
+  ],
+  "physicalDevicePerformance": "not measured"
+}

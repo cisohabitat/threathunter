@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FieldGuide } from "../ui/FieldGuide";
 import { AudioPanel } from "../ui/AudioPanel";
 import { useMissionAudio } from "../presentation/sound/useMissionAudio";
@@ -11,6 +11,7 @@ import { Workbench } from "../ui/Workbench";
 import { Debrief } from "../ui/Debrief";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { briefing, hints } from "../presentation/voice/scripts";
+import { Learning } from "../journey/Learning";
 import { Journey, ContinueJourney } from "../journey/Journey";
 import type { CaseId } from "../journey/contracts";
 import { ComparisonPanel, ComparisonProvider } from "../comparison/Comparison";
@@ -25,10 +26,16 @@ function readGuidancePreference() {
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
 export default function App({
   openCampaign,
+  openFreeHunt,
   homeRequest = 0,
+  caseRequest = 0,
+  active = true,
 }: {
-  openCampaign?: (mission: "M04" | "M07") => void;
+  openCampaign?: (mission: Exclude<CaseId, "M01">) => void;
+  openFreeHunt?: () => void;
   homeRequest?: number;
+  caseRequest?: number;
+  active?: boolean;
 }) {
   const game = useGame(),
     {
@@ -45,6 +52,12 @@ export default function App({
     [artReady, setArtReady] = useState(false),
     [artUnavailable, setArtUnavailable] = useState(false);
   const [guided, setGuided] = useState(readGuidancePreference);
+  const [handledCaseRequest, setHandledCaseRequest] = useState(0);
+  useEffect(() => {
+    if (caseRequest === handledCaseRequest || game.busy) return;
+    setHandledCaseRequest(caseRequest);
+    setHome(!game.view);
+  }, [caseRequest, handledCaseRequest, game.busy, game.view]);
   const [handledHomeRequest, setHandledHomeRequest] = useState(homeRequest);
   if (handledHomeRequest !== homeRequest) {
     setHandledHomeRequest(homeRequest);
@@ -82,6 +95,8 @@ export default function App({
     v,
     game.debrief,
     home ? "home" : game.debrief ? "debrief" : screen,
+    undefined,
+    active,
   );
   const blocked =
     game.busy || game.readOnly || Boolean(game.error && !game.temporary);
@@ -470,6 +485,17 @@ export default function App({
                         collection can see the activity you care about. Each
                         case keeps its own local save.
                       </p>
+                      {openFreeHunt ? (
+                        <button
+                          disabled={game.busy}
+                          onClick={() => {
+                            audio.playMuted();
+                            openFreeHunt();
+                          }}
+                        >
+                          Seeded free hunt · validated templates
+                        </button>
+                      ) : null}
                       <div className="actions">
                         <button
                           disabled={game.busy}
@@ -498,10 +524,13 @@ export default function App({
                   </section>
                 ) : null}
                 {openCampaign ? (
-                  <Journey
-                    ready={!game.busy}
-                    open={(mission) => void openJourney(mission)}
-                  />
+                  <>
+                    <Journey
+                      ready={!game.busy}
+                      open={(mission) => void openJourney(mission)}
+                    />
+                    <Learning />
+                  </>
                 ) : null}
               </section>
             ) : game.debrief ? (

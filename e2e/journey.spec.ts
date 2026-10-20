@@ -64,7 +64,7 @@ async function check(page: Page, completed: number) {
     .getByRole("button", { name: /^(Check|Refresh) saved progress$/ })
     .click();
   await expect(area.getByRole("status")).toHaveText(
-    `${completed} of 3 cases have a validated saved completion.`,
+    `${completed} of 12 cases have a validated saved completion.`,
     { timeout: 60000 },
   );
   return area;
@@ -188,20 +188,16 @@ test("saved progress is read-only and low scores permit case-to-case continuatio
   ).toContainText("Your saved finding stays available");
   await finalHunt
     .getByRole("button", {
-      name: "Revisit M01 · The Midnight Login",
+      name: "Continue to M02 · Too Many Alerts",
       exact: true,
     })
     .click();
   await page
-    .getByRole("button", {
-      name: "Threat Hunter Silent Intrusion home",
-      exact: true,
-    })
+    .locator('[data-expansion="M02"]')
+    .getByRole("button", { name: /THREAT HUNTER.*HOME/ })
     .click();
   await check(page, 3);
-  await expect(overview(page)).toContainText(
-    "You have completed all three cases",
-  );
+  await expect(overview(page)).toContainText("Recommended next: M02");
 });
 
 test("damaged saves stay retained and failed workers do not masquerade as corruption", async ({

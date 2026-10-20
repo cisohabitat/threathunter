@@ -1,0 +1,676 @@
+{
+  "missionId": "M08",
+  "version": "1.0.0",
+  "rubricVersion": "expansion-1.0.0",
+  "policyVersion": "m08-scoped-response-1",
+  "title": "The Cloud Connection",
+  "trigger": "Workload and identity review",
+  "question": "Which cloud identity and workload boundary can explain an application action that endpoint records cannot cover?",
+  "briefing": "An application integration performed a cloud storage operation. The available workstation record is quiet, but it cannot observe actions performed by the cloud workload identity. Your authority is to acquire records and recommend a session-scoped response through Cloud Identity Operations. You cannot approve your own control or disable an entire account or service.",
+  "lesson": "A workload identity belongs to an application or service; it is distinct from a person\u2019s endpoint session.",
+  "worlds": [
+    "B",
+    "M",
+    "U-B",
+    "U-M"
+  ],
+  "entities": [
+    {
+      "id": "WORKLOAD-S8",
+      "name": "Cloud workload identity session",
+      "purpose": "Cloud workload identity session",
+      "owner": "Cloud Identity Operations",
+      "impact": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions.",
+      "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+      "dependency": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions."
+    },
+    {
+      "id": "APP-08",
+      "name": "APP-08 context",
+      "purpose": "Related context that must be assessed separately",
+      "owner": "Northstar Operations",
+      "impact": "Do not generalise the primary session finding to this separate scope.",
+      "capability": "Only the explicitly delivered relationship and source records.",
+      "dependency": "A separate task or observation does not supply approval for the primary session."
+    }
+  ],
+  "initialEntities": [
+    "APP-08"
+  ],
+  "initialScope": "APP-08",
+  "primaryTarget": "WORKLOAD-S8",
+  "mechanic": {
+    "kind": "boundary",
+    "question": "Which cloud identity and workload boundary can explain an application action that endpoint records cannot cover?",
+    "options": [
+      {
+        "id": "endpoint-only",
+        "label": "Treat a quiet workstation source as coverage of all cloud actions"
+      },
+      {
+        "id": "workload-boundary",
+        "label": "Pivot from the app to the acquired workload identity and cloud audit"
+      },
+      {
+        "id": "all-cloud",
+        "label": "Claim that one app session covers every cloud identity"
+      }
+    ],
+    "supportedChoice": "workload-boundary",
+    "requires": [
+      "baseline"
+    ],
+    "claims": [
+      {
+        "id": "app-delegation",
+        "label": "App delegation"
+      },
+      {
+        "id": "workload-action",
+        "label": "Workload action"
+      },
+      {
+        "id": "coverage-boundary",
+        "label": "Coverage boundary"
+      }
+    ],
+    "priorities": [
+      "WORKLOAD-S8",
+      "APP-08"
+    ],
+    "unsupportedChoices": [
+      "endpoint-only",
+      "all-cloud"
+    ]
+  },
+  "limits": [
+    {
+      "id": "scope",
+      "label": "Workstation collection cannot establish the absence of actions executed by a delegated cloud workload.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Unavailable collection does not establish that no activity occurred.",
+      "requires": [
+        "context_gap",
+        "activity_gap",
+        "independent_gap",
+        "verified_gap"
+      ]
+    },
+    {
+      "id": "operator",
+      "label": "The source identifies a session or credential, not a person or motive.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "separate",
+      "label": "Other scopes and their remaining questions need their own evidence.",
+      "requires": [
+        "baseline"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "baseline",
+      "label": "Establish the task and business consequence",
+      "sourceId": "scope_catalogue",
+      "source": "Scope and dependency catalogue",
+      "question": "What is this service for, and which consequences change investigation priority?",
+      "can": "Names the normal task, related scopes, owners and interruption consequence.",
+      "cannot": "Does not establish who performed the current action.",
+      "targets": [
+        "all"
+      ],
+      "static": true,
+      "factIds": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "context",
+      "label": "Check the exact work authorisation",
+      "sourceId": "work_register",
+      "source": "Work authorisation register",
+      "question": "Does approved work cover this session, task, target and period?",
+      "can": "Tests the specific business explanation.",
+      "cannot": "Does not prove the human operator or the activity that actually occurred.",
+      "targets": [
+        "WORKLOAD-S8"
+      ],
+      "static": true,
+      "factIds": [
+        "context_B",
+        "context_M",
+        "context_gap"
+      ]
+    },
+    {
+      "id": "activity",
+      "label": "Inspect the scoped session activity",
+      "sourceId": "session_audit",
+      "source": "Session activity audit",
+      "question": "Which action was recorded for this named session within collection limits?",
+      "can": "Records session-level actions and the observed target.",
+      "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+      "targets": [
+        "WORKLOAD-S8"
+      ],
+      "static": false,
+      "factIds": [
+        "activity_B",
+        "activity_M",
+        "activity_gap",
+        "later_activity_B",
+        "later_activity_M"
+      ]
+    },
+    {
+      "id": "independent",
+      "label": "Check the service transaction independently",
+      "sourceId": "service_journal",
+      "source": "Independent service journal",
+      "question": "Does the service-side transaction establish the same scoped operation?",
+      "can": "Tests the operation through a separately collected service transaction.",
+      "cannot": "A second card alone does not establish a sufficient explanation.",
+      "targets": [
+        "WORKLOAD-S8"
+      ],
+      "static": false,
+      "factIds": [
+        "independent_B",
+        "independent_M",
+        "independent_gap",
+        "later_independent_B",
+        "later_independent_M"
+      ]
+    },
+    {
+      "id": "window",
+      "label": "Read the enabled future observation window",
+      "sourceId": "future_verification",
+      "source": "Future-only verification source",
+      "question": "Did the explicitly generated harmless event reach collection after activation?",
+      "can": "Tests this named source capability, target and future event time only.",
+      "cannot": "Cannot backfill any missing historical interval or prove broader coverage.",
+      "targets": [
+        "WORKLOAD-S8"
+      ],
+      "static": false,
+      "factIds": [
+        "future_sample"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "opening",
+      "recordId": "R00",
+      "title": "Starting observations",
+      "text": "An application integration performed a cloud storage operation. The available workstation record is quiet, but it cannot observe actions performed by the cloud workload identity.",
+      "sourceId": "review_briefing",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "APP-08"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "review_briefing-R00",
+      "originId": "catalogue-review_briefing",
+      "caveats": []
+    },
+    {
+      "id": "baseline",
+      "recordId": "R01",
+      "title": "Task, scope and business consequence",
+      "text": "APP-08 delegates a limited document-synchronisation job to WORKLOAD-S8. Endpoint process records cover the workstation; cloud identity and object audits cover the delegated storage action.",
+      "sourceId": "scope_catalogue",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8",
+        "APP-08"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "scope_catalogue-R01",
+      "originId": "catalogue-scope_catalogue",
+      "caveats": []
+    },
+    {
+      "id": "context_B",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The integration change record approves the workload session, document collection and read-only object operation within this review period.",
+      "sourceId": "work_register",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_B",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The workload session read the document collection named in the integration record. This cloud operation is not expected to appear as a workstation process.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_B",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The storage object audit independently records the approved document read by the delegated workload session.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_B",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The integration change record approves the workload session, document collection and read-only object operation within this review period. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_M",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The integration change record approves read-only document synchronisation. It contains no approval for changing the storage access policy through this workload session.",
+      "sourceId": "work_register",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_M",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The workload session submitted a storage-access-policy change outside its read-only integration task. The endpoint\u2019s quiet result cannot contradict this cloud audit.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_M",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The storage policy audit independently records the policy-change request tied to the delegated workload session and the affected document collection.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_M",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The integration change record approves read-only document synchronisation. It contains no approval for changing the storage access policy through this workload session. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_gap",
+      "recordId": "R02",
+      "title": "Work record unavailable",
+      "text": "The work-authorisation archive is unavailable for the named session and period. No approval or denial can be inferred.",
+      "sourceId": "work_register",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_gap",
+      "recordId": "R03",
+      "title": "Session collection unavailable",
+      "text": "The session-audit source did not collect the relevant historical interval. Absence of a record cannot establish the absence of activity.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "session_audit-R03",
+      "originId": "catalogue-session_audit",
+      "caveats": []
+    },
+    {
+      "id": "independent_gap",
+      "recordId": "R04",
+      "title": "Independent collection is limited",
+      "text": "The independent service journal lacks the target application operation for the historical interval. A different source name does not restore that capability.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "service_journal-R04",
+      "originId": "catalogue-service_journal",
+      "caveats": []
+    },
+    {
+      "id": "verified_gap",
+      "recordId": "VR01",
+      "title": "Verified check timed out",
+      "text": "The pre-established directory contact did not respond by the stated due step. This is a delivered limitation, not approval or a reason to wait indefinitely.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "directory_callback-VR01",
+      "originId": "catalogue-directory_callback",
+      "caveats": []
+    },
+    {
+      "id": "future_sample",
+      "recordId": "W01",
+      "title": "Future-only source verification",
+      "text": "A harmless verification event was collected after the enabled source window began. It establishes collection only for this target, capability and time; it cannot restore historical coverage.",
+      "sourceId": "future_verification",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "future-verification",
+      "originId": "future-test",
+      "caveats": [
+        "A successful test now does not establish historical coverage."
+      ]
+    },
+    {
+      "id": "later_activity_B",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_B",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_M",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "objective",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_M",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "WORKLOAD-S8"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "objective",
+      "caveats": []
+    }
+  ],
+  "sufficient": {
+    "explained": [
+      [
+        "opening",
+        "baseline",
+        "context_B",
+        "activity_B"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_B",
+        "independent_B"
+      ]
+    ],
+    "misuse": [
+      [
+        "opening",
+        "baseline",
+        "context_M",
+        "activity_M"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_M",
+        "independent_M"
+      ]
+    ],
+    "visibility": [
+      [
+        "opening",
+        "baseline",
+        "context_gap",
+        "activity_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap",
+        "independent_gap"
+      ]
+    ],
+    "provisional": [
+      [
+        "opening",
+        "baseline",
+        "context_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap"
+      ]
+    ]
+  },
+  "response": {
+    "targetId": "WORKLOAD-S8",
+    "owner": "Cloud Identity Operations",
+    "delayTicks": 2,
+    "windowTicks": 2,
+    "control": "Restrict only the named organisation-controlled session",
+    "requiredFacts": [
+      "activity_M",
+      "independent_M"
+    ],
+    "objectiveTick": 8,
+    "objective": "A further out-of-scope operation completes through the same session if its access remains active.",
+    "dependency": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions."
+  },
+  "sensorEnabled": true,
+  "glossary": [
+    {
+      "term": "Boundary",
+      "definition": "A workload identity belongs to an application or service; it is distinct from a person\u2019s endpoint session."
+    },
+    {
+      "term": "Source boundary",
+      "definition": "The target, operation and interval a source is capable of observing."
+    },
+    {
+      "term": "Scope",
+      "definition": "The explicitly named session or service covered by a claim and next action."
+    }
+  ],
+  "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+}

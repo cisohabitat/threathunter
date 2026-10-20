@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { BackupImport } from "../ui/BackupImport";
+import { useEffect, useRef, useState } from "react";
 import { packages } from "./content";
 import { type Finding, type MissionId, type View } from "./contracts";
 import { useCampaign } from "./useCampaign";
@@ -299,13 +300,24 @@ function Investigation({ view, game }: { view: View; game: Game }) {
     </>
   );
 }
-function CaseFile({ view, game }: { view: View; game: Game }) {
+function CaseFile({
+  view,
+  game,
+  onDirtyChange,
+}: {
+  view: View;
+  game: Game;
+  onDirtyChange: (dirty: boolean) => void;
+}) {
   const finding = view.finding,
     [review, setReview] = useState(false),
     [buffer, setBuffer] = useState({
       base: finding.notes,
       text: finding.notes,
     });
+  useEffect(() => {
+    onDirtyChange(buffer.text !== finding.notes);
+  }, [buffer.text, finding.notes, onDirtyChange]);
   if (
     buffer.base !== finding.notes &&
     ((!game.temporary && game.readOnly) || buffer.text === buffer.base)
@@ -687,6 +699,7 @@ export default function Campaign({
   const game = useCampaign(missionId),
     pack = packages[missionId],
     [screen, setScreen] = useState("Brief"),
+    [notesDirty, setNotesDirty] = useState(false),
     [confirmRecovery, setConfirmRecovery] = useState(false),
     [confirmReload, setConfirmReload] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null),
@@ -694,10 +707,19 @@ export default function Campaign({
   const audio = useMissionAudio(
     game.view,
     game.debrief,
-    `${missionId}:${screen}`,
+    `${missionId}:${game.view?.runId}:${game.resetKey}:${screen}`,
     audioPacks[missionId],
     active,
   );
+  useEffect(() => {
+    if (!notesDirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [notesDirty]);
   function navigate(next: string) {
     scroll.current[screen] = window.scrollY;
     setScreen(next);
@@ -719,7 +741,7 @@ export default function Campaign({
   }
   return (
     <ComparisonProvider
-      key={game.view?.runId ?? missionId}
+      key={`${game.view?.runId ?? missionId}:${game.resetKey}`}
       records={fromP1(game.debrief ? [] : (game.view?.records ?? []))}
     >
       <div className="app-shell campaign-shell" data-mission={missionId}>
@@ -792,6 +814,27 @@ export default function Campaign({
             ) : null}
           </div>
         </section>
+        {game.view ? (
+          <BackupImport
+            disabled={
+              game.blocked ||
+              game.temporary ||
+              notesDirty ||
+              game.durableRevision !== game.view.revision
+            }
+            replace={game.replace}
+            backups={game.backupIds}
+            download={game.download}
+          />
+        ) : null}
+        {game.requestError ? (
+          <section role="alert">
+            <p>{game.requestError}</p>
+            <button onClick={game.dismissRequestError}>
+              Dismiss import message
+            </button>
+          </section>
+        ) : null}
         <AudioPanel
           audio={audio}
           debrief={null}
@@ -942,7 +985,7 @@ export default function Campaign({
           {game.view ? (
             <>
               <CampaignGuide
-                key={game.view.runId}
+                key={`${game.view.runId}:${game.resetKey}`}
                 view={game.view}
                 audio={audio}
                 show={showHelp}
@@ -1034,7 +1077,12 @@ export default function Campaign({
                 <Investigation view={game.view} game={game} />
               </div>
               <div hidden={screen !== "Case File"}>
-                <CaseFile key={game.view.runId} view={game.view} game={game} />
+                <CaseFile
+                  key={`${game.view.runId}:${game.resetKey}`}
+                  view={game.view}
+                  game={game}
+                  onDirtyChange={setNotesDirty}
+                />
               </div>
               <div hidden={screen !== "Timeline"}>
                 <Timeline view={game.view} game={game} />

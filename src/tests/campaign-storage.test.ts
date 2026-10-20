@@ -2,6 +2,8 @@ import "fake-indexeddb/auto";
 import { beforeEach, expect, it, vi } from "vitest";
 import { createRun, processCommand, acknowledge } from "../campaign/engine";
 import {
+  replaceImported,
+  replacementBackups,
   archiveCompleted,
   commit,
   database,
@@ -125,4 +127,22 @@ it("rejects oversized, hostile and cross-mission records without replacing stora
   expect(() => importSave("[".repeat(65) + "]".repeat(65))).toThrow("nesting");
   await expect(validateRow(before!, "M04")).rejects.toThrow("mission");
   expect(await database.rows.get("active:M07")).toEqual(before);
+});
+
+it("preserves the exact P1 row on validated active replacement and rejects stale replacement", async () => {
+  const old = createRun("M04", "old", "B");
+  await commit(old, null);
+  const row = await database.rows.get("active:M04");
+  const saved = await replaceImported(
+    createRun("M04", "incoming", "M"),
+    "old",
+    0,
+  );
+  expect((await inspect("M04")).state).toEqual(saved);
+  const ids = await replacementBackups("M04");
+  expect(ids).toHaveLength(1);
+  expect(await database.rows.get(ids[0])).toEqual({ ...row!, id: ids[0] });
+  const before = await database.rows.toArray();
+  await expect(replaceImported(old, "old", 0)).rejects.toThrow("changed");
+  expect(await database.rows.toArray()).toEqual(before);
 });

@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 import tailwind from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwind()],
-  build: { target: "es2022" },
+  build: { target: "es2022", manifest: true },
 });

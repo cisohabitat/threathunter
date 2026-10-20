@@ -83,3 +83,24 @@ export function choices(
   );
   return { page: current, last, records: [...batch, ...extras] };
 }
+
+export function fromExpansion(
+  records: import("../expansion/contracts").PublicRecord[],
+): Observation[] {
+  return records.map((r) => ({
+    key: comparisonKey(r.ref),
+    title: r.title,
+    text: r.text,
+    source: r.sourceId.replaceAll("_", " "),
+    lineage: r.lineage,
+    subjects: [...r.entityIds],
+    event:
+      r.eventTick === null
+        ? "No event step specified by this record"
+        : `Event step ${r.eventTick}`,
+    cutoff: r.cutoffTick,
+    delivered: r.deliveredTick,
+    coverage: r.coverage,
+    limits: [...r.caveats],
+  }));
+}

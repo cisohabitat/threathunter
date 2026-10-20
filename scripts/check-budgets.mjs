@@ -10,11 +10,55 @@ const workers = readdirSync("dist/assets")
   .filter((name) => /^validationWorker-.*\.js$/.test(name))
   .map((name) => "/assets/" + name);
 assert(workers.length === 1, "Expected the preloaded save-validation worker");
-const core = [entry, ...workers, ...css].map((path) => ({
-  path,
-  bytes: statSync("dist" + path).size,
-  gzipBytes: gzipSync(readFileSync("dist" + path)).length,
-}));
+const preloads = [
+  ...html.matchAll(/<link[^>]+rel="modulepreload"[^>]+href="([^"]+)"/g),
+].map((m) => m[1]);
+const core = [...new Set([entry, ...preloads, ...workers, ...css])].map(
+  (path) => ({
+    path,
+    bytes: statSync("dist" + path).size,
+    gzipBytes: gzipSync(readFileSync("dist" + path)).length,
+  }),
+);
+const manifest = JSON.parse(readFileSync("dist/.vite/manifest.json", "utf8"));
+const roots = Object.keys(manifest).filter((k) => manifest[k].isEntry);
+assert(roots.length === 1, "Expected one application entry");
+function graph(key, seen = new Set()) {
+  const item = manifest[key];
+  assert(item, `Missing build graph node ${key}`);
+  seen.add(item.file);
+  for (const next of item.imports ?? [])
+    if (!seen.has(manifest[next]?.file)) graph(next, seen);
+  return seen;
+}
+const initialFiles = graph(roots[0]);
+function profile(name, module, workerPattern) {
+  const paths = new Set(initialFiles);
+  if (module) for (const p of graph(module)) paths.add(p);
+  for (const name of readdirSync("dist/assets"))
+    if (workerPattern.test(name)) paths.add("assets/" + name);
+  const bytes = [...paths]
+    .filter((p) => p.endsWith(".js"))
+    .reduce((n, p) => n + gzipSync(readFileSync("dist/" + p)).length, 0);
+  assert(
+    bytes <= 400 * 1024,
+    `${name} active text/worker JavaScript exceeds 400 KiB compressed`,
+  );
+  return { name, gzipJavaScriptBytes: bytes, files: [...paths].sort() };
+}
+const profiles = [
+  profile("M01", null, /^validationWorker-.*\.js$/),
+  profile(
+    "P1 M04/M07",
+    "src/campaign/Campaign.tsx",
+    /^(validationWorker|p1Worker)-.*\.js$/,
+  ),
+  profile(
+    "Expansion/free hunts",
+    "src/expansion/Expansion.tsx",
+    /^(validationWorker|expansionWorker)-.*\.js$/,
+  ),
+];
 const art = JSON.parse(readFileSync("src/presentation/art.json", "utf8"));
 const audio = JSON.parse(
   readFileSync("src/presentation/voice/manifest.json", "utf8"),
@@ -43,19 +87,30 @@ const coreTotal =
   core.reduce((sum, item) => sum + item.gzipBytes, 0) +
   Math.max(...art.compositions.map((c) => c.bytes));
 assert(coreTotal <= 2 * 1024 * 1024, "Critical assets exceed 2 MiB");
-const p1JavaScript = readdirSync("dist/assets")
-  .filter((name) => name.endsWith(".js") && !name.startsWith("mixer-"))
+const allShippedJavaScript = readdirSync("dist/assets")
+  .filter((name) => name.endsWith(".js"))
   .reduce(
     (sum, name) => sum + gzipSync(readFileSync("dist/assets/" + name)).length,
     0,
   );
-assert(
-  p1JavaScript <= 400 * 1024,
-  "Loaded P1 text/worker JavaScript exceeds 400 KiB compressed",
-);
-const p1Packs = ["m04", "m07"].map((mission) => {
+const p1Packs = [
+  "m04",
+  "m07",
+  "m02",
+  "m03",
+  "m05",
+  "m06",
+  "m08",
+  "m09",
+  "m10",
+  "m11",
+  "m12",
+].map((mission) => {
   const pack = JSON.parse(
-    readFileSync(`src/campaign/audio/${mission}/manifest.json`, "utf8"),
+    readFileSync(
+      `src/${mission === "m04" || mission === "m07" ? "campaign" : "expansion"}/audio/${mission}/manifest.json`,
+      "utf8",
+    ),
   );
   const voice = pack.cues
       .filter((c) => c.text)
@@ -80,7 +135,10 @@ console.log(
       criticalTotalWithLargestArt: coreTotal,
       voiceBytes,
       soundBytes,
-      p1LoadedJavaScriptGzipBytes: p1JavaScript,
+      activeCaseProfiles: profiles,
+      allShippedJavaScriptGzipBytes: allShippedJavaScript,
+      budgetMethod:
+        "400 KiB applies to the cold active-case text graph plus loaded workers; all shipped JavaScript is reported separately. Initial modulepreloads are included.",
       p1Packs,
       physicalDevicePerformance: "not measured",
     },

@@ -20,6 +20,61 @@
       "path": "m07-voice-masters-v1.zip",
       "bytes": 4483839,
       "sha256": "2471e1b33857627c5f258734df756a0dec4bb8b7b7b379dec5e93a8b7831267d"
+    },
+    {
+      "path": "expansion-nudge-masters-v2.zip",
+      "bytes": 2303044,
+      "sha256": "836c3425081baba252ece205deb1264514d8f562c17b9dc6302cad0acd942bde"
+    },
+    {
+      "path": "expansion-shared-voice-masters-v1.zip",
+      "bytes": 4255543,
+      "sha256": "fe09a47bdcf4de01b936442abcc8a14de8479eb783645a2de585909d50f7bd6d"
+    },
+    {
+      "path": "m02-voice-masters-v1.zip",
+      "bytes": 1129738,
+      "sha256": "b400701800cb92b5edeaf684348661048fb670fc2fa9ec769f766e26df3ad4b1"
+    },
+    {
+      "path": "m03-voice-masters-v1.zip",
+      "bytes": 1180347,
+      "sha256": "580266c205aa2edcc2b04f7def3b178f7db056bdbc29d499b6cdfc7f4630575a"
+    },
+    {
+      "path": "m05-voice-masters-v1.zip",
+      "bytes": 1178776,
+      "sha256": "2278dba85c702f3d0a2a692109f383e49077dfb4af44fcc659a3492c5caa7f05"
+    },
+    {
+      "path": "m06-voice-masters-v1.zip",
+      "bytes": 1107478,
+      "sha256": "9998fb1e13fa9f52e6179d71fe1366904ea2d8e25eabf212898208d7e84429fe"
+    },
+    {
+      "path": "m08-voice-masters-v1.zip",
+      "bytes": 1151316,
+      "sha256": "dc479a4eee012267496b283b30f7751d6914fac3f7300fe219443ee9a2da8a20"
+    },
+    {
+      "path": "m09-voice-masters-v1.zip",
+      "bytes": 1042186,
+      "sha256": "e8b5a51c26ff195a1810c3c0aab23539670bf428fa9dfda7f9359537a78e640a"
+    },
+    {
+      "path": "m10-voice-masters-v1.zip",
+      "bytes": 1088756,
+      "sha256": "aaa88843cee9ba942d937bf1791773e09a9c48697418a65a01b20da2930e7c2d"
+    },
+    {
+      "path": "m11-voice-masters-v1.zip",
+      "bytes": 1185909,
+      "sha256": "7c633e79330f6d4b2956b6cd7591da4673bac5155a8d18b2ac8a448eb71faa99"
+    },
+    {
+      "path": "m12-voice-masters-v1.zip",
+      "bytes": 1160135,
+      "sha256": "fbd4a57d075b3335cd0aefb58677b84eb06715b20ca4ab3f087d0ecf4b13d610"
     }
   ],
   "audio": [

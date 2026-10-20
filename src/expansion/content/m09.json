@@ -1,0 +1,636 @@
+{
+  "missionId": "M09",
+  "version": "1.0.0",
+  "rubricVersion": "expansion-1.0.0",
+  "policyVersion": "m09-scoped-response-1",
+  "title": "The Silent Administrator",
+  "trigger": "Privilege review",
+  "question": "Did emergency access authorise this particular task, target and interval?",
+  "briefing": "An administrator activated emergency access during a customer-service repair. The grant is real, but elevated permission is not approval for every possible action. Your authority is to acquire records and recommend a session-scoped response through Privileged Access Response. You cannot approve your own control or disable an entire account or service.",
+  "lesson": "Authorisation is permission for a defined task and scope; privilege is the technical ability to perform an action.",
+  "worlds": [
+    "B",
+    "M",
+    "U-B",
+    "U-M"
+  ],
+  "entities": [
+    {
+      "id": "GRANT-S9",
+      "name": "Emergency-access grant session",
+      "purpose": "Emergency-access grant session",
+      "owner": "Privileged Access Response",
+      "impact": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access.",
+      "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+      "dependency": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access."
+    },
+    {
+      "id": "REPAIR-09",
+      "name": "REPAIR-09 context",
+      "purpose": "Related context that must be assessed separately",
+      "owner": "Northstar Operations",
+      "impact": "Do not generalise the primary session finding to this separate scope.",
+      "capability": "Only the explicitly delivered relationship and source records.",
+      "dependency": "A separate task or observation does not supply approval for the primary session."
+    }
+  ],
+  "initialEntities": [
+    "REPAIR-09"
+  ],
+  "initialScope": "REPAIR-09",
+  "primaryTarget": "GRANT-S9",
+  "mechanic": {
+    "kind": "grant",
+    "question": "Did emergency access authorise this particular task, target and interval?",
+    "options": [
+      {
+        "id": "grant-scope",
+        "label": "Compare the grant\u2019s task, target and interval with the recorded action"
+      },
+      {
+        "id": "privilege-is-permission",
+        "label": "Treat technical privilege as approval for every task"
+      },
+      {
+        "id": "emergency-exempts",
+        "label": "Assume emergency access removes all scope limits"
+      }
+    ],
+    "supportedChoice": "grant-scope",
+    "requires": [
+      "baseline"
+    ],
+    "claims": [
+      {
+        "id": "grant-authority",
+        "label": "Grant authority"
+      },
+      {
+        "id": "repair-task",
+        "label": "Repair task"
+      },
+      {
+        "id": "observed-use",
+        "label": "Observed use"
+      }
+    ],
+    "priorities": [
+      "GRANT-S9",
+      "REPAIR-09"
+    ],
+    "unsupportedChoices": [
+      "privilege-is-permission",
+      "emergency-exempts"
+    ]
+  },
+  "limits": [
+    {
+      "id": "scope",
+      "label": "A valid privileged grant does not authorise every technically possible action or establish who operated it.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Unavailable collection does not establish that no activity occurred.",
+      "requires": [
+        "context_gap",
+        "activity_gap",
+        "independent_gap",
+        "verified_gap"
+      ]
+    },
+    {
+      "id": "operator",
+      "label": "The source identifies a session or credential, not a person or motive.",
+      "requires": [
+        "opening"
+      ]
+    },
+    {
+      "id": "separate",
+      "label": "Other scopes and their remaining questions need their own evidence.",
+      "requires": [
+        "baseline"
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "baseline",
+      "label": "Establish the task and business consequence",
+      "sourceId": "scope_catalogue",
+      "source": "Scope and dependency catalogue",
+      "question": "What is this service for, and which consequences change investigation priority?",
+      "can": "Names the normal task, related scopes, owners and interruption consequence.",
+      "cannot": "Does not establish who performed the current action.",
+      "targets": [
+        "all"
+      ],
+      "static": true,
+      "factIds": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "context",
+      "label": "Check the exact work authorisation",
+      "sourceId": "work_register",
+      "source": "Work authorisation register",
+      "question": "Does approved work cover this session, task, target and period?",
+      "can": "Tests the specific business explanation.",
+      "cannot": "Does not prove the human operator or the activity that actually occurred.",
+      "targets": [
+        "GRANT-S9"
+      ],
+      "static": true,
+      "factIds": [
+        "context_B",
+        "context_M",
+        "context_gap"
+      ]
+    },
+    {
+      "id": "activity",
+      "label": "Inspect the scoped session activity",
+      "sourceId": "session_audit",
+      "source": "Session activity audit",
+      "question": "Which action was recorded for this named session within collection limits?",
+      "can": "Records session-level actions and the observed target.",
+      "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+      "targets": [
+        "GRANT-S9"
+      ],
+      "static": false,
+      "factIds": [
+        "activity_B",
+        "activity_M",
+        "activity_gap",
+        "later_activity_B",
+        "later_activity_M"
+      ]
+    },
+    {
+      "id": "independent",
+      "label": "Check the service transaction independently",
+      "sourceId": "service_journal",
+      "source": "Independent service journal",
+      "question": "Does the service-side transaction establish the same scoped operation?",
+      "can": "Tests the operation through a separately collected service transaction.",
+      "cannot": "A second card alone does not establish a sufficient explanation.",
+      "targets": [
+        "GRANT-S9"
+      ],
+      "static": false,
+      "factIds": [
+        "independent_B",
+        "independent_M",
+        "independent_gap",
+        "later_independent_B",
+        "later_independent_M"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "opening",
+      "recordId": "R00",
+      "title": "Starting observations",
+      "text": "An administrator activated emergency access during a customer-service repair. The grant is real, but elevated permission is not approval for every possible action.",
+      "sourceId": "review_briefing",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "REPAIR-09"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "review_briefing-R00",
+      "originId": "catalogue-review_briefing",
+      "caveats": []
+    },
+    {
+      "id": "baseline",
+      "recordId": "R01",
+      "title": "Task, scope and business consequence",
+      "text": "The emergency grant permits restarting a customer-service worker and inspecting its error counters during the repair window. It does not authorise exporting the customer directory.",
+      "sourceId": "scope_catalogue",
+      "worlds": [
+        "B",
+        "M",
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "GRANT-S9",
+        "REPAIR-09"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "scope_catalogue-R01",
+      "originId": "catalogue-scope_catalogue",
+      "caveats": []
+    },
+    {
+      "id": "context_B",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The repair authorisation records the grant session, customer-service worker and counter-inspection task for the declared window.",
+      "sourceId": "work_register",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_B",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The emergency grant session inspected worker counters and restarted the approved worker inside the repair window; the recorded scope matches the authorisation.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_B",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The privileged-access journal independently links the grant session to the authorised worker restart and repair record.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_B",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The repair authorisation records the grant session, customer-service worker and counter-inspection task for the declared window. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_M",
+      "recordId": "R02",
+      "title": "The specific work authorisation",
+      "text": "The repair authorisation covers worker restart and error counters only. No approval covers a customer-directory export through the emergency grant session.",
+      "sourceId": "work_register",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_M",
+      "recordId": "R03",
+      "title": "Recorded session activity",
+      "text": "The grant session exported a customer-directory dataset outside the authorised repair task. Having the technical privilege does not establish permission for that action.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "session_audit-R03",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "independent_M",
+      "recordId": "R04",
+      "title": "An independently collected transaction",
+      "text": "The customer application audit independently records the directory export under the grant session; the linked repair record permits no such export.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "lineage": "service_journal-R04",
+      "originId": "session-action",
+      "caveats": []
+    },
+    {
+      "id": "verified_M",
+      "recordId": "VR01",
+      "title": "Verified business-context response",
+      "text": "A pre-established directory contact confirmed the task record: The repair authorisation covers worker restart and error counters only. No approval covers a customer-directory export through the emergency grant session. This confirms the business record, not the person operating the session.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "lineage": "directory_callback-VR01",
+      "originId": "verified-contact",
+      "caveats": []
+    },
+    {
+      "id": "context_gap",
+      "recordId": "R02",
+      "title": "Work record unavailable",
+      "text": "The work-authorisation archive is unavailable for the named session and period. No approval or denial can be inferred.",
+      "sourceId": "work_register",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "work_register-R02",
+      "originId": "catalogue-work_register",
+      "caveats": []
+    },
+    {
+      "id": "activity_gap",
+      "recordId": "R03",
+      "title": "Session collection unavailable",
+      "text": "The session-audit source did not collect the relevant historical interval. Absence of a record cannot establish the absence of activity.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "session_audit-R03",
+      "originId": "catalogue-session_audit",
+      "caveats": []
+    },
+    {
+      "id": "independent_gap",
+      "recordId": "R04",
+      "title": "Independent collection is limited",
+      "text": "The independent service journal lacks the target application operation for the historical interval. A different source name does not restore that capability.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "service_journal-R04",
+      "originId": "catalogue-service_journal",
+      "caveats": []
+    },
+    {
+      "id": "verified_gap",
+      "recordId": "VR01",
+      "title": "Verified check timed out",
+      "text": "The pre-established directory contact did not respond by the stated due step. This is a delivered limitation, not approval or a reason to wait indefinitely.",
+      "sourceId": "directory_callback",
+      "worlds": [
+        "U-B",
+        "U-M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "lineage": "directory_callback-VR01",
+      "originId": "catalogue-directory_callback",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_B",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_B",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation within the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "B"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "follow-on",
+      "caveats": []
+    },
+    {
+      "id": "later_activity_M",
+      "recordId": "R05",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "session_audit",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "session_audit-later-operation",
+      "originId": "objective",
+      "caveats": []
+    },
+    {
+      "id": "later_independent_M",
+      "recordId": "R06",
+      "title": "A later scoped transaction",
+      "text": "The named session performed a further source-recorded operation outside the specifically approved task. This later event does not identify the person, establish motive or change any earlier snapshot.",
+      "sourceId": "service_journal",
+      "worlds": [
+        "M"
+      ],
+      "entityIds": [
+        "GRANT-S9"
+      ],
+      "eventTick": 8,
+      "availableAt": 8,
+      "coverage": "covered",
+      "lineage": "service_journal-later-operation",
+      "originId": "objective",
+      "caveats": []
+    }
+  ],
+  "sufficient": {
+    "explained": [
+      [
+        "opening",
+        "baseline",
+        "context_B",
+        "activity_B"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_B",
+        "independent_B"
+      ]
+    ],
+    "misuse": [
+      [
+        "opening",
+        "baseline",
+        "context_M",
+        "activity_M"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_M",
+        "independent_M"
+      ]
+    ],
+    "visibility": [
+      [
+        "opening",
+        "baseline",
+        "context_gap",
+        "activity_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap",
+        "independent_gap"
+      ]
+    ],
+    "provisional": [
+      [
+        "opening",
+        "baseline",
+        "context_gap"
+      ],
+      [
+        "opening",
+        "baseline",
+        "verified_gap"
+      ]
+    ]
+  },
+  "response": {
+    "targetId": "GRANT-S9",
+    "owner": "Privileged Access Response",
+    "delayTicks": 2,
+    "windowTicks": 2,
+    "control": "Restrict only the named organisation-controlled session",
+    "requiredFacts": [
+      "activity_M",
+      "independent_M"
+    ],
+    "objectiveTick": 8,
+    "objective": "A further out-of-scope operation completes through the same session if its access remains active.",
+    "dependency": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access."
+  },
+  "sensorEnabled": false,
+  "glossary": [
+    {
+      "term": "Grant",
+      "definition": "Authorisation is permission for a defined task and scope; privilege is the technical ability to perform an action."
+    },
+    {
+      "term": "Source boundary",
+      "definition": "The target, operation and interval a source is capable of observing."
+    },
+    {
+      "term": "Scope",
+      "definition": "The explicitly named session or service covered by a claim and next action."
+    }
+  ],
+  "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+}

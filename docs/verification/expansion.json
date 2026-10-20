@@ -1,0 +1,114 @@
+{
+  "capturedAt": "2026-10-20T12:21:32.996Z",
+  "url": "http://127.0.0.1:4173",
+  "entry": "/assets/index-BDL_5sTL.js",
+  "entrySha256": "3f3bedc17f3e93c24f46e33f6d92cd1247854224d1f913f5633563fb0a8e4e24",
+  "method": "Actual production preview; imported audited fixtures; public workspaces; reading/export equality; weak explicit closure and exact reload; WCAG A/AA samples at desktop and 320px; long-history background import. Full maximum-credit player flows are separately covered by e2e/expansion.spec.ts.",
+  "missions": [
+    {
+      "mission": "M02",
+      "frame": "docs/verification/screens/24-m02-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M03",
+      "frame": "docs/verification/screens/25-m03-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M05",
+      "frame": "docs/verification/screens/26-m05-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M06",
+      "frame": "docs/verification/screens/27-m06-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M08",
+      "frame": "docs/verification/screens/28-m08-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M09",
+      "frame": "docs/verification/screens/29-m09-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M10",
+      "frame": "docs/verification/screens/30-m10-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M11",
+      "frame": "docs/verification/screens/31-m11-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    },
+    {
+      "mission": "M12",
+      "frame": "docs/verification/screens/32-m12-workspace.png",
+      "desktopAxeViolations": 0,
+      "phoneAxeViolations": 0,
+      "phoneWidth": 320,
+      "readingPortableEquality": true,
+      "closureReloadEquality": true,
+      "closedRevision": 5
+    }
+  ],
+  "longHistory": {
+    "commands": 1000,
+    "bytes": 674185,
+    "importMs": 5284.678864000016,
+    "heartbeat": {
+      "callbacks": 211,
+      "maxGapMs": 819.6999999955297
+    },
+    "timelineVisibleItems": 50,
+    "exportCommands": 1000,
+    "reloaded": true
+  },
+  "freeHuntImported": true,
+  "physicalDevicePerformance": "not measured",
+  "humanReview": "deferred/unpassed"
+}

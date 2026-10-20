@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-20",
+  "reviewStatus": "pending-human-listening",
+  "modelSha256": "5d4f08ba6a2a48c44592eed3ce56bf85e9de3dd4e20df90541ae68a8310c029a",
+  "archive": "production/expansion-nudge-masters-v2.zip",
+  "archiveBytes": 2303044,
+  "archiveSha256": "836c3425081baba252ece205deb1264514d8f562c17b9dc6302cad0acd942bde",
+  "files": [
+    {
+      "missionId": "M02",
+      "path": "m02/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Which alert deserves the first scoped investigation when severity and business impact disagree? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m02/morgan-1-v1.mp3",
+        "durationMs": 15020,
+        "bytes": 90348,
+        "sha256": "64911f92660c901108172ae010b90dabdc3aae76545e714cdb7869b86a2fd20b"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Compare business consequence with alert severity. Choose which known scope deserves investigation first; a louder alert is not automatically more important.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m02/morgan-1-v2.mp3",
+        "durationMs": 10057,
+        "bytes": 60569,
+        "sha256": "733223e6a811ab8f9c821e0e869d1dcfc041bf0ca6b2e3812f21c244216d39d0"
+      },
+      "wavSha256": "2810337100ae338c9cbce84d0179951b136c497a593550ec275d8d1d08da9b06",
+      "flacSha256": "27eec0888f5889f8674658853cbb9004836ee9042d904bc7fb632383053910e3",
+      "pcmSha256": "5866aa00888f0fd78f8672e53400dfdb59b68c7c347a0979859dfefcea57b623"
+    },
+    {
+      "missionId": "M03",
+      "path": "m03/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Does a familiar account\u2019s activity fit its assigned task, without using the employee\u2019s reputation as evidence? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m03/morgan-1-v1.mp3",
+        "durationMs": 16274,
+        "bytes": 97871,
+        "sha256": "8d0bf1e2c6de6243ae34de86cc6eb575706e5fbd3313bdf3c47a201c68e0d2cb"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Test the task, destination and actual session action. A familiar account or a trusted colleague does not establish current authorisation.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m03/morgan-1-v2.mp3",
+        "durationMs": 9561,
+        "bytes": 57591,
+        "sha256": "ade37353052b209194231813b3b8a53774eb900a96cd14b81aceed116e935763"
+      },
+      "wavSha256": "a1c2fc673fa419821a594dfa2ae9315778b7b090c74e632a523815cba486b9ad",
+      "flacSha256": "6421c75fae7f387d7165403634c84b11641e47b0637eaecbb6c4f86a4f99fefc",
+      "pcmSha256": "e6e2714137a4b8b1f01983eafecf78c543f49332747305409e55977b8b386af0"
+    },
+    {
+      "missionId": "M05",
+      "path": "m05/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. What can credential-use evidence establish, and which person-attribution claims remain unsupported? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m05/morgan-1-v1.mp3",
+        "durationMs": 15621,
+        "bytes": 93953,
+        "sha256": "7fdca955e1f45d23bc5aae526166ca9013ba5e35c8b51b42fe38fb6fb2be9720"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Separate credential use from person attribution. Check the specific session and task; a credential label alone does not identify the operator.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m05/morgan-1-v2.mp3",
+        "durationMs": 9352,
+        "bytes": 56337,
+        "sha256": "e755e5f2f9486f03897037a33884381c7b294e35a6a41114a61ea39a46260d76"
+      },
+      "wavSha256": "dd38e677dd1235427176609769e5c291798e7e1c4546441378799cfa6d53aef8",
+      "flacSha256": "8dac94bdbfb955543da9c551526415720f6320ea2695b00fd739944b11755e41",
+      "pcmSha256": "c49600dd9c6a9cc4fee0c639fe90de7ce46aa6a63bdb56a2c9f4076346e25ca3"
+    },
+    {
+      "missionId": "M06",
+      "path": "m06/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Does a cross-system connection fit a specific management task or extend beyond it? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m06/morgan-1-v1.mp3",
+        "durationMs": 14393,
+        "bytes": 86587,
+        "sha256": "47ba642ce73460e16f75057aa1d01f123ad35fc35e563cc0ff975fe93b70ba24"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Follow the acquired management path. Compare its actual target with the approved task before calling a cross-system connection suspicious.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m06/morgan-1-v2.mp3",
+        "durationMs": 8490,
+        "bytes": 51165,
+        "sha256": "1455974f58e2ba9adb505247a9c51df00226a9cf29f510393e2d7dcc37a806e0"
+      },
+      "wavSha256": "371b4fb7837d36e7eeac15094d19f554bf62302b11c37f24f78661aaf8d22faa",
+      "flacSha256": "614987273c0dba41fa1c0cbe39aea66963753d3288af6b2ad26669b6841339d1",
+      "pcmSha256": "c4af7e06cfc74799c5ec4ff5569a74e4f99718b4c096204c02725f6fdfe7f4f7"
+    },
+    {
+      "missionId": "M08",
+      "path": "m08/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Which cloud identity and workload boundary can explain an application action that endpoint records cannot cover? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m08/morgan-1-v1.mp3",
+        "durationMs": 16144,
+        "bytes": 97088,
+        "sha256": "10f5a3ca19d35416c081b924cd1659e850c1cecaa37e2b52b7e8bdb34c5ad2ce"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Follow the application\u2019s acquired workload relationship. Choose a source that can observe the cloud action; a quiet endpoint has a different boundary.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m08/morgan-1-v2.mp3",
+        "durationMs": 9247,
+        "bytes": 55710,
+        "sha256": "916b591bfca0e8ce63a998e9f0d64dd1ff31a41beb9b3b3482c6439717d907d0"
+      },
+      "wavSha256": "3bbe4fdfc75c24686b9a7d3fade0feed7dc20cb7a5ee6691fd330521404faaf9",
+      "flacSha256": "f9c99b7fc6a9aa922576be0b9d82317a1654ea2b301568fa96753edd4909f34b",
+      "pcmSha256": "4a32dbf25fb0e8937a54b1b59863c873f9366b85b2d0cff3d316896e4dba45d0"
+    },
+    {
+      "missionId": "M09",
+      "path": "m09/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Did emergency access authorise this particular task, target and interval? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m09/morgan-1-v1.mp3",
+        "durationMs": 14602,
+        "bytes": 87840,
+        "sha256": "4d8ab58e44d0ad759f5aecedd5293dfa26ac78063503e5923da8bb1a10e6ce2d"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Compare the emergency grant\u2019s task, target and interval with the recorded action. Technical privilege alone does not establish authorisation.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m09/morgan-1-v2.mp3",
+        "durationMs": 8829,
+        "bytes": 53202,
+        "sha256": "72aca5c925ad911525321c3166ad0f1b172b1ecff4ae7136b49622949fdd30b7"
+      },
+      "wavSha256": "7c573f7fd30d99127a903e9097696ec79036d12787d099de652ddd477057ce21",
+      "flacSha256": "7f9024b44d9f283e76c1a3c61222ba74157c832679523017deb167e2bd76f88b",
+      "pcmSha256": "7a799140d0f615cea89d22775213dba3c69435251168736ac4b7e86f11fdb86f"
+    },
+    {
+      "missionId": "M10",
+      "path": "m10/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Which behaviour can be established without turning a policy observation into a claim about motive? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m10/morgan-1-v1.mp3",
+        "durationMs": 14838,
+        "bytes": 89251,
+        "sha256": "989dca20fdd8cbd775e151a51a5c6fc7d1d2510caf9e8cbf25534b5179ae7b52"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Establish the behaviour and approval boundary. Keep motive and person identity separate from what a source can actually record.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m10/morgan-1-v2.mp3",
+        "durationMs": 7523,
+        "bytes": 45365,
+        "sha256": "1fb52073f51f08ff19b2c93c7fc7ff4e63f4967248e278e25691cd417c234554"
+      },
+      "wavSha256": "67229a2536098cdbb4ac5b613388e7b6cf8eb0166d384d996ebcc52ef4627b77",
+      "flacSha256": "25c6e98c5217b313ab5ce0c17f886ab1df63712e870e3ef522fb351f405887d1",
+      "pcmSha256": "72b1718c2e728de63ff8ea1db1d79c5bdc580a8e58ee657a1671dfb09390f5eb"
+    },
+    {
+      "missionId": "M11",
+      "path": "m11/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. Do several suspicious observations share one explanation, or should their causal claims stay separate? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m11/morgan-1-v1.mp3",
+        "durationMs": 15569,
+        "bytes": 93640,
+        "sha256": "3da59c84afe00284d9a651bc918981558f62f86d04f4101355641df304297acf"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Test each causal explanation separately. Join observations only when an acquired relationship supports the link, rather than relying on shared timing.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m11/morgan-1-v2.mp3",
+        "durationMs": 9404,
+        "bytes": 56650,
+        "sha256": "75dd2628b38688589f2291170260aad1a776c52897c431fb7a5eea90c13cc014"
+      },
+      "wavSha256": "5587bb083daf959daf7d89828fa934598ced0f75203fcb85189184afb3eee269",
+      "flacSha256": "d316f28e97f8a71a8fdb6f5fad7a6d411196d43ce0053cb9ebaf61d6a472711d",
+      "pcmSha256": "2d9ef6037a5dcf414157e686a409280011ed8d2e04aa32cd217168ac0401ec83"
+    },
+    {
+      "missionId": "M12",
+      "path": "m12/morgan-1-v2.flac",
+      "previousCue": {
+        "id": "morgan-1",
+        "text": "Start with the task and business consequence. What should be handed over first when one service has a scoped action and another has an unresolved coverage gap? Choose a source that can test this question; a label or familiar identity is not a verdict.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m12/morgan-1-v1.mp3",
+        "durationMs": 15856,
+        "bytes": 95364,
+        "sha256": "410d34de2f5cff7973ee980538acd395a36f995ab59feee73da55ebbe1ecb26c"
+      },
+      "activeCue": {
+        "id": "morgan-1",
+        "text": "Prioritise the supported scope and preserve the separate collection gap. A useful handoff names owners and follow-ups without requiring certainty about every system.",
+        "when": "player_requested_baseline_hint",
+        "speaker": "Morgan (synthetic)",
+        "language": "en-US",
+        "audioPath": "/audio/m12/morgan-1-v2.mp3",
+        "durationMs": 11677,
+        "bytes": 70286,
+        "sha256": "9cd62d2506f97ef94f451f59ef96e2f49a53c8cd99a93ece247664dee9176d4b"
+      },
+      "wavSha256": "25c52cff26c9b0cfda69171b3a5c26b17d66eae7831b7d794dc74dbc50ad311f",
+      "flacSha256": "377784ed6c664bc4b48629bf1636df060ed89e5b0bd36cc6699330ebc54d9a8f",
+      "pcmSha256": "8f3315d53d979683c912c6f7e894b4822bf925cad2542c16f0cb413e5b65ca00"
+    }
+  ]
+}

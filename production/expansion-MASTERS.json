@@ -1,0 +1,316 @@
+{
+  "date": "2026-10-20",
+  "reviewStatus": "pending-human-listening",
+  "method": "Piper 1.8.0; stock en_US-ljspeech-high; no cloning. Shared neutral scripts are literal shared deliveries, not hidden-branch subsets. Existing M01 interface sounds reused unchanged.",
+  "modelSha256": "5d4f08ba6a2a48c44592eed3ce56bf85e9de3dd4e20df90541ae68a8310c029a",
+  "files": [
+    {
+      "path": "expansion-shared/morgan-2.flac",
+      "wavSha256": "913b8a4cb5150acdb237aaf443657e5b326bad132650270d4e1134762e6916b6",
+      "flacSha256": "5acb2de65327b3b698d9e17d216b3638e41cf47f6b94463d224b6df7d03c0b5e",
+      "pcmSha256": "e1bba2a57bad1d7cb18585c4bc8dde1e59c40cc7893ae349be5202bd6a840b2f",
+      "deliveryPath": "/audio/expansion-shared/morgan-2-v1.mp3",
+      "deliverySha256": "9b50e0c184a08966d79aa6027ae010031c4ce175d7d8643a70d187fe665e1460"
+    },
+    {
+      "path": "expansion-shared/morgan-3.flac",
+      "wavSha256": "dd631ef1dd8ac11231eae86f33243e766f3aa66dc45e20d8e9e6947ec74111cb",
+      "flacSha256": "723209316147658cacf2ffa505d3ace174ae7f83b93d117aeeb0c69a15a9ea09",
+      "pcmSha256": "8fb0ca50b8377d12338cc6d4dccd6496bb8d18c311401f2afd27631efe2d0c12",
+      "deliveryPath": "/audio/expansion-shared/morgan-3-v1.mp3",
+      "deliverySha256": "3d65ea178f3b8e96d267ac4e7e9454ba89fe8067c23925b92e3c29d92ef230e2"
+    },
+    {
+      "path": "expansion-shared/morgan-4.flac",
+      "wavSha256": "d45488fdc7d2a2de4fd78efb87ca22332abf9fe6f4f9f5313e2d731e1d28f841",
+      "flacSha256": "eebeaf6b1dc92071b623fa6f2462cbef5f287d707add061389915d6dbd026bc2",
+      "pcmSha256": "145a4bba0989064048dc861d9f985c39620d021f6c856b650eef10d00c06f7df",
+      "deliveryPath": "/audio/expansion-shared/morgan-4-v1.mp3",
+      "deliverySha256": "9e781f99f95af4e7600b0a0c69d7527155c784634cff5bde933d43ffa293732e"
+    },
+    {
+      "path": "expansion-shared/morgan-5.flac",
+      "wavSha256": "b89d2dc6376753bbefc2ddae97b28ac5b2a502b2c025907e27f95fe9424a395c",
+      "flacSha256": "e9aa29337bc30448aac9c882f30736b9c7a44e4a6a47907cf321a31c8cd7a7f7",
+      "pcmSha256": "8a7f3ec199ffc9754fa500478dac365f2b3ee97af0a25b53c5614575e9fe0077",
+      "deliveryPath": "/audio/expansion-shared/morgan-5-v1.mp3",
+      "deliverySha256": "2a544af371d1020ac023f2e5996af69515c4e62a0c3ced68ef3da9e710197854"
+    },
+    {
+      "path": "expansion-shared/morgan-6.flac",
+      "wavSha256": "2756973d1731d245ae9045d72cd8699b87be8433ff05a0fbf4bd100a5ac0a5f8",
+      "flacSha256": "da9ebd44b259a0e6c6da19386b907f83ddec23a6f7b33687dfa5fb773f56bed6",
+      "pcmSha256": "2cb8e7a36f840bc16945f89bd44e202ce3eed12ec7230e8a863e44b39efdd12d",
+      "deliveryPath": "/audio/expansion-shared/morgan-6-v1.mp3",
+      "deliverySha256": "0748fb48ce8c5b6e9a81c15364737d5e461455c1dbddfae74cefcd9a9184ef48"
+    },
+    {
+      "path": "expansion-shared/check-ready.flac",
+      "wavSha256": "575efe50f60d8344e79e15e433cedf187bb2dc534e276cf8cd8247b222cd1c9c",
+      "flacSha256": "6d24667c1c48729df9b0d80c96a429c7d6f304c0aa6cbd6a10f708c747eb7eed",
+      "pcmSha256": "41d682d6687277adead457144bbfa618fdd0796dff21833212f32b66ada79cec",
+      "deliveryPath": "/audio/expansion-shared/check-ready-v1.mp3",
+      "deliverySha256": "afe9ae8e22332250f4b9bd6cb39e28d485e027415a97b97474cf3a0906ae7d6e"
+    },
+    {
+      "path": "expansion-shared/report-submitted.flac",
+      "wavSha256": "fb52e0b206725efbb213f96c9fec81df9ee575dd577752e0e28592b1823e9378",
+      "flacSha256": "53f41948de70260040e2e9f3a6e2d68f64d59ef7060aebc17f1f8016c7b49105",
+      "pcmSha256": "870acd3a6d82d1a727dd2ea85d1edddd585c573964afbbf1a8da52bab45b667c",
+      "deliveryPath": "/audio/expansion-shared/report-submitted-v1.mp3",
+      "deliverySha256": "2eac9d3031a384caa63fdc5f699483183ac22b69f4c4e7f2e666b40378b55167"
+    },
+    {
+      "path": "expansion-shared/finding-explained.flac",
+      "wavSha256": "7edbd4c8d92b90061f65052decbf38d12d8cb0acae3d35abd04d08fb95485167",
+      "flacSha256": "23c02a43e2de8722154c454b4d9cf4586c81a2ed38f58ed050ce2885f900121d",
+      "pcmSha256": "7e263a572786392f8ec9d2890244f958eb3a7c0ef77240739136dd22897aca4a",
+      "deliveryPath": "/audio/expansion-shared/finding-explained-v1.mp3",
+      "deliverySha256": "1c86dcabab4a0d9e82f4789975ef2a6753fd7f4902da2891d1889f034162c627"
+    },
+    {
+      "path": "expansion-shared/finding-misuse.flac",
+      "wavSha256": "0f23e4d3f203b06271045b3b20d60413b2ef83e4e704407a28bc6d4b60d5f127",
+      "flacSha256": "2f8808314be2e1f6c102c8561c9c8399a575de27c0146587c584b6d2d19757fe",
+      "pcmSha256": "d2edccb7e7d38284b324460c20d0a535f8ec6c6a6304e48169e6cfab1e5c33a0",
+      "deliveryPath": "/audio/expansion-shared/finding-misuse-v1.mp3",
+      "deliverySha256": "6b706e9c9902f537f8da4b79e0f484ca8bde0d55781b7f3318a8561fec1c1294"
+    },
+    {
+      "path": "expansion-shared/finding-visibility.flac",
+      "wavSha256": "cf0dd24acf231c017e16f3bf299eb074d75f8bec9293c7cafae11b965dad9926",
+      "flacSha256": "de8cf0d223df4402e6e37adf89cf5e595d60f82cb3f69b5489b62226da3829c9",
+      "pcmSha256": "488f8be85b36768a9b462ad6c1a05da46c3263e27ef0de6d45ba8c01bf8f01a5",
+      "deliveryPath": "/audio/expansion-shared/finding-visibility-v1.mp3",
+      "deliverySha256": "bbb484484df5cd757eb6be8aecf1de2b9409a640b80fbf40fdc6c53d71efc610"
+    },
+    {
+      "path": "expansion-shared/finding-provisional.flac",
+      "wavSha256": "7bddd1806ff2077d899b27233b8c968037261b29a518cb8231f404e4ed7d66a6",
+      "flacSha256": "b1fcb8a851cf4f6a393400f338e584a3da7cd39a163c3dde00f4236bc7bc607c",
+      "pcmSha256": "e279c8c2afa5466281090b3bbf3c2a38fca1ac96064bee73e15073a9fbc71a92",
+      "deliveryPath": "/audio/expansion-shared/finding-provisional-v1.mp3",
+      "deliverySha256": "95caabab4e0c1154129fd4c81c272d580e1fdd7333cad6d542fb15282b2ebd11"
+    },
+    {
+      "path": "expansion-shared/finding-unsupported.flac",
+      "wavSha256": "4f2a12c95768110758b824413237fec231f513373f1a7dd4bca97f0d5b528d8b",
+      "flacSha256": "e5eb2a1cb9dc2e270aba8a7acea0f0842b0381b9bda09f1379b41765f7595454",
+      "pcmSha256": "e3945538d5b86a27318303bad85e1aeb0510b36133bc7bbbe0b67b54db8db29f",
+      "deliveryPath": "/audio/expansion-shared/finding-unsupported-v1.mp3",
+      "deliverySha256": "36d57f1ba57a4e8a838db3844718b77fc3d954554bd2acda4779e88c06533871"
+    },
+    {
+      "path": "expansion-shared/outcome-occurred.flac",
+      "wavSha256": "7fef86dfe5a7674a6f572e105b05aaabc5cd0f7faad948e70e130a64c2daade1",
+      "flacSha256": "a988607fd4cadc63ddfa56093fd61106cd7c6af336007f1cb5c45d992e62e51e",
+      "pcmSha256": "0d6b193aa523e37fc16d62a2076b243648306c7448ff9902a92452f7ac5f30bd",
+      "deliveryPath": "/audio/expansion-shared/outcome-occurred-v1.mp3",
+      "deliverySha256": "9b91453e7beeceee3945a908b087442cec7d23b8f31732538b48e9dc2ea86096"
+    },
+    {
+      "path": "expansion-shared/outcome-not-occurred.flac",
+      "wavSha256": "dd36a92f67687483841a6964dbc97851cce656e12b739eefb187bd1d31ff2132",
+      "flacSha256": "ad5e8ab8def496deadd4ca3a736d52077567f7bc07d860c5f3cf5d5ea08d9834",
+      "pcmSha256": "e5bbad9806a641d3dd3e2302debdeac56c4ec8415eaa1235f3198d16f1d8dfe9",
+      "deliveryPath": "/audio/expansion-shared/outcome-not-occurred-v1.mp3",
+      "deliverySha256": "0684edb8a89e9a04ae981d00241cd95f984de528e21e5775c7db607253781f0f"
+    },
+    {
+      "path": "m02/briefing.flac",
+      "wavSha256": "9065f41d25576f5e50565bedc1b406ffd895517de9a8b822806cbd53ec8fd1ba",
+      "flacSha256": "a820cca84605672f2d53b8359b6b44a339db6085793e540b4e75df5d2fd388e4",
+      "pcmSha256": "fc65bbc7cb354857d6eebe3450edb2d6877056c03816a9617facc81cdd7b4044",
+      "deliveryPath": "/audio/m02/briefing-v1.mp3",
+      "deliverySha256": "adaf823d37eb6c8889bfb3b1c905d11d68731c450e397715fe2fad9f1e3baf76"
+    },
+    {
+      "path": "m02/morgan-1.flac",
+      "wavSha256": "8f6856287304dc775f8111588dd4c384166e3687361f5a4b80fc88b88e0ea20a",
+      "flacSha256": "f7e6797e4f99d4ea60a924a935ab4b9cd293635ce31db71da9c3e5627151859e",
+      "pcmSha256": "c3c15901a93ab05103b001f20304103b32a8fa5261881b3a3f6c0a7b01e271f1",
+      "deliveryPath": "/audio/m02/morgan-1-v1.mp3",
+      "deliverySha256": "64911f92660c901108172ae010b90dabdc3aae76545e714cdb7869b86a2fd20b"
+    },
+    {
+      "path": "m03/briefing.flac",
+      "wavSha256": "7f866cf72a2f1c91ead42cf5105ff44821d98758ae07a0ed631b1e3f9b98c134",
+      "flacSha256": "00398402ab4a9e7e8f522edc1a163bbb387fbec979efe1d1aba8801ed5a3de78",
+      "pcmSha256": "b5c70ae8d85c0506a47f24aa3b6e18394dd3f6c710c50508f58e3827fde66ed8",
+      "deliveryPath": "/audio/m03/briefing-v1.mp3",
+      "deliverySha256": "03683ac6bb01193c6415c5b308bf04bbd657c4d9591cd3e18de605e6411a1c5e"
+    },
+    {
+      "path": "m03/morgan-1.flac",
+      "wavSha256": "3492045c8a77162163e8f50c5370c29d1813975c2f4cfc592e6f9257926f2a08",
+      "flacSha256": "224623a49e5cc42f8ef89b1b034e9257b1804618058f5e0f676a2726550a4e61",
+      "pcmSha256": "b0b6ac004cc468ea9a2a0560eaad5aab89c87eebaced953e169ea8c5b16f9dc1",
+      "deliveryPath": "/audio/m03/morgan-1-v1.mp3",
+      "deliverySha256": "8d0bf1e2c6de6243ae34de86cc6eb575706e5fbd3313bdf3c47a201c68e0d2cb"
+    },
+    {
+      "path": "m05/briefing.flac",
+      "wavSha256": "f36f88f0fd4bccaa2736ef2e9e1816db812452c46363693be68a0879ac2bfc74",
+      "flacSha256": "4e09cae08e3dec6810e548a7638379c34c5a2f6c8cc23a5b0d65d3fe0460923b",
+      "pcmSha256": "bd5d5b6dd4bb2920b02e4c6ab5d469e7caa4cbfbd6c8644b00c6a5c2e83bd1fe",
+      "deliveryPath": "/audio/m05/briefing-v1.mp3",
+      "deliverySha256": "2b3d834d9d48b7a78cc17cac45f7e86175bba8636207b201bf6aa202b42cea09"
+    },
+    {
+      "path": "m05/morgan-1.flac",
+      "wavSha256": "13087dd6e6402f9e1abf397dbdd1ab5ac65382c9cd84041aeb1a56d1fad82899",
+      "flacSha256": "799826afa71166a9434bd58a89d03a7d2d3e3dc48516eac0a133916dbbf75872",
+      "pcmSha256": "c806ac4c221e835950875e0cf8cf3570af09b036b9a8618df144b9056b740e78",
+      "deliveryPath": "/audio/m05/morgan-1-v1.mp3",
+      "deliverySha256": "7fdca955e1f45d23bc5aae526166ca9013ba5e35c8b51b42fe38fb6fb2be9720"
+    },
+    {
+      "path": "m06/briefing.flac",
+      "wavSha256": "02cf2e39dfad96a098cdcbd7e4938ec4c4d8338d7206926e46a02ce6777f98c4",
+      "flacSha256": "829da7975fe2c8b54406025ea2b54b0032de24f11cc629276825c1bdfc63b770",
+      "pcmSha256": "4fb34f3700928403533098d0a9a8c0a0876d401b1c3604dccb2c746d95839541",
+      "deliveryPath": "/audio/m06/briefing-v1.mp3",
+      "deliverySha256": "2896ca2a12bb3ad132719b81d782e63ad7691174314dda91ce5b88f7981e282d"
+    },
+    {
+      "path": "m06/morgan-1.flac",
+      "wavSha256": "084316fc1962cfa2b4a256fd6214bdaa86a220564d4afb8dad4c0a8ef1557d9e",
+      "flacSha256": "3e512d3bec56a57bc223f09358b80aa684fc4233797732f994bb06ae258ae215",
+      "pcmSha256": "2f18d9317eaf6b434e22f7d0e8308976f18aab8e3cbdc7494d963affb3f87bad",
+      "deliveryPath": "/audio/m06/morgan-1-v1.mp3",
+      "deliverySha256": "47ba642ce73460e16f75057aa1d01f123ad35fc35e563cc0ff975fe93b70ba24"
+    },
+    {
+      "path": "m08/briefing.flac",
+      "wavSha256": "64dab1539ce0043d4e813a7f46e774e93d494a6697ab3422267d6c5069721c3d",
+      "flacSha256": "c92c83f6f398b7a8f5eddf62f8be780fef5c20243e44c9f472138cfe418cce05",
+      "pcmSha256": "70128d96de76c006eebdeb34f31bcfef93c3a9333e4827232610403f7484debf",
+      "deliveryPath": "/audio/m08/briefing-v1.mp3",
+      "deliverySha256": "f3f0ea54d70447e2885891b2da14992b4b8817c520ee129b1a2f8fdd851f017b"
+    },
+    {
+      "path": "m08/morgan-1.flac",
+      "wavSha256": "4429213a3a6d77df5afc3f60e37ec56a4b7fb2b6229d3aebe3b661b1cc2bd8a6",
+      "flacSha256": "f956bb10ddeb6c469338d9c6a62ed09c3d2cf65f318530c7b6cb3bbfdbc2649d",
+      "pcmSha256": "b3b1a5e98fefa8ddfdbac92662ed272f64d239ecbb1d992d2c9a372f515faac0",
+      "deliveryPath": "/audio/m08/morgan-1-v1.mp3",
+      "deliverySha256": "10f5a3ca19d35416c081b924cd1659e850c1cecaa37e2b52b7e8bdb34c5ad2ce"
+    },
+    {
+      "path": "m09/briefing.flac",
+      "wavSha256": "eb1440dec6d6d0f2f886ba68f1627fea446a8e9d2604cbd547c167f37bcb13bb",
+      "flacSha256": "fe691727ce38acd44584f8bc16461baf2880a64de1e04d105394c9876d7a4ef3",
+      "pcmSha256": "fbab109a3479471f993ad197da8a32286fbaf31f0a067e42757388c983e23202",
+      "deliveryPath": "/audio/m09/briefing-v1.mp3",
+      "deliverySha256": "958e11b7bc9ac34d549cb437dd5c24778536eb790754cdffc671203084e861ae"
+    },
+    {
+      "path": "m09/morgan-1.flac",
+      "wavSha256": "5896f95ab060bf22ecfcb768b68345797e6b87109dafe5202c3ee0ad3832bb42",
+      "flacSha256": "cbd7a8002ebd654f2e9a2fb4bf21d167b83064fb895547ccacc3d96cc203e44c",
+      "pcmSha256": "ce2dad56987e5395cf59cdaffc5c6a260d77778a7454b5aef9343510d0e450a1",
+      "deliveryPath": "/audio/m09/morgan-1-v1.mp3",
+      "deliverySha256": "4d8ab58e44d0ad759f5aecedd5293dfa26ac78063503e5923da8bb1a10e6ce2d"
+    },
+    {
+      "path": "m10/briefing.flac",
+      "wavSha256": "a2d09946c312ba616ffa06b51e2ef3e37ceb504717df429a8f249832f8f9887e",
+      "flacSha256": "98ec4ca59eb02e22dd173f675486a570b17a08eec9bcf4a04d1eecf56391fa59",
+      "pcmSha256": "a03ff03cec9bef8f9d9391fccc16d303ad638f92610813a7249ba47c6ea3d3c7",
+      "deliveryPath": "/audio/m10/briefing-v1.mp3",
+      "deliverySha256": "5f690fca8459632b3e5eb53c528404990af03d7f6cc8e672486bf9ca95c887e3"
+    },
+    {
+      "path": "m10/morgan-1.flac",
+      "wavSha256": "5debd8fbdda553839c5e917f578857d2859ca8da3e1a00347c1bdb4ca7f1a585",
+      "flacSha256": "26adcd014ce131257894797c95e0aa697b5ac1c58bd6c8dd4746df7214b88916",
+      "pcmSha256": "3f0cbf0d485fcba5031a4ebdabf5da65ba009c610f9bdfea1074de3b60bbfd00",
+      "deliveryPath": "/audio/m10/morgan-1-v1.mp3",
+      "deliverySha256": "989dca20fdd8cbd775e151a51a5c6fc7d1d2510caf9e8cbf25534b5179ae7b52"
+    },
+    {
+      "path": "m11/briefing.flac",
+      "wavSha256": "c15843d61d11d3b4f6cbcbc636389fb94d90f9bae53aa781bafd281e39139d7e",
+      "flacSha256": "713bf53841a3a48bcc22cbb8d534378eec89fdf6ada6fd3a82d8c95b3908c784",
+      "pcmSha256": "2e4aee8b587a216d5a50fba4c4f38d9b47593939303be8caf0a30441cb345926",
+      "deliveryPath": "/audio/m11/briefing-v1.mp3",
+      "deliverySha256": "2f458c8f19cfc7ddec0f26cec353f64bbaffe6f10b8c57590ee9b77c5e7642ed"
+    },
+    {
+      "path": "m11/morgan-1.flac",
+      "wavSha256": "231205ddbf96bf27f5741b888f2ee770992c1a5c8c6c2318106a587bc7179956",
+      "flacSha256": "01f3ca5121022dc3bc2ecd308689198dced2e5faf63c144e8bdaab88d6218145",
+      "pcmSha256": "78f7aea443ae03c898dd56738e128c0a651e12135079ede44471bb39b4e15e51",
+      "deliveryPath": "/audio/m11/morgan-1-v1.mp3",
+      "deliverySha256": "3da59c84afe00284d9a651bc918981558f62f86d04f4101355641df304297acf"
+    },
+    {
+      "path": "m12/briefing.flac",
+      "wavSha256": "d1bbcc322281bce5fd31e0bbaeadd8789a76b6b88e8fd2c6192191c138df238f",
+      "flacSha256": "08c8e3b7d0a7064b0095029d20ca67dbb84718a1ae7a87017ce0c18c0b4136d8",
+      "pcmSha256": "9dd3839a96bb84f39cf5c29786a2abd7d25ab91e0c7bb64b763ceb4567ef54ed",
+      "deliveryPath": "/audio/m12/briefing-v1.mp3",
+      "deliverySha256": "2691419a4c1cefe2b7f33b01d9c43c684ace4f4be6d3ddefb70b2fb10423d152"
+    },
+    {
+      "path": "m12/morgan-1.flac",
+      "wavSha256": "ea4a7da99b5da3f1518df88a874b4b0aeea638afb90db09f5e9b265252334e4e",
+      "flacSha256": "e151bf98e0879778334a0f4d351fb41522c848369bc4d09e4d4cd3d95d9b9b6b",
+      "pcmSha256": "67c612edd708f5f3461be8043b5ba7788b31cec4ba669332328188d5369ecd94",
+      "deliveryPath": "/audio/m12/morgan-1-v1.mp3",
+      "deliverySha256": "410d34de2f5cff7973ee980538acd395a36f995ab59feee73da55ebbe1ecb26c"
+    }
+  ],
+  "archives": [
+    {
+      "path": "production/expansion-shared-voice-masters-v1.zip",
+      "bytes": 4255543,
+      "sha256": "fe09a47bdcf4de01b936442abcc8a14de8479eb783645a2de585909d50f7bd6d"
+    },
+    {
+      "path": "production/m02-voice-masters-v1.zip",
+      "bytes": 1129738,
+      "sha256": "b400701800cb92b5edeaf684348661048fb670fc2fa9ec769f766e26df3ad4b1"
+    },
+    {
+      "path": "production/m03-voice-masters-v1.zip",
+      "bytes": 1180347,
+      "sha256": "580266c205aa2edcc2b04f7def3b178f7db056bdbc29d499b6cdfc7f4630575a"
+    },
+    {
+      "path": "production/m05-voice-masters-v1.zip",
+      "bytes": 1178776,
+      "sha256": "2278dba85c702f3d0a2a692109f383e49077dfb4af44fcc659a3492c5caa7f05"
+    },
+    {
+      "path": "production/m06-voice-masters-v1.zip",
+      "bytes": 1107478,
+      "sha256": "9998fb1e13fa9f52e6179d71fe1366904ea2d8e25eabf212898208d7e84429fe"
+    },
+    {
+      "path": "production/m08-voice-masters-v1.zip",
+      "bytes": 1151316,
+      "sha256": "dc479a4eee012267496b283b30f7751d6914fac3f7300fe219443ee9a2da8a20"
+    },
+    {
+      "path": "production/m09-voice-masters-v1.zip",
+      "bytes": 1042186,
+      "sha256": "e8b5a51c26ff195a1810c3c0aab23539670bf428fa9dfda7f9359537a78e640a"
+    },
+    {
+      "path": "production/m10-voice-masters-v1.zip",
+      "bytes": 1088756,
+      "sha256": "aaa88843cee9ba942d937bf1791773e09a9c48697418a65a01b20da2930e7c2d"
+    },
+    {
+      "path": "production/m11-voice-masters-v1.zip",
+      "bytes": 1185909,
+      "sha256": "7c633e79330f6d4b2956b6cd7591da4673bac5155a8d18b2ac8a448eb71faa99"
+    },
+    {
+      "path": "production/m12-voice-masters-v1.zip",
+      "bytes": 1160135,
+      "sha256": "fbd4a57d075b3335cd0aefb58677b84eb06715b20ca4ab3f087d0ecf4b13d610"
+    }
+  ]
+}

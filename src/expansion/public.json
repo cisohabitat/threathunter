@@ -1,0 +1,1497 @@
+{
+  "M11": {
+    "missionId": "M11",
+    "version": "1.0.0",
+    "title": "The Unseen Adversary",
+    "trigger": "Multi-source hypothesis",
+    "question": "Do several suspicious observations share one explanation, or should their causal claims stay separate?",
+    "briefing": "A backup agent change and an unusual support session occurred in the same review period. Their timing overlaps; that does not establish that they belong to one event chain. Your authority is to acquire records and recommend a session-scoped response through Service Response. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "A causal claim connects a specific action and consequence; overlapping timestamps alone are not a causal link.",
+    "entities": [
+      {
+        "id": "SUPPORT-S11",
+        "name": "Named support-service session",
+        "purpose": "Named support-service session",
+        "owner": "Service Response",
+        "impact": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path."
+      },
+      {
+        "id": "BACKUP-11",
+        "name": "BACKUP-11 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "BACKUP-11"
+    ],
+    "initialScope": "BACKUP-11",
+    "primaryTarget": "SUPPORT-S11",
+    "glossary": [
+      {
+        "term": "Causal",
+        "definition": "A causal claim connects a specific action and consequence; overlapping timestamps alone are not a causal link."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": true,
+    "mechanic": {
+      "kind": "causal",
+      "question": "Do several suspicious observations share one explanation, or should their causal claims stay separate?",
+      "options": [
+        {
+          "id": "one-attack",
+          "label": "Merge all nearby observations into one attack"
+        },
+        {
+          "id": "separate-claims",
+          "label": "Keep backup and support claims separate unless an acquired link joins them"
+        },
+        {
+          "id": "ignore-second",
+          "label": "Treat one benign explanation as clearing every other observation"
+        }
+      ],
+      "claims": [
+        {
+          "id": "backup-work",
+          "label": "The backup work order"
+        },
+        {
+          "id": "support-session",
+          "label": "The separate support session"
+        },
+        {
+          "id": "unproven-link",
+          "label": "A shared causal link remains unproven"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "Shared timing does not establish a common actor, causal chain or explanation."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "SUPPORT-S11"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "SUPPORT-S11"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "SUPPORT-S11"
+        ],
+        "static": false
+      },
+      {
+        "id": "window",
+        "label": "Read the enabled future observation window",
+        "sourceId": "future_verification",
+        "source": "Future-only verification source",
+        "question": "Did the explicitly generated harmless event reach collection after activation?",
+        "can": "Tests this named source capability, target and future event time only.",
+        "cannot": "Cannot backfill any missing historical interval or prove broader coverage.",
+        "targets": [
+          "SUPPORT-S11"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "SUPPORT-S11",
+      "owner": "Service Response",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The backup agent change supports recovery validation. Restricting the support session must not shut down the independently approved backup path."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M12": {
+    "missionId": "M12",
+    "version": "1.0.0",
+    "title": "Operation Shadowfall",
+    "trigger": "Capstone review",
+    "question": "What should be handed over first when one service has a scoped action and another has an unresolved coverage gap?",
+    "briefing": "A settlement session, a customer-service coverage gap and a routine lab review compete for attention. You can make a useful prioritised handoff without claiming certainty about all three. Your authority is to acquire records and recommend a session-scoped response through Coordinated Response. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "A prioritised handoff separates supported findings, remaining uncertainty, owners and next review triggers.",
+    "entities": [
+      {
+        "id": "SETTLEMENT-S12",
+        "name": "Named settlement-service session",
+        "purpose": "Named settlement-service session",
+        "owner": "Coordinated Response",
+        "impact": "Settlement is a live business dependency. The customer-service coverage gap has a separate restoration owner; it cannot be silently cleared by a settlement finding.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "Settlement is a live business dependency. The customer-service coverage gap has a separate restoration owner; it cannot be silently cleared by a settlement finding."
+      },
+      {
+        "id": "COVERAGE-12",
+        "name": "COVERAGE-12 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      },
+      {
+        "id": "LAB-12",
+        "name": "Isolated test lab",
+        "purpose": "Planned non-production testing",
+        "owner": "Lab Operations",
+        "impact": "No live customer service depends on this lab review.",
+        "capability": "Isolated test activity only.",
+        "dependency": "Not a dependency of settlement or customer-service collection."
+      }
+    ],
+    "initialEntities": [
+      "COVERAGE-12",
+      "SETTLEMENT-S12"
+    ],
+    "initialScope": "COVERAGE-12",
+    "primaryTarget": "SETTLEMENT-S12",
+    "glossary": [
+      {
+        "term": "Capstone",
+        "definition": "A prioritised handoff separates supported findings, remaining uncertainty, owners and next review triggers."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "capstone",
+      "question": "What should be handed over first when one service has a scoped action and another has an unresolved coverage gap?",
+      "options": [
+        {
+          "id": "certainty-first",
+          "label": "Wait for certainty about every system before making any handoff"
+        },
+        {
+          "id": "bounded-handoff",
+          "label": "Prioritise the settlement finding and retain a separate coverage-restoration task"
+        },
+        {
+          "id": "global-clear",
+          "label": "Use one explained action to declare the environment clean"
+        }
+      ],
+      "claims": [
+        {
+          "id": "settlement-scope",
+          "label": "Settlement scope"
+        },
+        {
+          "id": "coverage-restoration",
+          "label": "The separate coverage-restoration task"
+        },
+        {
+          "id": "routine-lab",
+          "label": "Routine lab"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "A scoped settlement finding neither resolves the independent historical coverage gap nor clears the entire environment."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "SETTLEMENT-S12"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "SETTLEMENT-S12"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "SETTLEMENT-S12"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "SETTLEMENT-S12",
+      "owner": "Coordinated Response",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "Settlement is a live business dependency. The customer-service coverage gap has a separate restoration owner; it cannot be silently cleared by a settlement finding."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M06": {
+    "missionId": "M06",
+    "version": "1.0.0",
+    "title": "Moving Quietly",
+    "trigger": "Proactive scope review",
+    "question": "Does a cross-system connection fit a specific management task or extend beyond it?",
+    "briefing": "A management identity connected from the orchestration service to an archive host. Cross-system administration is routine at Northstar; the connection alone is not a finding. Your authority is to acquire records and recommend a session-scoped response through Platform Operations. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "A lateral access path describes one system reaching another; its legitimacy depends on task, target and authority.",
+    "entities": [
+      {
+        "id": "ARCHIVE-S6",
+        "name": "Archive-host management session",
+        "purpose": "Archive-host management session",
+        "owner": "Platform Operations",
+        "impact": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths."
+      },
+      {
+        "id": "ORCH-06",
+        "name": "ORCH-06 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "ORCH-06"
+    ],
+    "initialScope": "ORCH-06",
+    "primaryTarget": "ARCHIVE-S6",
+    "glossary": [
+      {
+        "term": "Path",
+        "definition": "A lateral access path describes one system reaching another; its legitimacy depends on task, target and authority."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "path",
+      "question": "Does a cross-system connection fit a specific management task or extend beyond it?",
+      "options": [
+        {
+          "id": "all-admin-bad",
+          "label": "Treat all administrative cross-system access as misuse"
+        },
+        {
+          "id": "scoped-path",
+          "label": "Follow the acquired path and compare the actual target with the task"
+        },
+        {
+          "id": "tool-name",
+          "label": "Decide from the management tool name"
+        }
+      ],
+      "claims": [
+        {
+          "id": "management-path",
+          "label": "Management path"
+        },
+        {
+          "id": "task-scope",
+          "label": "Task scope"
+        },
+        {
+          "id": "additional-access",
+          "label": "Additional access"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "A management connection or tool name alone is not evidence of unauthorised movement."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "ARCHIVE-S6"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "ARCHIVE-S6"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "ARCHIVE-S6"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "ARCHIVE-S6",
+      "owner": "Platform Operations",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The archive host supports daily restore validation. There is no authority to isolate it directly or interrupt unrelated backup paths."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M03": {
+    "missionId": "M03",
+    "version": "1.0.0",
+    "title": "The Trusted Employee",
+    "trigger": "Behaviour review",
+    "question": "Does a familiar account\u2019s activity fit its assigned task, without using the employee\u2019s reputation as evidence?",
+    "briefing": "A long-serving Northstar analyst account opened the customer export workspace outside its usual shift. The account name identifies credentials, not the operator. Your authority is to acquire records and recommend a session-scoped response through Customer Services. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "Behavioural context compares an observed action with the actual task and permitted scope.",
+    "entities": [
+      {
+        "id": "CUSTOMER-S3",
+        "name": "Customer export workspace session",
+        "purpose": "Customer export workspace session",
+        "owner": "Customer Services",
+        "impact": "The export workspace supports a regulated customer-service batch; session-level restriction is narrower than disabling the employee account.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The export workspace supports a regulated customer-service batch; session-level restriction is narrower than disabling the employee account."
+      },
+      {
+        "id": "ROSTER-03",
+        "name": "ROSTER-03 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "ROSTER-03"
+    ],
+    "initialScope": "ROSTER-03",
+    "primaryTarget": "CUSTOMER-S3",
+    "glossary": [
+      {
+        "term": "Context",
+        "definition": "Behavioural context compares an observed action with the actual task and permitted scope."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "context",
+      "question": "Does a familiar account\u2019s activity fit its assigned task, without using the employee\u2019s reputation as evidence?",
+      "options": [
+        {
+          "id": "reputation",
+          "label": "Treat a trusted account as sufficient approval"
+        },
+        {
+          "id": "task-context",
+          "label": "Compare the task, destination and session scope"
+        },
+        {
+          "id": "hour-only",
+          "label": "Decide from the shift time alone"
+        }
+      ],
+      "claims": [
+        {
+          "id": "assigned-task",
+          "label": "Assigned task"
+        },
+        {
+          "id": "observed-action",
+          "label": "Observed action"
+        },
+        {
+          "id": "identity-limit",
+          "label": "Identity limit"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "Account history and reputation do not establish the current operator or intent."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "CUSTOMER-S3"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "CUSTOMER-S3"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "CUSTOMER-S3"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "CUSTOMER-S3",
+      "owner": "Customer Services",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The export workspace supports a regulated customer-service batch; session-level restriction is narrower than disabling the employee account."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M09": {
+    "missionId": "M09",
+    "version": "1.0.0",
+    "title": "The Silent Administrator",
+    "trigger": "Privilege review",
+    "question": "Did emergency access authorise this particular task, target and interval?",
+    "briefing": "An administrator activated emergency access during a customer-service repair. The grant is real, but elevated permission is not approval for every possible action. Your authority is to acquire records and recommend a session-scoped response through Privileged Access Response. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "Authorisation is permission for a defined task and scope; privilege is the technical ability to perform an action.",
+    "entities": [
+      {
+        "id": "GRANT-S9",
+        "name": "Emergency-access grant session",
+        "purpose": "Emergency-access grant session",
+        "owner": "Privileged Access Response",
+        "impact": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access."
+      },
+      {
+        "id": "REPAIR-09",
+        "name": "REPAIR-09 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "REPAIR-09"
+    ],
+    "initialScope": "REPAIR-09",
+    "primaryTarget": "GRANT-S9",
+    "glossary": [
+      {
+        "term": "Grant",
+        "definition": "Authorisation is permission for a defined task and scope; privilege is the technical ability to perform an action."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "grant",
+      "question": "Did emergency access authorise this particular task, target and interval?",
+      "options": [
+        {
+          "id": "grant-scope",
+          "label": "Compare the grant\u2019s task, target and interval with the recorded action"
+        },
+        {
+          "id": "privilege-is-permission",
+          "label": "Treat technical privilege as approval for every task"
+        },
+        {
+          "id": "emergency-exempts",
+          "label": "Assume emergency access removes all scope limits"
+        }
+      ],
+      "claims": [
+        {
+          "id": "grant-authority",
+          "label": "Grant authority"
+        },
+        {
+          "id": "repair-task",
+          "label": "Repair task"
+        },
+        {
+          "id": "observed-use",
+          "label": "Observed use"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "A valid privileged grant does not authorise every technically possible action or establish who operated it."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "GRANT-S9"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "GRANT-S9"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "GRANT-S9"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "GRANT-S9",
+      "owner": "Privileged Access Response",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The grant supports a live customer-service repair. Restriction must be limited to this named grant session, preserving unrelated responder access."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M02": {
+    "missionId": "M02",
+    "version": "1.0.0",
+    "title": "Too Many Alerts",
+    "trigger": "Alert comparison",
+    "question": "Which alert deserves the first scoped investigation when severity and business impact disagree?",
+    "briefing": "A lab workstation has twelve high-severity signature alerts. A billing-service session has one medium-severity access alert. Neither alert establishes who acted. Your authority is to acquire records and recommend a session-scoped response through Billing Operations. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "Priority is the order of useful work based on consequence and evidence; severity is a source label.",
+    "entities": [
+      {
+        "id": "BILLING-S2",
+        "name": "Billing session feeding the daily invoice run",
+        "purpose": "Billing session feeding the daily invoice run",
+        "owner": "Billing Operations",
+        "impact": "Invoice settlement relies on this service; interrupting the entire application would delay customer payments.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "Invoice settlement relies on this service; interrupting the entire application would delay customer payments."
+      },
+      {
+        "id": "LAB-02",
+        "name": "LAB-02 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "LAB-02",
+      "BILLING-S2"
+    ],
+    "initialScope": "LAB-02",
+    "primaryTarget": "BILLING-S2",
+    "glossary": [
+      {
+        "term": "Triage",
+        "definition": "Priority is the order of useful work based on consequence and evidence; severity is a source label."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "triage",
+      "question": "Which alert deserves the first scoped investigation when severity and business impact disagree?",
+      "options": [
+        {
+          "id": "alert-count",
+          "label": "Investigate whichever alert appears most often"
+        },
+        {
+          "id": "business-impact",
+          "label": "Investigate the live billing consequence first"
+        },
+        {
+          "id": "severity-only",
+          "label": "Follow the highest vendor severity automatically"
+        }
+      ],
+      "claims": [
+        {
+          "id": "billing-priority",
+          "label": "Billing priority"
+        },
+        {
+          "id": "lab-explanation",
+          "label": "Lab explanation"
+        },
+        {
+          "id": "billing-session",
+          "label": "Billing session"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "Severity and alert volume do not establish business priority or actor identity."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "BILLING-S2"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "BILLING-S2"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "BILLING-S2"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "BILLING-S2",
+      "owner": "Billing Operations",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "Invoice settlement relies on this service; interrupting the entire application would delay customer payments."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M10": {
+    "missionId": "M10",
+    "version": "1.0.0",
+    "title": "The Insider Question",
+    "trigger": "Conflicting reports",
+    "question": "Which behaviour can be established without turning a policy observation into a claim about motive?",
+    "briefing": "A manager reports an employee\u2019s unusual export; a colleague says it was approved. These reports conflict. Neither report establishes the person\u2019s intent. Your authority is to acquire records and recommend a session-scoped response through Information Governance. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "Intent describes a purpose; a source recording an action usually cannot establish that purpose.",
+    "entities": [
+      {
+        "id": "EXPORT-S10",
+        "name": "Named export-workspace session",
+        "purpose": "Named export-workspace session",
+        "owner": "Information Governance",
+        "impact": "The workspace supports legitimate reporting. Findings must distinguish the observed session action, the approval boundary and any separate people process.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The workspace supports legitimate reporting. Findings must distinguish the observed session action, the approval boundary and any separate people process."
+      },
+      {
+        "id": "REVIEW-10",
+        "name": "REVIEW-10 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "REVIEW-10"
+    ],
+    "initialScope": "REVIEW-10",
+    "primaryTarget": "EXPORT-S10",
+    "glossary": [
+      {
+        "term": "Intent",
+        "definition": "Intent describes a purpose; a source recording an action usually cannot establish that purpose."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "intent",
+      "question": "Which behaviour can be established without turning a policy observation into a claim about motive?",
+      "options": [
+        {
+          "id": "behaviour-only",
+          "label": "Report the observed behaviour and approval boundary; leave motive unresolved"
+        },
+        {
+          "id": "policy-proves-intent",
+          "label": "Infer malicious intent from a policy exception"
+        },
+        {
+          "id": "manager-verdict",
+          "label": "Adopt the manager\u2019s report as the verdict"
+        }
+      ],
+      "claims": [
+        {
+          "id": "observed-behaviour",
+          "label": "Recorded behaviour"
+        },
+        {
+          "id": "approval-boundary",
+          "label": "The specific approval boundary"
+        },
+        {
+          "id": "intent-limit",
+          "label": "Intent remains unresolved"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "A policy or approval mismatch does not prove malicious intent or identify the human operator."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "EXPORT-S10"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "EXPORT-S10"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "EXPORT-S10"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "EXPORT-S10",
+      "owner": "Information Governance",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The workspace supports legitimate reporting. Findings must distinguish the observed session action, the approval boundary and any separate people process."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M08": {
+    "missionId": "M08",
+    "version": "1.0.0",
+    "title": "The Cloud Connection",
+    "trigger": "Workload and identity review",
+    "question": "Which cloud identity and workload boundary can explain an application action that endpoint records cannot cover?",
+    "briefing": "An application integration performed a cloud storage operation. The available workstation record is quiet, but it cannot observe actions performed by the cloud workload identity. Your authority is to acquire records and recommend a session-scoped response through Cloud Identity Operations. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "A workload identity belongs to an application or service; it is distinct from a person\u2019s endpoint session.",
+    "entities": [
+      {
+        "id": "WORKLOAD-S8",
+        "name": "Cloud workload identity session",
+        "purpose": "Cloud workload identity session",
+        "owner": "Cloud Identity Operations",
+        "impact": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions."
+      },
+      {
+        "id": "APP-08",
+        "name": "APP-08 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "APP-08"
+    ],
+    "initialScope": "APP-08",
+    "primaryTarget": "WORKLOAD-S8",
+    "glossary": [
+      {
+        "term": "Boundary",
+        "definition": "A workload identity belongs to an application or service; it is distinct from a person\u2019s endpoint session."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": true,
+    "mechanic": {
+      "kind": "boundary",
+      "question": "Which cloud identity and workload boundary can explain an application action that endpoint records cannot cover?",
+      "options": [
+        {
+          "id": "endpoint-only",
+          "label": "Treat a quiet workstation source as coverage of all cloud actions"
+        },
+        {
+          "id": "workload-boundary",
+          "label": "Pivot from the app to the acquired workload identity and cloud audit"
+        },
+        {
+          "id": "all-cloud",
+          "label": "Claim that one app session covers every cloud identity"
+        }
+      ],
+      "claims": [
+        {
+          "id": "app-delegation",
+          "label": "App delegation"
+        },
+        {
+          "id": "workload-action",
+          "label": "Workload action"
+        },
+        {
+          "id": "coverage-boundary",
+          "label": "Coverage boundary"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "Workstation collection cannot establish the absence of actions executed by a delegated cloud workload."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "WORKLOAD-S8"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "WORKLOAD-S8"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "WORKLOAD-S8"
+        ],
+        "static": false
+      },
+      {
+        "id": "window",
+        "label": "Read the enabled future observation window",
+        "sourceId": "future_verification",
+        "source": "Future-only verification source",
+        "question": "Did the explicitly generated harmless event reach collection after activation?",
+        "can": "Tests this named source capability, target and future event time only.",
+        "cannot": "Cannot backfill any missing historical interval or prove broader coverage.",
+        "targets": [
+          "WORKLOAD-S8"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "WORKLOAD-S8",
+      "owner": "Cloud Identity Operations",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The integration delivers customer-service documents. Restricting the named workload session does not stop every app or remove all storage permissions."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  },
+  "M05": {
+    "missionId": "M05",
+    "version": "1.0.0",
+    "title": "Stolen Identity",
+    "trigger": "Intelligence-led hypothesis",
+    "question": "What can credential-use evidence establish, and which person-attribution claims remain unsupported?",
+    "briefing": "A synthetic intelligence bulletin names a potentially exposed Northstar test credential. A corresponding organisation-controlled session exists. The bulletin does not identify the operator. Your authority is to acquire records and recommend a session-scoped response through Identity Response. You cannot approve your own control or disable an entire account or service.",
+    "lesson": "Attribution is the strength and scope of a claim about who acted; account attribution is narrower than person attribution.",
+    "entities": [
+      {
+        "id": "IDENTITY-S5",
+        "name": "Named identity-service session",
+        "purpose": "Named identity-service session",
+        "owner": "Identity Response",
+        "impact": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account.",
+        "capability": "Named session and disclosed source paths only; no account-wide or host-wide control.",
+        "dependency": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account."
+      },
+      {
+        "id": "OWNER-05",
+        "name": "OWNER-05 context",
+        "purpose": "Related context that must be assessed separately",
+        "owner": "Northstar Operations",
+        "impact": "Do not generalise the primary session finding to this separate scope.",
+        "capability": "Only the explicitly delivered relationship and source records.",
+        "dependency": "A separate task or observation does not supply approval for the primary session."
+      }
+    ],
+    "initialEntities": [
+      "OWNER-05"
+    ],
+    "initialScope": "OWNER-05",
+    "primaryTarget": "IDENTITY-S5",
+    "glossary": [
+      {
+        "term": "Attribution",
+        "definition": "Attribution is the strength and scope of a claim about who acted; account attribution is narrower than person attribution."
+      },
+      {
+        "term": "Source boundary",
+        "definition": "The target, operation and interval a source is capable of observing."
+      },
+      {
+        "term": "Scope",
+        "definition": "The explicitly named session or service covered by a claim and next action."
+      }
+    ],
+    "sensorEnabled": false,
+    "mechanic": {
+      "kind": "attribution",
+      "question": "What can credential-use evidence establish, and which person-attribution claims remain unsupported?",
+      "options": [
+        {
+          "id": "credential-not-person",
+          "label": "Attribute the observed action to the session; leave the person unresolved"
+        },
+        {
+          "id": "owner-did-it",
+          "label": "Name the credential owner as the operator"
+        },
+        {
+          "id": "address-proves-person",
+          "label": "Treat the source address as a person identifier"
+        }
+      ],
+      "claims": [
+        {
+          "id": "credential-use",
+          "label": "Credential use"
+        },
+        {
+          "id": "session-scope",
+          "label": "Session scope"
+        },
+        {
+          "id": "person-attribution",
+          "label": "Person attribution remains unresolved"
+        }
+      ]
+    },
+    "limits": [
+      {
+        "id": "scope",
+        "label": "Credential use does not identify the person, and a threat bulletin alone does not prove current misuse."
+      },
+      {
+        "id": "coverage",
+        "label": "Unavailable collection does not establish that no activity occurred."
+      },
+      {
+        "id": "operator",
+        "label": "The source identifies a session or credential, not a person or motive."
+      },
+      {
+        "id": "separate",
+        "label": "Other scopes and their remaining questions need their own evidence."
+      }
+    ],
+    "queries": [
+      {
+        "id": "baseline",
+        "label": "Establish the task and business consequence",
+        "sourceId": "scope_catalogue",
+        "source": "Scope and dependency catalogue",
+        "question": "What is this service for, and which consequences change investigation priority?",
+        "can": "Names the normal task, related scopes, owners and interruption consequence.",
+        "cannot": "Does not establish who performed the current action.",
+        "targets": [
+          "all"
+        ],
+        "static": true
+      },
+      {
+        "id": "context",
+        "label": "Check the exact work authorisation",
+        "sourceId": "work_register",
+        "source": "Work authorisation register",
+        "question": "Does approved work cover this session, task, target and period?",
+        "can": "Tests the specific business explanation.",
+        "cannot": "Does not prove the human operator or the activity that actually occurred.",
+        "targets": [
+          "IDENTITY-S5"
+        ],
+        "static": true
+      },
+      {
+        "id": "activity",
+        "label": "Inspect the scoped session activity",
+        "sourceId": "session_audit",
+        "source": "Session activity audit",
+        "question": "Which action was recorded for this named session within collection limits?",
+        "can": "Records session-level actions and the observed target.",
+        "cannot": "Cannot identify a person, establish motive or reconstruct missing historical collection.",
+        "targets": [
+          "IDENTITY-S5"
+        ],
+        "static": false
+      },
+      {
+        "id": "independent",
+        "label": "Check the service transaction independently",
+        "sourceId": "service_journal",
+        "source": "Independent service journal",
+        "question": "Does the service-side transaction establish the same scoped operation?",
+        "can": "Tests the operation through a separately collected service transaction.",
+        "cannot": "A second card alone does not establish a sufficient explanation.",
+        "targets": [
+          "IDENTITY-S5"
+        ],
+        "static": false
+      }
+    ],
+    "response": {
+      "targetId": "IDENTITY-S5",
+      "owner": "Identity Response",
+      "delayTicks": 2,
+      "windowTicks": 2,
+      "control": "Restrict only the named organisation-controlled session",
+      "dependency": "The identity also runs an essential reconciliation job. Restricting this session does not disable every use of the account."
+    },
+    "reviewWindow": "The named session from its start through the explicit cutoff of each acquired snapshot. A simulation step is an investigation opportunity, not a minute."
+  }
+}

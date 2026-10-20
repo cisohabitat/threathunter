@@ -4,7 +4,7 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 
 **Live:** https://threathunter-rosy.vercel.app
 
-**Status: three-mission internal candidate. M01, M04 and M07 are playable; required player, device and creative reviews are deferred, not passed.**
+**Status: twelve-case internal candidate plus constrained seeded free hunts. Required player, device, accessibility and creative/listening reviews remain deferred, not passed.**
 
 ## How to play M01: The Midnight Login
 
@@ -140,7 +140,7 @@ P1 exports use a separate versioned `threat-hunter-p1` envelope. Select the matc
 
 ## Your investigation journey
 
-On home, **Check saved progress** reads and validates the three cases already stored in this browser. Follow the recommended M01 → M04 → M07 order, or open any case directly. Completion drives the recommendation; no score threshold blocks continuation. Each debrief now offers the next investigation while retaining its saved or in-memory finding. The final case offers a return to M01.
+On home, **Check saved progress** reads and validates all twelve authored cases stored in this browser. Start with M01 → M04 → M07; later cases in the guided path unlock through completion at any score. **Show all twelve authored cases** and **Choose independent case order** let you investigate out of order with the same facts, costs and scoring. Each debrief now offers the next investigation while retaining its saved or in-memory finding. M12 offers a return to M01.
 
 The overview distinguishes saved open/closed cases, preserved completed archives, recovery needs and unavailable validation. It checks at most five archives per mission and explicitly labels incomplete/unavailable checks. Recovery backups and temporary/unsaved closures do not count as saved completion. **Refresh saved progress** after saving or importing; where supported, save-change notifications mark an older snapshot as stale. Checking progress never repairs, rewrites, upgrades or removes a case, and creates no separate profile or cloud account.
 
@@ -149,3 +149,31 @@ The overview distinguishes saved open/closed cases, preserved completed archives
 The journey's progress announcement is separate from **Save and readiness**. A completed overview check does not save an investigation; rely on its case's **Saved on this device** status.
 
 Run `npm run verify:comparison` against a production preview on port 4173 (or `THREAT_HUNTER_TEST_URL`). It imports real three-mission fixtures, compares snapshots at 320px, checks sampled accessibility and unchanged portable exports, and writes [comparison evidence](docs/verification/comparison.json). This is automated lab evidence, not human or device acceptance.
+
+## The complete authored campaign
+
+After the three introductory cases, investigate **M02 Too Many Alerts**, **M03 The Trusted Employee**, **M05 Stolen Identity**, **M06 Moving Quietly**, **M08 The Cloud Connection**, **M09 The Silent Administrator**, **M10 The Insider Question**, **M11 The Unseen Adversary** and **M12 Operation Shadowfall**. Stable mission IDs describe learning purposes rather than a false consecutive release order. Each case has its own task, scope, authority, competing explanations and evidence-based debrief. Use priority queues, task/permission comparisons, acquired scope pivots and claim relationships; a selected explanation receives no pre-close correct/wrong feedback.
+
+In expansion cases, open **Explore**, establish the task/business consequence, choose an acquired scope, then select a source question. Query costs and cutoffs are explicit. A verified business check costs one step and is due at request-start +3. M08/M11 can enable a bounded future-only collection test for two steps. The Case File records evidence roles, alternatives, limits, confidence and handoff; notes are explicitly saved or flushed on review. A responder can restrict only the supported named session, with explicit confirmation. Review/close remains available for incomplete findings.
+
+Every case ships an optional complete 21-entry voice pack. Expansion packs have their own opening/first guidance, literal shared neutral speech and unchanged M01 sounds. All scripts, captions, measured durations and delivery/master hashes are retained; short first-guidance v2 clips preserve their original v1 candidates. Listening/art/device acceptance remains pending. [Expansion rules and source matrices](docs/P2_MISSIONS.md) specify both strong routes, sparse twins and the independently versioned rubric. Existing M01/P1 saves and rules remain unchanged.
+
+## Seeded free hunts and local learning
+
+Choose **Seeded free hunt · validated templates**, enter a seed and begin. The fixed generator selects a validated causal template, world/collection family and disclosed source/response profile. The full manifest reproduces it; records are derived from the causal selection. The active free hunt and completed archives are separate from authored campaign completion. **Try another approach** repeats identical conditions; **Start another seeded hunt** archives the durable closed run and uses the new seed. Temporary runs require export acknowledgement before replacement. These are local practice cases without a runtime LLM, account or leaderboard.
+
+**Notice your investigation habits → Check my local investigation examples** reads at most one validated closed example per authored case, inspecting at most five archives. It recognises tested alternatives, bounded scope, useful visibility findings and preliminary handoffs. These are descriptive in-game examples rather than a competency or personality diagnosis. Invalid/unavailable reads and limits are explicit; there is no profile database or analytics.
+
+## Routes and emergency export
+
+Case links use `/case/m01` through `/case/m12`; seeded hunts use `/hunt/free`. Refresh resumes the selected case's stored state, and browser history changes only navigation. Loaded controllers stay mounted when switching cases, retaining accepted volatile work and stopping inactive audio. The legacy M01 home/Begin flow remains available at `/`.
+
+If the interface fails, **Export stored recovery data** can download one exact active/previous or preserved-original row using a read-only path independent of game rendering and validation. The recovery JSON is for inspection, separate from portable imports. It preserves stored data; uncommitted memory that was lost in a rendering failure is not reconstructed. See the [full completion worklist](docs/GDD_COMPLETION.md) for implementation versus acceptance evidence.
+
+Each expansion Case File has four steps: **Explanation → Evidence → Unknowns → Next step**. Review is available throughout, including for an incomplete finding. In the save controls, **Import another backup** preserves the current saved row before replacing a fully saved matching case; save optional notes first. Previous imported versions remain exportable, and replay never overwrites an earlier completed run sharing its ID. Free-hunt backups belong to their separate free-hunt slot.
+
+`npm run verify:expansion` checks a running production preview on port 4173 and writes the current twelve-case extension's workspace screenshots and lab report. Campaign groups cover foundations, context, boundaries and synthesis. These automated reports remain separate from deferred player, listening and physical-device reviews.
+
+Unfinished M04/M07 notes stay in their mounted Case File when navigating and block backup replacement until explicitly saved. The browser warns before leaving with unfinished notes. Run local browser engines sequentially; concurrent runners require separate artifact directories.
+
+Current local validation: **266 unit checks**, all nine expansion mission routes, targeted recovery/offline/import browser checks, and production-preview accessibility/save checks. Transfer budgets pass. Performance acceptance remains open: the latest throttled preview cold start was 11.216 seconds against the six-second target; reference-device profiling and all deferred human reviews are still required. See [the completion worklist](docs/GDD_COMPLETION.md) and [verification ledger](docs/verification/RESULTS.md) for methods and failed/retried runs. Each publication also requires observed hosted CI, the existing Vercel deployment and matching live assets/routes.

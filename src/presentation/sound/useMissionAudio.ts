@@ -38,6 +38,7 @@ function preferences() {
     return { ...defaults };
   }
 }
+let inSessionPreferences: AudioPreferences | undefined;
 export function useMissionAudio(
   view: {
     runId: string;
@@ -53,7 +54,9 @@ export function useMissionAudio(
     () => (pack ? new Map(pack.cues.map((c) => [c.id, c])) : cues),
     [pack],
   );
-  const [prefs, setPrefs] = useState(preferences),
+  const [prefs, setPrefs] = useState(() => ({
+      ...(inSessionPreferences ?? preferences()),
+    })),
     [enabled, setEnabled] = useState(false),
     [phase, setPhase] = useState<"idle" | "loading" | "ready" | "error">(
       "idle",
@@ -61,6 +64,9 @@ export function useMissionAudio(
     [error, setError] = useState(""),
     [lastCue, setLastCue] = useState<string | null>(null),
     [playing, setPlaying] = useState(false);
+  const generation = useRef(0),
+    preparing = useRef<MissionMixer | null>(null),
+    packRef = useRef(pack);
   const mixer = useRef<MissionMixer | null>(null),
     loading = useRef(false),
     alive = useRef(true),
@@ -72,6 +78,40 @@ export function useMissionAudio(
       checks: number;
       closed: boolean;
     } | null>(null);
+  useEffect(() => {
+    if (packRef.current === pack) return;
+    packRef.current = pack;
+    generation.current++;
+    preparing.current?.dispose();
+    preparing.current = null;
+    mixer.current?.dispose();
+    mixer.current = null;
+    loading.current = false;
+    enabledRef.current = false;
+    setEnabled(false);
+    setPhase("idle");
+    setLastCue(null);
+    setPlaying(false);
+    setError("");
+  }, [pack]);
+  useEffect(() => {
+    const sync = (event: Event) => {
+      if (event.type === "storage") {
+        if ((event as StorageEvent).key !== "threat-hunter-audio-v1") return;
+        inSessionPreferences = preferences();
+      }
+      if (inSessionPreferences) setPrefs({ ...inSessionPreferences });
+    };
+    window.addEventListener("threat-hunter-audio-prefs", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("threat-hunter-audio-prefs", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+  const invalidateLoads = useCallback(() => {
+    generation.current++;
+  }, []);
   // This boundary has no command adapter and cannot change gameplay.
   useEffect(() => {
     prefsRef.current = prefs;
@@ -82,9 +122,13 @@ export function useMissionAudio(
     alive.current = true;
     return () => {
       alive.current = false;
+      invalidateLoads();
+      preparing.current?.dispose();
+      preparing.current = null;
+      loading.current = false;
       mixer.current?.dispose();
     };
-  }, []);
+  }, [invalidateLoads]);
   useEffect(() => {
     mixer.current?.stopVoice();
     setLastCue(null);
@@ -129,6 +173,7 @@ export function useMissionAudio(
       checks: view.records.filter(
         (r) =>
           r.ref.recordId === "EV-06" ||
+          r.ref.recordId === "VR01" ||
           r.ref.recordId.startsWith("R-test_") ||
           r.ref.recordId === "R-other_test_received",
       ).length,
@@ -155,44 +200,54 @@ export function useMissionAudio(
     }
     if (loading.current) return;
     loading.current = true;
+    const ownerGeneration = generation.current;
     setPhase("loading");
     setError("");
     try {
       const { MissionMixer } = await import("./mixer");
+      if (!alive.current || generation.current !== ownerGeneration) return;
       const next = new MissionMixer(
         (message) => {
-          if (alive.current) setError(message);
+          if (alive.current && generation.current === ownerGeneration)
+            setError(message);
         },
         (value) => {
-          if (alive.current) setPlaying(value);
+          if (alive.current && generation.current === ownerGeneration)
+            setPlaying(value);
         },
         pack?.cues,
       );
+      preparing.current = next;
       await next.load();
-      if (!alive.current) {
+      if (!alive.current || generation.current !== ownerGeneration) {
         next.dispose();
         return;
       }
+      preparing.current = null;
       mixer.current = next;
       next.configure(prefsRef.current, enabledRef.current);
       setPhase("ready");
     } catch (e) {
-      if (alive.current) {
+      if (alive.current && generation.current === ownerGeneration) {
+        preparing.current?.dispose();
+        preparing.current = null;
         setPhase("error");
         setError(String(e));
       }
     } finally {
-      loading.current = false;
+      if (generation.current === ownerGeneration) loading.current = false;
     }
   }
   function update(changes: Partial<AudioPreferences>) {
     const next = { ...prefs, ...changes };
+    inSessionPreferences = { ...next };
     setPrefs(next);
     try {
       localStorage.setItem("threat-hunter-audio-v1", JSON.stringify(next));
     } catch {
       /* Optional preferences do not affect the save. */
     }
+    window.dispatchEvent(new Event("threat-hunter-audio-prefs"));
   }
   return {
     prefs,

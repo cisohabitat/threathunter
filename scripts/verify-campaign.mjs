@@ -87,13 +87,11 @@ try {
     );
     const textReadyMs = Math.round(performance.now() - readyStart),
       importStart = performance.now();
-    await area
-      .locator('input[type="file"]')
-      .setInputFiles({
-        name: "case.json",
-        mimeType: "application/json",
-        buffer: Buffer.from(fixtures[mission]),
-      });
+    await area.locator('input[type="file"]').setInputFiles({
+      name: "case.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(fixtures[mission]),
+    });
     await saved();
     const importAndCommitMs = Math.round(performance.now() - importStart);
     await tab("Investigate");
@@ -101,12 +99,10 @@ try {
       await acquire("Compare account activity by host");
       await area.getByLabel("Investigation scope").selectOption("LEGACY-01");
       await saved();
-      await area
-        .locator(".scope-matrix")
-        .screenshot({
-          path: "docs/verification/screens/14-m04-matrix-phone.png",
-          animations: "disabled",
-        });
+      await area.locator(".scope-matrix").screenshot({
+        path: "docs/verification/screens/14-m04-matrix-phone.png",
+        animations: "disabled",
+      });
       for (const name of [
         "Check ownership and billing dependency",
         "Check the migration approval",
@@ -234,9 +230,6 @@ try {
     assert.equal(await portable(), before);
     await page.context().setOffline(false);
     await page.reload();
-    await page
-      .getByRole("button", { name: new RegExp(`${mission} ·`) })
-      .click();
     await saved();
     assert.deepEqual(JSON.parse(await portable()), JSON.parse(before));
     await tab("Case File");
@@ -338,9 +331,6 @@ try {
       animations: "disabled",
     });
     await page.reload();
-    await page
-      .getByRole("button", { name: new RegExp(`${mission} ·`) })
-      .click();
     await saved();
     await debrief.waitFor();
     results.push({

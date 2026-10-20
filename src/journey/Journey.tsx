@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  learningGroup,
   caseDetails,
   caseOrder,
   nextCase,
+  canOpenCase,
   type CaseId,
   type Progress,
 } from "./contracts";
@@ -18,6 +20,8 @@ export function Journey({
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const [stale, setStale] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [independentOrder, setIndependentOrder] = useState(false);
   const generation = useRef(0),
     alive = useRef(true),
     changed = useRef(0);
@@ -31,6 +35,7 @@ export function Journey({
     for (const name of [
       "threat-hunter-save-changes",
       "threat-hunter-campaign-changes",
+      "threat-hunter-expansion-changes",
     ]) {
       try {
         const channel = new BroadcastChannel(name);
@@ -70,10 +75,11 @@ export function Journey({
   return (
     <section className="panel journey" aria-label="Your investigation journey">
       <p className="eyebrow">YOUR INVESTIGATION JOURNEY</p>
-      <h2>Three cases. A new question each time.</h2>
+      <h2>Twelve cases. A new question each time.</h2>
       <p>
-        Recommended order: M01 → M04 → M07. Continue by completing a case, at
-        any score. All three cases remain available if you prefer another order.
+        Start with M01 → M04 → M07, then investigate priority, identity, scope,
+        authority and competing causal explanations. Later cases unlock through
+        completion at any score. You can also choose independent case order.
       </p>
       <button disabled={busy || !ready} onClick={() => void refresh()}>
         {!ready
@@ -91,13 +97,13 @@ export function Journey({
             ? "Progress has not been checked in this view."
             : stale
               ? "Saved progress may have changed. Refresh before relying on this snapshot."
-              : `${progress.filter((p) => p.completed).length} of 3 cases have a validated saved completion.`}
+              : `${progress.filter((p) => p.completed).length} of ${caseOrder.length} cases have a validated saved completion.`}
       </p>
       {error ? <p role="alert">{error}</p> : null}
       {next === null ? (
         <p>
-          You have completed all three cases. Revisit a debrief or replay a case
-          with a different investigation route.
+          You have completed all twelve authored cases. Revisit a debrief or
+          replay a case with a different investigation route.
         </p>
       ) : next ? (
         <p>
@@ -112,58 +118,96 @@ export function Journey({
             : "Your score does not gate this case."}
         </p>
       ) : null}
+      <button aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+        {expanded
+          ? "Show the introductory path"
+          : "Show all twelve authored cases"}
+      </button>
+      <button
+        aria-pressed={independentOrder}
+        onClick={() => {
+          setIndependentOrder(!independentOrder);
+          setExpanded(true);
+        }}
+      >
+        {independentOrder
+          ? "Use the completion-based path"
+          : "Choose independent case order"}
+      </button>
+      {independentOrder ? (
+        <p>
+          Independent order changes navigation. Facts, action costs and scoring
+          remain the same.
+        </p>
+      ) : null}
       <ol className="journey-cases">
-        {caseOrder.map((id) => {
-          const p = progress?.find((item) => item.mission === id);
-          return (
-            <li key={id}>
-              <h3>
-                {id} · {caseDetails[id].title}
-              </h3>
-              <p>{caseDetails[id].lesson}</p>
-              {p ? (
-                <>
+        {caseOrder
+          .filter((id, i) => expanded || i < 3 || id === next)
+          .map((id) => {
+            const p = progress?.find((item) => item.mission === id);
+            return (
+              <li key={id}>
+                <p className="eyebrow">{learningGroup(id)}</p>
+                <h3>
+                  {id} · {caseDetails[id].title}
+                </h3>
+                <p>{caseDetails[id].lesson}</p>
+                {p ? (
+                  <>
+                    <p>
+                      {p.completed
+                        ? p.archivedCompletion
+                          ? "Completed case preserved in an archive."
+                          : "Closed finding saved on this device."
+                        : p.active === "open"
+                          ? "An investigation is saved in progress."
+                          : p.active === "none" && p.archiveCheck === "complete"
+                            ? "No saved completion found."
+                            : "Completion could not be fully established."}
+                    </p>
+                    {p.active === "needs_recovery" ? (
+                      <p>
+                        Active save needs recovery. Open the case to inspect the
+                        retained original.
+                      </p>
+                    ) : p.active === "unavailable" ? (
+                      <p>
+                        Active-save validation or storage is unavailable; this
+                        does not establish corruption.
+                      </p>
+                    ) : null}
+                    {p.archiveCheck !== "complete" ? (
+                      <p>
+                        Archive check{" "}
+                        {p.archiveCheck === "partial"
+                          ? "incomplete (at most five entries checked)"
+                          : "unavailable"}
+                        . No archive was repaired or removed.
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <p>Saved progress not checked.</p>
+                )}
+                <button
+                  disabled={
+                    !ready ||
+                    !canOpenCase(id, stale ? null : progress, independentOrder)
+                  }
+                  onClick={() => open(id)}
+                >
+                  Open {id} investigation
+                </button>
+                {!canOpenCase(id, stale ? null : progress, independentOrder) ? (
                   <p>
-                    {p.completed
-                      ? p.archivedCompletion
-                        ? "Completed case preserved in an archive."
-                        : "Closed finding saved on this device."
-                      : p.active === "open"
-                        ? "An investigation is saved in progress."
-                        : p.active === "none" && p.archiveCheck === "complete"
-                          ? "No saved completion found."
-                          : "Completion could not be fully established."}
+                    Complete the preceding case and refresh saved progress, or
+                    choose independent order. A score threshold is never
+                    required.
                   </p>
-                  {p.active === "needs_recovery" ? (
-                    <p>
-                      Active save needs recovery. Open the case to inspect the
-                      retained original.
-                    </p>
-                  ) : p.active === "unavailable" ? (
-                    <p>
-                      Active-save validation or storage is unavailable; this
-                      does not establish corruption.
-                    </p>
-                  ) : null}
-                  {p.archiveCheck !== "complete" ? (
-                    <p>
-                      Archive check{" "}
-                      {p.archiveCheck === "partial"
-                        ? "incomplete (at most five entries checked)"
-                        : "unavailable"}
-                      . No archive was repaired or removed.
-                    </p>
-                  ) : null}
-                </>
-              ) : (
-                <p>Saved progress not checked.</p>
-              )}
-              <button disabled={!ready} onClick={() => open(id)}>
-                Open {id} investigation
-              </button>
-            </li>
-          );
-        })}
+                ) : null}
+              </li>
+            );
+          })}
       </ol>
       <p className="muted">
         This overview checks saved cases only. Temporary or unsaved work stays
@@ -187,7 +231,9 @@ export function ContinueJourney({
   return (
     <section className="panel" aria-label="Continue your investigation journey">
       <h2>
-        {next ? "A new question awaits" : "Three ways to investigate Northstar"}
+        {next
+          ? "A new question awaits"
+          : "Twelve ways to investigate Northstar"}
       </h2>
       <p>
         {next

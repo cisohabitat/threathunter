@@ -11,6 +11,9 @@ export function useCampaign(mission: MissionId) {
     guard = useRef(false);
   const [view, setView] = useState<View | null>(null),
     [debrief, setDebrief] = useState<Debrief | null>(null);
+  const [requestError, setRequestError] = useState("");
+  const [resetKey, setResetKey] = useState(0),
+    [backupIds, setBackupIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(true),
     [error, setError] = useState(""),
     [status, setStatus] = useState("Checking this mission's local save…");
@@ -113,6 +116,12 @@ export function useCampaign(mission: MissionId) {
               ? "This browser cannot coordinate durable writes. Read/export or explicitly play temporarily."
               : "",
         );
+        storage
+          .replacementBackups(mission)
+          .then((ids) => {
+            if (alive) setBackupIds(ids);
+          })
+          .catch(() => {});
         storage
           .archives(mission)
           .then((ids) => {
@@ -251,6 +260,53 @@ export function useCampaign(mission: MissionId) {
       setBusy(false);
     }
   }
+  async function replace(text: string) {
+    const old = engine.current;
+    if (
+      !old ||
+      guard.current ||
+      temporary ||
+      readOnly ||
+      !writerAvailable ||
+      error ||
+      durable.current !== old.view.revision
+    )
+      return;
+    guard.current = true;
+    setBusy(true);
+    setRequestError("");
+    try {
+      const { state } = await request("import", text);
+      if (!state || state.missionId !== mission)
+        throw Error(
+          "This backup belongs to a different mission or free-hunt slot.",
+        );
+      const committed = await storage.replaceImported(
+        state,
+        old.view.runId,
+        old.view.revision,
+      );
+      expose(committed);
+      durable.current = committed.view.revision;
+      setResetKey((key) => key + 1);
+      setStatus("Saved on this device");
+      await storage
+        .replacementBackups(mission)
+        .then(setBackupIds)
+        .catch(() => {});
+      await storage
+        .archives(mission)
+        .then(setArchiveIds)
+        .catch(() => {});
+    } catch (e) {
+      setRequestError(
+        `Import failed: ${String(e)}. Your active investigation remains available.`,
+      );
+    } finally {
+      guard.current = false;
+      setBusy(false);
+    }
+  }
   async function recover(previous: boolean) {
     if (!issue || guard.current || readOnly || !writerAvailable) return;
     const selected = previous ? issue.previous : newRun();
@@ -308,6 +364,11 @@ export function useCampaign(mission: MissionId) {
     }
   }
   return {
+    resetKey,
+    backupIds,
+    replace,
+    requestError,
+    dismissRequestError: () => setRequestError(""),
     view,
     debrief,
     busy,
