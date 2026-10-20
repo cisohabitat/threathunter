@@ -1,9 +1,9 @@
 {
   "critical": [
     {
-      "path": "/assets/index-BDL_5sTL.js",
-      "bytes": 555470,
-      "gzipBytes": 175607
+      "path": "/assets/index-XejjUdLV.js",
+      "bytes": 555471,
+      "gzipBytes": 175610
     },
     {
       "path": "/assets/schemas-Dzim_TYw.js",
@@ -21,42 +21,42 @@
       "gzipBytes": 8492
     }
   ],
-  "criticalTotalWithLargestArt": 315416,
+  "criticalTotalWithLargestArt": 315419,
   "voiceBytes": 981008,
   "soundBytes": 52748,
   "activeCaseProfiles": [
     {
       "name": "M01",
-      "gzipJavaScriptBytes": 239980,
+      "gzipJavaScriptBytes": 239983,
       "files": [
-        "assets/index-BDL_5sTL.js",
+        "assets/index-XejjUdLV.js",
         "assets/schemas-Dzim_TYw.js",
         "assets/validationWorker-BcOVUR-6.js"
       ]
     },
     {
       "name": "P1 M04/M07",
-      "gzipJavaScriptBytes": 312176,
+      "gzipJavaScriptBytes": 312179,
       "files": [
-        "assets/BackupImport-G-Ten9t6.js",
-        "assets/Campaign-MaKD9XXh.js",
-        "assets/index-BDL_5sTL.js",
+        "assets/BackupImport-e5D74Bb5.js",
+        "assets/Campaign-CGJhSTpR.js",
+        "assets/index-XejjUdLV.js",
         "assets/p1Worker-Dy-eUMu4.js",
         "assets/schemas-Dzim_TYw.js",
-        "assets/storage-Bkct9YQt.js",
+        "assets/storage-CvvKtfNK.js",
         "assets/validationWorker-BcOVUR-6.js"
       ]
     },
     {
       "name": "Expansion/free hunts",
-      "gzipJavaScriptBytes": 344580,
+      "gzipJavaScriptBytes": 344583,
       "files": [
-        "assets/BackupImport-G-Ten9t6.js",
-        "assets/Expansion-q0fXTpu4.js",
+        "assets/BackupImport-e5D74Bb5.js",
+        "assets/Expansion-Om_073vi.js",
         "assets/expansionWorker-DY_EKLuh.js",
-        "assets/index-BDL_5sTL.js",
+        "assets/index-XejjUdLV.js",
         "assets/schemas-Dzim_TYw.js",
-        "assets/storage-BJXVXnc_.js",
+        "assets/storage-Dd--IWdl.js",
         "assets/validationWorker-BcOVUR-6.js"
       ]
     }

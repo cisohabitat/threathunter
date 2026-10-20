@@ -439,7 +439,7 @@ export default function App({
                     </a>
                   </div>
                   <p className="hero-foot">
-                    THREE CASES. YOUR JUDGEMENT. NO COUNTDOWN.
+                    TWELVE CASES. YOUR JUDGEMENT. NO COUNTDOWN.
                   </p>
                 </m.div>
                 <div className="hero-coordinate">
