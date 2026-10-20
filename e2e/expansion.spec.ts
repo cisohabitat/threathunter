@@ -601,20 +601,10 @@ test("a lazy-interface failure still exports the exact stored row through the ro
     await database.runs.put(row);
     return row;
   });
-  await page.reload();
   await page.route("**/src/expansion/Expansion.tsx", (route) => route.abort());
-  await page
-    .getByRole("button", {
-      name: "Show all twelve authored cases",
-      exact: true,
-    })
-    .click();
-  await page
-    .getByRole("button", { name: "Choose independent case order", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Open M02 investigation", exact: true })
-    .click();
+  // Navigate directly: the injected module failure may replace the entire
+  // home screen before a navigation button's click has finished settling.
+  await page.goto("/case/m02");
   await expect(
     page.getByRole("heading", {
       name: "The interface could not load.",
