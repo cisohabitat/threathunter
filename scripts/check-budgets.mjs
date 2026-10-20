@@ -43,6 +43,32 @@ const coreTotal =
   core.reduce((sum, item) => sum + item.gzipBytes, 0) +
   Math.max(...art.compositions.map((c) => c.bytes));
 assert(coreTotal <= 2 * 1024 * 1024, "Critical assets exceed 2 MiB");
+const p1JavaScript = readdirSync("dist/assets")
+  .filter((name) => name.endsWith(".js") && !name.startsWith("mixer-"))
+  .reduce(
+    (sum, name) => sum + gzipSync(readFileSync("dist/assets/" + name)).length,
+    0,
+  );
+assert(
+  p1JavaScript <= 400 * 1024,
+  "Loaded P1 text/worker JavaScript exceeds 400 KiB compressed",
+);
+const p1Packs = ["m04", "m07"].map((mission) => {
+  const pack = JSON.parse(
+    readFileSync(`src/campaign/audio/${mission}/manifest.json`, "utf8"),
+  );
+  const voice = pack.cues
+      .filter((c) => c.text)
+      .reduce((sum, c) => sum + c.bytes, 0),
+    sound = pack.cues
+      .filter((c) => !c.text)
+      .reduce((sum, c) => sum + c.bytes, 0);
+  assert(
+    voice <= 2 * 1024 * 1024 && sound <= 500 * 1024,
+    `${mission} optional voice/sound exceeds its budget`,
+  );
+  return { mission, voiceBytes: voice, soundBytes: sound };
+});
 assert(
   !readdirSync("dist").includes("production"),
   "Masters leaked into browser output",
@@ -54,6 +80,8 @@ console.log(
       criticalTotalWithLargestArt: coreTotal,
       voiceBytes,
       soundBytes,
+      p1LoadedJavaScriptGzipBytes: p1JavaScript,
+      p1Packs,
       physicalDevicePerformance: "not measured",
     },
     null,

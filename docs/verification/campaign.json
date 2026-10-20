@@ -1,0 +1,45 @@
+{
+  "buildBundle": "/assets/index-DqmGREwM.js",
+  "bundleSha256": "7f8487b4ada90a23e66602f94f06ae608dcfefc142285ffdccd7e6a6d2cce2ab",
+  "browser": "156.0.8078.4",
+  "method": "Linux Chromium production preview; phone/tablet viewports, healthy local storage/network. Actual UI fixture import, acquisition, source window, full-pack offline playback, 100 navigation clicks with two-frame wait, portable export/pure-reader validation and reload equality.",
+  "missions": [
+    {
+      "mission": "M04",
+      "textReadyMs": 473,
+      "importAndCommitMs": 115,
+      "acquisitionSamples": 5,
+      "acquisitionCommitP95Ms": 95,
+      "navigationSamples": 100,
+      "navigationP95Ms": 84,
+      "restoredRevision": 6,
+      "restoredTick": 5,
+      "commands": 6,
+      "fullVoiceFiles": 21,
+      "referenceQuality": 100,
+      "finalRevision": 22,
+      "closedReloadPassed": true,
+      "offlineVoiceAndExportInvariant": true,
+      "reloadPortableEquality": true
+    },
+    {
+      "mission": "M07",
+      "textReadyMs": 854,
+      "importAndCommitMs": 97,
+      "acquisitionSamples": 5,
+      "acquisitionCommitP95Ms": 95,
+      "navigationSamples": 100,
+      "navigationP95Ms": 83,
+      "restoredRevision": 9,
+      "restoredTick": 11,
+      "commands": 9,
+      "fullVoiceFiles": 21,
+      "referenceQuality": 100,
+      "finalRevision": 27,
+      "closedReloadPassed": true,
+      "offlineVoiceAndExportInvariant": true,
+      "reloadPortableEquality": true
+    }
+  ],
+  "limits": "Lab automation and emulation only. No physical-device, assistive-technology, listening, creative or player review. Acquisition timings include declared simulation/commit work and automation. Reference scored closure/reload is also checked. These authored-fixture expectations are not human calibration or player acceptance."
+}

@@ -1,5 +1,12 @@
 import { Howl } from "howler";
-import { voicePack, cues } from "../voice/pack";
+import { voicePack } from "../voice/pack";
+export type AudioAsset = {
+  id: string;
+  text: string;
+  audioPath: string;
+  bytes: number;
+  sha256: string;
+};
 export type AudioPreferences = {
   master: number;
   voice: number;
@@ -22,45 +29,76 @@ export class MissionMixer {
   constructor(
     private onError: (message: string) => void,
     private onPlaying: (playing: boolean) => void,
+    private assets: readonly AudioAsset[] = voicePack.cues,
   ) {}
+  private loading: AbortController | null = null;
+  private generation = 0;
   async load() {
-    const results = await Promise.allSettled(
-      voicePack.cues.map(async (cue) => {
-        const response = await fetch(cue.audioPath);
-        if (!response.ok) throw Error(`Could not load ${cue.id}.`);
-        const bytes = await response.arrayBuffer();
-        const hash = Array.from(
-          new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)),
-        )
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
-        if (bytes.byteLength !== cue.bytes || hash !== cue.sha256)
-          throw Error(`Audio asset does not match manifest: ${cue.id}.`);
-        const url = URL.createObjectURL(
-          new Blob([bytes], { type: "audio/mpeg" }),
-        );
-        this.urls.push(url);
-        const sound = await new Promise<Howl>((resolve, reject) => {
-          const h = new Howl({
-            src: [url],
-            format: ["mp3"],
-            preload: true,
-            loop: cue.id === "ambience",
-            onload: () => resolve(h),
-            onloaderror: () => {
-              h.unload();
-              reject(Error(`Could not decode ${cue.id}.`));
-            },
+    const controller = new AbortController(),
+      generation = ++this.generation;
+    this.loading = controller;
+    const deadline = setTimeout(() => controller.abort(), 20000);
+    try {
+      await Promise.all(
+        this.assets.map(async (cue) => {
+          const response = await fetch(cue.audioPath, {
+            signal: controller.signal,
           });
-        });
-        this.sounds.set(cue.id, sound);
-      }),
-    );
-    if (results.some((r) => r.status === "rejected")) {
+          if (!response.ok) throw Error(`Could not load ${cue.id}.`);
+          const bytes = await response.arrayBuffer();
+          const hash = Array.from(
+            new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)),
+          )
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
+          if (
+            controller.signal.aborted ||
+            generation !== this.generation ||
+            bytes.byteLength !== cue.bytes ||
+            hash !== cue.sha256
+          )
+            throw Error("Voice asset unavailable or incompatible.");
+          const url = URL.createObjectURL(
+            new Blob([bytes], { type: "audio/mpeg" }),
+          );
+          this.urls.push(url);
+          await new Promise<void>((resolve, reject) => {
+            const abort = () => reject(Error("Voice preparation cancelled."));
+            controller.signal.addEventListener("abort", abort, { once: true });
+            const h = new Howl({
+              src: [url],
+              format: ["mp3"],
+              preload: true,
+              loop: cue.id === "ambience",
+              onload: () => {
+                controller.signal.removeEventListener("abort", abort);
+                if (
+                  generation !== this.generation ||
+                  controller.signal.aborted
+                ) {
+                  h.unload();
+                  reject(Error("Obsolete voice preparation."));
+                } else resolve();
+              },
+              onloaderror: () => {
+                controller.signal.removeEventListener("abort", abort);
+                reject(Error(`Could not decode ${cue.id}.`));
+              },
+            });
+            // Own pending decoders immediately so failure/disposal can unload them.
+            this.sounds.set(cue.id, h);
+          });
+        }),
+      );
+    } catch {
+      controller.abort();
       this.dispose();
       throw Error(
         "Voice pack unavailable. Continue with text; you can retry audio.",
       );
+    } finally {
+      clearTimeout(deadline);
+      if (this.loading === controller) this.loading = null;
     }
   }
   configure(prefs: AudioPreferences, enabled: boolean) {
@@ -104,7 +142,7 @@ export class MissionMixer {
     this.stopVoice();
     if (!this.enabled || this.level("voice") === 0) return;
     const sound = this.sounds.get(id);
-    if (!sound || !cues.get(id)?.text) return;
+    if (!sound || !this.assets.find((cue) => cue.id === id)?.text) return;
     this.foreground = sound;
     this.speaking = true;
     this.onPlaying(true);
@@ -137,6 +175,9 @@ export class MissionMixer {
     for (const sound of this.sounds.values()) sound.stop();
   }
   dispose() {
+    this.generation++;
+    this.loading?.abort();
+    this.loading = null;
     this.stopAll();
     for (const sound of this.sounds.values()) sound.unload();
     this.sounds.clear();

@@ -1,7 +1,55 @@
-import { StrictMode, Component, type ReactNode } from "react";
+import {
+  StrictMode,
+  Component,
+  lazy,
+  Suspense,
+  useState,
+  type ReactNode,
+} from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "../ui/styles.css";
+const Campaign = lazy(() => import("../campaign/Campaign"));
+function Root() {
+  const [selected, setSelected] = useState<"M04" | "M07" | null>(null);
+  const [visited, setVisited] = useState<("M04" | "M07")[]>([]);
+  function open(mission: "M04" | "M07") {
+    setVisited((previous) =>
+      previous.includes(mission) ? previous : [...previous, mission],
+    );
+    setSelected(mission);
+    window.scrollTo(0, 0);
+  }
+  // Keep loaded investigations mounted: changing cases cannot discard volatile work.
+  return (
+    <>
+      <div hidden={selected !== null}>
+        <App openCampaign={open} />
+      </div>
+      {visited.map((mission) => (
+        <div key={mission} hidden={selected !== mission}>
+          <Suspense
+            fallback={
+              <main>
+                <h1>Preparing investigation…</h1>
+                <button onClick={() => setSelected(null)}>Return home</button>
+              </main>
+            }
+          >
+            <Campaign
+              missionId={mission}
+              active={selected === mission}
+              onExit={() => {
+                setSelected(null);
+                window.scrollTo(0, 0);
+              }}
+            />
+          </Suspense>
+        </div>
+      ))}
+    </>
+  );
+}
 class ErrorBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -25,7 +73,7 @@ class ErrorBoundary extends Component<
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
-      <App />
+      <Root />
     </ErrorBoundary>
   </StrictMode>,
 );

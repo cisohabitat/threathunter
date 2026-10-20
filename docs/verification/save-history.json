@@ -1,43 +1,43 @@
 {
-  "buildBundle": "/assets/index-DDGWuq93.js",
-  "bundleSha256": "afb7167563f3172624cd6a6d7ef2024d58613c4dec15d07bdf7cfda56b011b69",
+  "buildBundle": "/assets/index-DqmGREwM.js",
+  "bundleSha256": "7f8487b4ada90a23e66602f94f06ae608dcfefc142285ffdccd7e6a6d2cce2ab",
   "browser": "156.0.8078.4",
   "method": "Linux Chromium production preview, healthy desktop CPU/storage; 20 ms main-thread heartbeat during real file import and durable commit; exact stored command comparison and reload",
   "validationSamples": [
     {
       "commands": 100,
       "utf8Bytes": 183601,
-      "synchronousNodeValidationMs": 88
+      "synchronousNodeValidationMs": 49
     },
     {
       "commands": 350,
       "utf8Bytes": 631852,
-      "synchronousNodeValidationMs": 230
+      "synchronousNodeValidationMs": 1057
     },
     {
       "commands": 750,
       "utf8Bytes": 1349052,
-      "synchronousNodeValidationMs": 516
+      "synchronousNodeValidationMs": 1662
     }
   ],
   "boundedLegacy": {
     "commands": 20000,
     "utf8Bytes": 1827650,
-    "validationMs": 904,
+    "validationMs": 1209,
     "restoredTick": 20000,
     "receipts": 20000,
     "method": "Node import of a valid format-1 file at the command-count limit; no browser rendering claim"
   },
   "sameBuildReplayComparison": {
     "commands": 750,
-    "immutableReplayMs": 3710,
-    "ownedReplayMs": 31,
+    "immutableReplayMs": 19105,
+    "ownedReplayMs": 19,
     "equalCompleteState": true,
     "method": "Single same-build Node trial, identical parsed commands and initial state; no physical-device or population claim"
   },
   "boundedBrowser": {
     "commands": 20000,
-    "importAndCommitMs": 6969,
+    "importAndCommitMs": 5087,
     "portableBytes": 1833140,
     "snapshotThroughRevision": 0,
     "reloadPassed": true,
@@ -49,12 +49,28 @@
     "method": "Actual production Chromium file import, durable commit, portable download/pure-reader reimport, reload and Timeline first/latest pages; limit leaves no room for another command"
   },
   "workerImport": {
-    "importAndCommitMs": 2333,
-    "heartbeatSamples": 86,
-    "heartbeatP95Ms": 23.199999999254942,
-    "maximumHeartbeatGapMs": 623.4000000003725,
+    "importAndCommitMs": 11593,
+    "heartbeatSamples": 174,
+    "heartbeatP95Ms": 318,
+    "maximumHeartbeatGapMs": 1106.199999999255,
     "longTaskDurationsMs": [
-      616
+      1100,
+      52,
+      310,
+      281,
+      147,
+      168,
+      70,
+      637,
+      192,
+      84,
+      114,
+      257,
+      214,
+      90,
+      106,
+      53,
+      112
     ]
   },
   "restored": {

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { Debrief, PlayerView } from "../../domain/contracts";
-import { cues } from "../voice/pack";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cues, type voicePack } from "../voice/pack";
 import type { AudioPreferences, MissionMixer } from "./mixer";
 const defaults: AudioPreferences = {
   master: 0.7,
@@ -40,10 +39,20 @@ function preferences() {
   }
 }
 export function useMissionAudio(
-  view: PlayerView | null,
-  debrief: Debrief | null,
+  view: {
+    runId: string;
+    phase: "investigating" | "closed";
+    records: { ref: { recordId: string } }[];
+  } | null,
+  debrief: object | null,
   scene: string,
+  pack?: { cues: typeof voicePack.cues },
+  active = true,
 ) {
+  const selectedCues = useMemo(
+    () => (pack ? new Map(pack.cues.map((c) => [c.id, c])) : cues),
+    [pack],
+  );
   const [prefs, setPrefs] = useState(preferences),
     [enabled, setEnabled] = useState(false),
     [phase, setPhase] = useState<"idle" | "loading" | "ready" | "error">(
@@ -81,6 +90,12 @@ export function useMissionAudio(
     setLastCue(null);
   }, [scene]);
   useEffect(() => {
+    if (!active) {
+      mixer.current?.stopAll();
+      setEnabled(false);
+    }
+  }, [active]);
+  useEffect(() => {
     const onHidden = () => {
       if (document.hidden) mixer.current?.stopAll();
     };
@@ -89,7 +104,7 @@ export function useMissionAudio(
   }, []);
   const play = useCallback(
     (id: string) => {
-      if (!cues.get(id)?.text) return;
+      if (!selectedCues.get(id)?.text) return;
       if (
         (id === "morgan-6" ||
           id.startsWith("finding-") ||
@@ -101,7 +116,7 @@ export function useMissionAudio(
       setError("");
       mixer.current?.voice(id);
     },
-    [view?.phase],
+    [view?.phase, selectedCues],
   );
   useEffect(() => {
     if (!view) {
@@ -111,7 +126,12 @@ export function useMissionAudio(
     const next = {
       runId: view.runId,
       records: view.records.length,
-      checks: view.records.filter((r) => r.ref.recordId === "EV-06").length,
+      checks: view.records.filter(
+        (r) =>
+          r.ref.recordId === "EV-06" ||
+          r.ref.recordId.startsWith("R-test_") ||
+          r.ref.recordId === "R-other_test_received",
+      ).length,
       closed: Boolean(debrief),
     };
     const before = previous.current;
@@ -146,6 +166,7 @@ export function useMissionAudio(
         (value) => {
           if (alive.current) setPlaying(value);
         },
+        pack?.cues,
       );
       await next.load();
       if (!alive.current) {

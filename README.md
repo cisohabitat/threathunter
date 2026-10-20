@@ -4,9 +4,9 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 
 **Live:** https://threathunter-rosy.vercel.app
 
-**Status: deployed internal M01 development build; completed-P0 acceptance is still pending.**
+**Status: three-mission internal candidate. M01, M04 and M07 are playable; required player, device and creative reviews are deferred, not passed.**
 
-## How to play
+## How to play M01: The Midnight Login
 
 1. Choose **Guided investigation** (recommended), then **Begin investigation** or **Resume investigation**.
 2. Morgan explains your role: investigate an unfamiliar finance login at 02:13 and decide what the evidence supports.
@@ -92,7 +92,7 @@ After the application is loaded, all active-case text and rules are local. Offli
 
 GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the [baseline b3e309b run](https://github.com/cisohabitat/threathunter/actions/runs/39349995606) passed, including Chromium, Firefox and WebKit. New commits require their own observed result.
 
-See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), and [implementation status](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. M04, M07 and campaign expansion follow P0 acceptance.
+See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), and [implementation status](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. The user explicitly deferred review-first sequencing so M04/M07 development can proceed. Their new rules and fixtures are documented separately; this is not P0/P1 release acceptance.
 
 ## Keeping documentation current
 
@@ -115,3 +115,17 @@ Save-history audits now replay into a detached engine state, avoiding a copy of 
 Timeline and debrief history show up to 50 entries per page, with keyboard-accessible first/previous/next/latest controls. Timeline remembers its page when you change investigation screens. Pagination and the debrief delivery-step filter are free and never alter the finding.
 
 Normal exports are compact format-2 JSON prepared in the background validator without changing receipt acknowledgements. When a full snapshot exceeds 2 MiB, the writer uses a revision-zero checkpoint plus every original command and the final state hash. The reader reconstructs the same case; no actions are removed. If even the minimal envelope exceeds 2 MiB, saving/export reports an error and retains progress. The 20,000-command limit still applies. See [save compatibility](docs/SAVE_FORMAT.md) and [current verification](docs/verification/RESULTS.md).
+
+## Play the proactive hunts
+
+Choose **M04 · The Forgotten Server** or **M07 · The Missing Logs** under **More investigations**, below the home brief. Each mission keeps its own active save and completed-case archives. Switching investigations preserves accepted in-memory work and silences inactive audio. Export before changing browser/device or clearing storage.
+
+**M04 — The Forgotten Server:** begin a planned account review, acquire **Compare account activity by host**, then select the newly discovered host in **Investigation scope**. Check its billing dependency and compare the specific migration approval with session origin, task provenance or application access. Cite acquired observations, mark evidence used to test an alternative, and make a scoped Case File recommendation. An undocumented host is not a shutdown target; the response team owns permitted session restrictions.
+
+**M07 — The Missing Logs:** compare declared coverage with actual heartbeats, inspect collector configuration and the limited identity source, then select the relevant service. A controlled verification costs one step and completes three steps after request. Future collection takes two steps to activate; choose a four-step window for a test requested afterwards, or plan the check before activation. Use **Timeline** to advance deliberately or keep acquiring other sources. Review the completed window, name the missing historical source/interval, and assign repair/reverification. Successful collection now does not recover historical activity.
+
+In both hunts, **Case File → Review finding → Confirm and close hunt** freezes your decision-time knowledge. Numeric grading is optional and separate from the explicitly revealed world outcome. Reading, scope selection and evidence roles are free. The debrief offers earlier-step filtering, source/world/acquisition tracks, evidence-linked feedback and same-world replay with a new run ID.
+
+Each hunt has a complete candidate pre-generated voice pack with the same consent, captions/transcript, channel levels, mute, skip/replay and offline loaded-session controls as M01. Packs load in full independent of private truth. All listening/creative reviews remain deferred. Lossless masters are archived outside delivery; no runtime TTS, account, backend or microphone is involved.
+
+P1 exports use a separate versioned `threat-hunter-p1` envelope. Select the matching mission before importing; M01 files retain their existing format/readers. Durable receipt acknowledgement occurs only after the transaction succeeds. Failed writes keep accepted work for export/retry, damaged records retain an original recovery copy, and browsers without Web Locks require explicit temporary play. See [P1 rules and matrices](docs/P1_MISSIONS.md), [review deferral decision](docs/DESIGN_DECISIONS.md) and [save compatibility](docs/SAVE_FORMAT.md).

@@ -19,7 +19,11 @@ function readGuidancePreference() {
   }
 }
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
-export default function App() {
+export default function App({
+  openCampaign,
+}: {
+  openCampaign?: (mission: "M04" | "M07") => void;
+}) {
   const game = useGame(),
     {
       screen,
@@ -394,7 +398,7 @@ export default function App() {
                   </a>
                 </div>
                 <p className="hero-foot">
-                  ONE CASE. YOUR JUDGEMENT. NO COUNTDOWN.
+                  THREE CASES. YOUR JUDGEMENT. NO COUNTDOWN.
                 </p>
               </m.div>
               <div className="hero-coordinate">
@@ -425,6 +429,48 @@ export default function App() {
                   </p>
                 </div>
               </div>
+              {openCampaign ? (
+                <section
+                  className="home-brief"
+                  aria-label="More investigations"
+                >
+                  <div>
+                    <p className="eyebrow">PROACTIVE HUNTS</p>
+                    <h2>Start with a question.</h2>
+                  </div>
+                  <div>
+                    <p>
+                      Review an account’s reach, or test whether your collection
+                      can see the activity you care about. Each case keeps its
+                      own local save.
+                    </p>
+                    <div className="actions">
+                      <button
+                        disabled={game.busy}
+                        onClick={() => {
+                          audio.playMuted();
+                          openCampaign("M04");
+                        }}
+                      >
+                        M04 · The Forgotten Server
+                      </button>
+                      <button
+                        disabled={game.busy}
+                        onClick={() => {
+                          audio.playMuted();
+                          openCampaign("M07");
+                        }}
+                      >
+                        M07 · The Missing Logs
+                      </button>
+                    </div>
+                    <p className="muted">
+                      Internal candidates. Player, device and creative reviews
+                      are deferred.
+                    </p>
+                  </div>
+                </section>
+              ) : null}
             </section>
           ) : game.debrief ? (
             <Debrief

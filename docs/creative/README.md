@@ -1,4 +1,4 @@
-# Creative production handoff — M01 candidate
+# Creative production handoff — three-mission candidate
 
 **Status: pending human creative and listening acceptance.** Automated validation and agent visual inspection are evidence of technical delivery, not art direction approval or a completed player study.
 
@@ -37,3 +37,9 @@ Review each frame for next-action clarity, readable hierarchy, focus/selection/p
 ## Timeline revision reference
 
 [Current pagination control](../verification/screens/12-timeline-pagination.png) was captured from the production preview with a 20,000-command case. Before: every history entry was rendered in one list. After: at most 50 entries, an announced range, and first/previous/next/latest native buttons; the full ordered log remains accessible and exportable. Other composition frames remain the earlier baseline, not recaptured or reapproved here. Human/device visual acceptance remains pending.
+
+## M04/M07 extension
+
+The existing versioned generated Northstar landscape/portrait environmental compositions and their original PNG archive are reused as decorative mission-banner crops. This is reuse of existing candidate art, not a claim of new or approved mission illustrations. M04 adds a readable account-to-host matrix; M07 presents declared collection and observed delivery as separate labelled panels. Evidence roles, bounded lists, the Case File, separate outcome/quality debrief and full audio controls share the established grammar. New audio/script/master records are in [the production record](../audio/PRODUCTION.md).
+
+`npm run verify:campaign` captures current production-preview mission choices, M04 matrix/Case File/debrief, and M07 coverage/window/debrief frames (13–19 in `docs/verification/screens`). Earlier M01 frames remain labelled historical references. Before: only M01 was playable and M04/M07 were blueprints. After: two executable proactive hunts, with their own source mechanics and saved reports. The user deferred all human creative/listening/device reviews; these frames are technical review material, not approval.

@@ -40,6 +40,8 @@ Record exact current/previous major browser versions at the time of testing. Lin
 
 Use [device-review.csv](device-review.csv), [audio-review.csv](audio-review.csv) and screenshots/issue IDs. Every review starts **pending**. A failed critical path blocks sign-off; record corrections and repeat the affected check on the corrected commit.
 
-## P1 gate
+## Deferred P1 release gate
 
 The GDD Section 22.1 requires P0 to pass before M04/M07 production fixtures and full implementation. Record completed P0 evidence first; then author each P1 case's stable IDs, collection/time matrices, authority/dependency rules, sufficient sets, independent routes, fairness twins, golden traces and reviewed presentation package. The current build does not imply those missions or the eventual twelve-case campaign exist.
+
+The user subsequently deferred review-first sequencing and authorised M04/M07 development. Both are now executable candidates under [the recorded decision](../DESIGN_DECISIONS.md). Run the same actual-player, device and listening evidence collection before claiming release acceptance; no blank scorecard is a passed review.

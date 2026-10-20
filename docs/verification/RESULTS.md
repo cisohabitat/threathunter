@@ -85,7 +85,7 @@ The final production lab recorded cold case-ready **2,058 ms**, ordinary synthet
 
 Current reports: [save-history.json](save-history.json), [performance.json](performance.json), [crash-recovery.json](crash-recovery.json). The c97a4fb source build's [hosted run](https://github.com/cisohabitat/threathunter/actions/runs/39356069250) passed, and its exact production deployment reached READY. Physical-device, participant, listening/creative reviews, large-browser-history work and the GDD P1 gate remain open.
 
-## Current portable-history and timeline iteration
+## Portable-history baseline — 61cefbd
 
 Executed 20 October 2026: lint, strict TypeScript/build, budgets and **92 unit/asset tests** passed. The Chromium full run passed 52 checks; its two new large-case checks initially reloaded before closure committed. The corrected test waits for Saved and asserts the actual stored closed phase/revision. Both corrected desktop/phone reruns passed, giving **54 verified journeys across runs**. Linux WebKit passed ten of eleven selected journeys initially; its first home-opacity wait failed. The isolated keyboard/accessibility rerun passed (15.4 seconds), giving **11 verified WebKit journeys across runs**. No local Firefox or physical Safari pass is claimed.
 
@@ -109,3 +109,24 @@ The production lab recorded **2,683 ms** cold readiness at 4 Mbps / 100 ms RTT /
 [save-history.json](save-history.json), [performance.json](performance.json) and [crash-recovery.json](crash-recovery.json) contain the declared methods. The first production-profiler attempt stopped at an outdated home-button locator; after correcting it, profiling and crash recovery passed. Existing general frames remain baseline captures (`--no-screens`); [the added actual pagination frame](screens/12-timeline-pagination.png) records the new range/buttons. Before this change, timelines rendered every history item; now each page renders at most 50 while the complete history remains available. No human visual approval is inferred from this capture.
 
 The unchanged GDD still requires physical reference devices, assistive technology, creative/listening approval, eight newcomer sessions, eight generalist sessions and three specialist reviewers. Blank scorecards remain pending. Those gates precede M04/M07 production. This publication's CI/deployment must be checked independently from the prior c97a4fb success.
+
+## Current P1 expansion with reviews deferred
+
+The user explicitly authorised development before reviews; see [the decision](../DESIGN_DECISIONS.md). M04/M07 now have separate authored content, commands, source/cutoff matrices, causal events, scoring, persistence and candidate audiovisual packages. M01 remains pinned to its original fixtures/readers. Full GDD/release acceptance and a >9 player grade are not claimed.
+
+Executed checks: lint, strict TypeScript, production build, all **114 unit/asset tests**, and initial/P1/pack payload gates passed. **32 Chromium checks** passed in the broad desktop/phone regression. After final phase ordering and bounded media preparation, **20 focused Chromium checks** and **10 WebKit checks** passed cleanly. These final runs include all seven P1 journeys plus the three M01 audio journeys. The earlier new-test selectors, a later record remaining in the debrief limits panel at an earlier selected step, and the initial WebKit audio-failure loader stall were fixed. The loader now fails promptly, aborts/unloads pending work and has a 20-second deadline, with dedicated stalled-fetch/decoder tests. Local Firefox remains host-blocked; hosted CI must be checked independently.
+
+| Boundary | Evidence |
+| --- | --- |
+| Account scope → discovery → finding | M04 query earns LEGACY-01; two strong explanation/misuse routes and matched sparse twins; UI explained reference closes at 100 |
+| Coverage → controlled test/window → finding | M07 configuration-led and failed-test-first routes, target/capability limits, same-step activation priority, no historical backfill; UI visibility reference closes at 100 |
+| Decision → separate continuation | Timing changes M04 objective outcome without hindsight grade changes; pending M07 checks remain unknown at decision while later private collection resolves |
+| Worker → atomic storage → reload | Exact stored snapshots/logs, committed receipts after success, quota retry without duplicate action, full-row CAS, recovery-original, closed archives and same-world replay |
+| Mission switching | P1 journals stay independent; M01 row is byte-equivalent across switching; accepted volatile state remains mounted |
+| Ready media → offline/free reading | All 21 files per P1 pack load; both packs play offline; exports remain identical after audio, settings and navigation |
+| Missing coordination | Actual no-Web-Locks browser path requires explicit temporary play and leaves the mission's active row absent |
+| Layout/access | Phone/desktop emulation, 320px bounds, semantic tables/coverage panels and sampled WCAG 2.1 A/AA checks; physical/assistive-tech reviews deferred |
+
+New production-preview evidence is generated by `npm run verify:campaign` and recorded in [campaign.json](campaign.json), including actual import/commit, acquisition latency, 100 free navigation samples, both full offline packs, portable reconstruction, reference-scored closure and reload. Frames 13–19 are current P1 technical review captures; earlier M01 frames remain historical. The existing [performance](performance.json), [save-history](save-history.json) and [crash recovery](crash-recovery.json) reports are regenerated against the final bundle. These lab methods are not physical-device, player, creative or listening reviews. The declared methods and hashes in each report identify what was measured; main-thread/long-history limits remain explicit.
+
+The first-load and loaded-P1 compressed JavaScript budgets pass; optional mission voice remains separately measured. Lossless source archives are outside `public`/`dist`. This publication needs its own observed hosted-CI success and exact-commit Vercel READY/HTTPS asset verification. Deferred raw player/device/audio review CSVs remain unfilled.

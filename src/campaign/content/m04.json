@@ -1,0 +1,424 @@
+{
+  "missionId": "M04",
+  "version": "1.0.0",
+  "rubricVersion": "p1-1.0.0",
+  "policyVersion": "m04-session-and-dependency-1",
+  "title": "The Forgotten Server",
+  "question": "Has svc-billing been used interactively outside the application systems it is meant to support?",
+  "briefing": "There is no incident alert. Start a planned account review, compare its usual host with observed relationships, and choose where to narrow your hunt. Establish the billing dependency before recommending any disruption.",
+  "worlds": ["B", "M", "U-B", "U-M"],
+  "openingFactIds": ["baseline"],
+  "facts": [
+    {
+      "id": "baseline",
+      "recordId": "R-baseline",
+      "title": "Expected account purpose",
+      "text": "svc-billing runs the scheduled billing batch from APP-01. This review asks where the account has been used; no security alert initiated it.",
+      "sourceId": "service_roster",
+      "lineage": "roster",
+      "targetId": "APP-01",
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "usual_host",
+      "recordId": "R-app",
+      "title": "Expected relationship",
+      "text": "svc-billing has scheduled batch authentication on APP-01 in the review window.",
+      "sourceId": "authentication",
+      "lineage": "auth-matrix",
+      "targetId": "APP-01",
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "eventTick": 0,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null,
+      "relationship": {
+        "account": "svc-billing",
+        "host": "APP-01"
+      }
+    },
+    {
+      "id": "relationship",
+      "recordId": "R-legacy",
+      "title": "A connection outside the usual path",
+      "text": "svc-billing also has an interactive session, BILL-S1, on LEGACY-01 at step 0. The host is absent from current inventory. Neither detail establishes misuse.",
+      "sourceId": "authentication",
+      "lineage": "auth-matrix",
+      "targetId": "LEGACY-01",
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "eventTick": 0,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null,
+      "relationship": {
+        "account": "svc-billing",
+        "host": "LEGACY-01"
+      }
+    },
+    {
+      "id": "dependency",
+      "recordId": "R-dependency",
+      "title": "An undocumented business dependency",
+      "text": "Billing Operations confirms LEGACY-01 supplies the nightly billing batch. No managed-host isolation capability is available. Do not stop it on the strength of its age or inventory absence. Session restrictions belong to the response team.",
+      "sourceId": "ownership",
+      "lineage": "owner-registry",
+      "targetId": "LEGACY-01",
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "change_match",
+      "recordId": "R-change",
+      "title": "A matching migration record",
+      "text": "Approved migration CR-204 covers svc-billing, LEGACY-01, operator OP-14, this maintenance interval and the interactive billing-validation task. An approval alone does not prove who used the account.",
+      "sourceId": "change_register",
+      "lineage": "change-register",
+      "targetId": "LEGACY-01",
+      "worlds": ["B"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "change_none",
+      "recordId": "R-change",
+      "title": "No matching approval in the covered register",
+      "text": "The covered change register contains no task authorising svc-billing interactive use on LEGACY-01 in this interval. This is one source, not proof of compromise by itself.",
+      "sourceId": "change_register",
+      "lineage": "change-register",
+      "targetId": "LEGACY-01",
+      "worlds": ["M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "change_gap",
+      "recordId": "R-change",
+      "title": "Approval archive unavailable",
+      "text": "The older change archive is unavailable for this interval. No matching approval can be verified or ruled out.",
+      "sourceId": "change_register",
+      "lineage": "change-register",
+      "targetId": "LEGACY-01",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "originId": null
+    },
+    {
+      "id": "origin_approved",
+      "recordId": "R-origin",
+      "title": "Session origin corroborates the task",
+      "text": "The separate management-gateway record maps BILL-S1 to OP-14 on MGMT-01 and the CR-204 billing-validation operation. It corroborates the specific approval, not every possible later action.",
+      "sourceId": "management_gateway",
+      "lineage": "gateway",
+      "targetId": "LEGACY-01",
+      "worlds": ["B"],
+      "eventTick": 0,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "origin_unapproved",
+      "recordId": "R-origin",
+      "title": "A distinct origin outside the permitted route",
+      "text": "The management gateway attributes BILL-S1 to an unmanaged client outside the registered migration route. Operator identity is unverified. Combine this with task or application evidence before claiming misuse.",
+      "sourceId": "management_gateway",
+      "lineage": "gateway",
+      "targetId": "LEGACY-01",
+      "worlds": ["M"],
+      "eventTick": 0,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "origin_gap",
+      "recordId": "R-origin",
+      "title": "Authentication does not establish an operator",
+      "text": "The legacy gateway retained authentication only. There is no usable operator or process-origin mapping for BILL-S1.",
+      "sourceId": "management_gateway",
+      "lineage": "gateway",
+      "targetId": "LEGACY-01",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": 0,
+      "availableAt": 0,
+      "coverage": "partial",
+      "originId": null
+    },
+    {
+      "id": "task_approved",
+      "recordId": "R-task",
+      "title": "Recorded migration task origin",
+      "text": "At step 2, host task collection records the approved billing-validation task created from BILL-S1 with the matching CR-204 operation identifier.",
+      "sourceId": "task_process",
+      "lineage": "host-task",
+      "targetId": "LEGACY-01",
+      "worlds": ["B"],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "originId": "task-created"
+    },
+    {
+      "id": "task_persistence",
+      "recordId": "R-task",
+      "title": "Recorded persistent task outside approved work",
+      "text": "At step 2, host task collection records BILL-S1 creating a recurring export task with no registered migration identifier. This is a distinct host observation, not another copy of the authentication entry.",
+      "sourceId": "task_process",
+      "lineage": "host-task",
+      "targetId": "LEGACY-01",
+      "worlds": ["M"],
+      "eventTick": 2,
+      "availableAt": 2,
+      "coverage": "covered",
+      "originId": "task-created"
+    },
+    {
+      "id": "task_gap",
+      "recordId": "R-task",
+      "title": "Historical process collection was absent",
+      "text": "LEGACY-01 has no historical process-creation collection at this cutoff. Enabling it now can record future executions only; it cannot recover an earlier task origin.",
+      "sourceId": "task_process",
+      "lineage": "host-task",
+      "targetId": "LEGACY-01",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "originId": null
+    },
+    {
+      "id": "access_expected",
+      "recordId": "R-access",
+      "title": "Billing application records expected access",
+      "text": "At step 6 the billing application records the scoped reconciliation dataset requested by the approved validation task. It does not establish activity outside this application.",
+      "sourceId": "billing_application",
+      "lineage": "billing-app",
+      "targetId": "LEGACY-01",
+      "worlds": ["B"],
+      "eventTick": 6,
+      "availableAt": 6,
+      "coverage": "covered",
+      "originId": "consequential-access"
+    },
+    {
+      "id": "access_unexpected",
+      "recordId": "R-access",
+      "title": "A second source records consequential access",
+      "text": "At step 6 the billing application records BILL-S1 requesting a customer-export dataset outside the migration task scope. The application records access scope independently of host-task collection.",
+      "sourceId": "billing_application",
+      "lineage": "billing-app",
+      "targetId": "LEGACY-01",
+      "worlds": ["M"],
+      "eventTick": 6,
+      "availableAt": 6,
+      "coverage": "covered",
+      "originId": "consequential-access"
+    },
+    {
+      "id": "access_gap",
+      "recordId": "R-access",
+      "title": "Application detail was not collected",
+      "text": "Application collection cannot attribute the reviewed data action to BILL-S1. Missing activity detail does not establish that no access occurred.",
+      "sourceId": "billing_application",
+      "lineage": "billing-app",
+      "targetId": "LEGACY-01",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "originId": null
+    }
+  ],
+  "queries": [
+    {
+      "id": "account_hosts",
+      "label": "Compare account activity by host",
+      "sourceId": "authentication",
+      "can": "Reveal recorded account-to-host relationships in the review window.",
+      "cannot": "Inventory absence and interactive use do not establish intent.",
+      "factIds": ["usual_host", "relationship"],
+      "static": true,
+      "scope": "account"
+    },
+    {
+      "id": "session_origin",
+      "label": "Inspect session origin",
+      "sourceId": "management_gateway",
+      "can": "Check an independently recorded operator and task route.",
+      "cannot": "An unfamiliar client alone does not prove misuse.",
+      "factIds": ["origin_approved", "origin_unapproved", "origin_gap"],
+      "static": true,
+      "scope": "host"
+    },
+    {
+      "id": "dependency",
+      "label": "Check ownership and billing dependency",
+      "sourceId": "ownership",
+      "can": "Establish the business dependency and permitted response capability.",
+      "cannot": "An undocumented host is not automatically safe to shut down.",
+      "factIds": ["dependency"],
+      "static": true,
+      "scope": "host"
+    },
+    {
+      "id": "change",
+      "label": "Check the migration approval",
+      "sourceId": "change_register",
+      "can": "Compare account, host, operator, time and task.",
+      "cannot": "An approval does not authorise every later action.",
+      "factIds": ["change_match", "change_none", "change_gap"],
+      "static": true,
+      "scope": "host"
+    },
+    {
+      "id": "task",
+      "label": "Inspect task provenance",
+      "sourceId": "task_process",
+      "can": "Inspect recorded process creation through the requested cutoff.",
+      "cannot": "A new sensor cannot backfill historical task origin.",
+      "factIds": ["task_approved", "task_persistence", "task_gap"],
+      "static": false,
+      "scope": "host"
+    },
+    {
+      "id": "application",
+      "label": "Inspect billing application scope",
+      "sourceId": "billing_application",
+      "can": "Read application access scope from its own collection path.",
+      "cannot": "This source cannot identify all activity on the host.",
+      "factIds": ["access_expected", "access_unexpected", "access_gap"],
+      "static": false,
+      "scope": "host"
+    },
+    {
+      "id": "window",
+      "label": "Review the future observation window",
+      "sourceId": "task_process",
+      "can": "Read executions recorded while the explicitly enabled sensor was active.",
+      "cannot": "A future execution is not a recovered creation event.",
+      "factIds": [],
+      "static": false,
+      "scope": "host"
+    }
+  ],
+  "sufficientSets": {
+    "explained": [
+      [
+        "baseline",
+        "relationship",
+        "dependency",
+        "change_match",
+        "task_approved"
+      ],
+      [
+        "baseline",
+        "relationship",
+        "dependency",
+        "change_match",
+        "origin_approved"
+      ]
+    ],
+    "misuse": [
+      [
+        "baseline",
+        "relationship",
+        "dependency",
+        "change_none",
+        "origin_unapproved",
+        "task_persistence"
+      ],
+      [
+        "baseline",
+        "relationship",
+        "dependency",
+        "change_none",
+        "origin_unapproved",
+        "access_unexpected"
+      ]
+    ],
+    "visibility": [
+      ["baseline", "relationship", "dependency", "change_gap", "task_gap"],
+      ["baseline", "relationship", "dependency", "origin_gap", "access_gap"]
+    ],
+    "provisional": [
+      [
+        "baseline",
+        "relationship",
+        "dependency",
+        "change_none",
+        "origin_unapproved"
+      ]
+    ]
+  },
+  "events": [
+    {
+      "id": "task-created",
+      "tick": 2,
+      "phase": 4,
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "actor": "world",
+      "description": "A task is created from the reviewed session.",
+      "requires": ["session_active"],
+      "effect": "task_ready"
+    },
+    {
+      "id": "consequential-access",
+      "tick": 6,
+      "phase": 4,
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "actor": "world",
+      "description": "The scheduled task requests application access.",
+      "requires": ["task_ready", "session_active"],
+      "effect": "access_ready"
+    },
+    {
+      "id": "future-execution",
+      "tick": 8,
+      "phase": 4,
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "actor": "world",
+      "description": "A scheduled task executes; any available sensor records this execution only.",
+      "requires": ["task_ready"],
+      "effect": "task_execution"
+    },
+    {
+      "id": "billing-batch",
+      "tick": 10,
+      "phase": 3,
+      "worlds": ["B", "M", "U-B", "U-M"],
+      "actor": "business",
+      "description": "The APP-01 billing batch completes through the legacy dependency.",
+      "requires": [],
+      "effect": "billing_completed"
+    },
+    {
+      "id": "objective",
+      "tick": 10,
+      "phase": 4,
+      "worlds": ["M", "U-M"],
+      "actor": "adversary",
+      "description": "The data objective requires the prepared access and still-active reviewed session.",
+      "requires": ["access_ready", "session_active"],
+      "effect": "objective"
+    }
+  ],
+  "truth": {
+    "B": "The specific migration was approved. The legacy billing dependency was real.",
+    "M": "The reviewed session created an unauthorised persistent task. The billing dependency was still real.",
+    "U-B": "The unobserved legacy activity was benign migration support. The available records did not establish that.",
+    "U-M": "The unobserved legacy activity was unauthorised. Its matched visible records did not establish that."
+  }
+}

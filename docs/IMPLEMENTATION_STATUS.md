@@ -1,6 +1,6 @@
 # Implementation status — internal build 0.1
 
-The v4.3 GDD is preserved unchanged and controls this implementation. This is a deployed internal M01 build at https://threathunter-rosy.vercel.app. Completed-P0 acceptance remains pending.
+The v4.3 GDD is preserved unchanged and controls this implementation. This is an internal three-mission candidate (M01/M04/M07) at https://threathunter-rosy.vercel.app. Completed-P0 acceptance remains pending.
 
 ## Implemented
 
@@ -28,7 +28,7 @@ The v4.3 GDD is preserved unchanged and controls this implementation. This is a 
 | Human evaluation | No novice/generalist studies, listening review, visual acceptance or learning-outcome validation has occurred.                                                                                                                                                                                                                                                                                                                                                           |
 | Deployment       | Production deployment is live and Git-connected to `main`. The existing project automatically deploys the production branch; inspect its commit and READY state when publishing. Physical-device and release-acceptance gates remain open.                                                                                                                                                                                                                               |
 
-Do not expand into M04/M07 until M01's required release evidence is complete. No public-release sign-off is implied by passing automated checks.
+The user explicitly deferred review-first expansion ordering. M04/M07 development is authorised; no public-release sign-off or review pass is implied by automated checks. See the current P1 update and design decision below.
 
 ## Asset provenance
 
@@ -133,3 +133,17 @@ The actual production browser imported/committed a valid 20,000-command format-1
 The production lab recorded **2,683 ms** cold core readiness, **34.7 ms** ordinary synthetic interaction p95 and **155.5 ms** short-case durable-command p95. Initial entry plus validator JavaScript is **231,909 bytes gzip**; critical JS/CSS plus the largest selected art is **306,300 bytes**. Abrupt-process recovery retained identical durable-row hashes and delivered the pending result once. See the updated [verification ledger](verification/RESULTS.md) and reports for methods and limits. The initial production verifier used an outdated home-button name; that locator was corrected and the profiler then passed. General screen references remain baseline captures; the added pagination frame shows the actual current control.
 
 Full GDD/P0 acceptance remains pending real player, specialist, creative/listening, physical-device and assistive-technology reviews. All raw human scorecards remain unfilled. M04/M07 production remains gated by GDD Sections 21.4/22.1; no campaign completion or >9 player grade is claimed. This publication requires its own observed hosted-CI and exact-commit Vercel READY result.
+
+## Current P1 candidate — user-authorised deferred reviews
+
+The user instructed “defer review. continue gdd”. [The recorded decision](DESIGN_DECISIONS.md) supersedes the earlier expansion stop for development. M04 and M07 are now playable, independently authored 1.0.0 packages alongside unchanged M01. Reviews remain deferred; this is not accepted P0/P1 or a validated >9 game grade. Earlier paragraphs that described M04/M07 as blocked are historical baselines.
+
+M04 earns an unexpected relationship through an account-to-host query, supports explicit scope narrowing, records the billing dependency and offers independent approval/origin/task/application routes. The response team can restrict only the supported reviewed session; an unmanaged host cannot be isolated. M07 compares declared coverage with actual deliveries, tests one selected capability/target using a harmless event and enables a bounded future-only source window. Its hidden-world twins have identical observations, timing and quality. Sensor activation costs two steps; no historical backfill occurs. Benign test generation, collection and result delivery occupy phases 3, 5 and 6 respectively, after phase-1 controls.
+
+P1 has an explicit versioned rubric and strict command, scope, source-lineage and finding contracts. Its separate save format/database pins engine/content/rubric/policy/profile/fixture versions and finite selection. Audited snapshots/full logs, worker preparation, atomic acknowledgement, full-row CAS, previous/original recovery, per-mission writer locks, temporary mode and completed replay archives are implemented. M01 fixtures, rules, readers and acquisition semantics remain unchanged. Switching missions retains accepted volatile state; inactive audio stops. See [P1 rules](P1_MISSIONS.md) and [save formats](SAVE_FORMAT.md).
+
+Both P1 missions ship 16 spoken clips, four effects and ambience (21 files each), canonical transcripts, manifests and lossless master archives. Stock synthetic English-US remains a candidate, not an approved accent choice. Existing generated Northstar landscape/portrait environmental art is reused with new matrix/coverage/Case File/debrief screens. All media is optional to the player; no runtime TTS or backend is added. The shared mixer now cancels remaining preparation on a failed clip and bounds stalled fetch/decode at 20 seconds, unloading pending media and allowing retry.
+
+Validation before publication: lint, strict TypeScript/build, all **114 unit/asset tests** and payload gates passed. The broader Chromium regression passed **32 desktop/phone checks**; after final scheduler/media hardening, another **20 current Chromium checks** passed, covering all seven P1 journeys and M01 audio. The final **10 WebKit checks** passed cleanly, including all seven P1 journeys, both offline packs, recovery/ownership/temporary play and M01 audio. Earlier selector/filter failures and the initial WebKit audio-loader failure were corrected; no clean earlier failed run is claimed. Hosted CI and exact-commit production deployment must be observed separately for this publication.
+
+The loaded P1 text/worker JavaScript remains under 400 KiB compressed; M04/M07 voice payloads are 883,990 / 918,942 bytes plus 52,748 bytes of effects/ambience each. Lossless archives are outside delivery. Production-preview measurements and current frames are generated by `npm run verify:campaign`; numeric results and method limits are in [the verification ledger](verification/RESULTS.md) and JSON reports. Physical performance, screen readers, player studies, visual approval, accent/pronunciation and listening reviews remain deferred. The nine later campaign cases and procedural/cloud/community features retain the GDD's future scope.

@@ -10,6 +10,16 @@
       "path": "art-masters-v1.zip",
       "bytes": 3354009,
       "sha256": "c863d5ed6525127460d2681d1e36bdbf5cfeeac3cee087c966b0c7d6102a5651"
+    },
+    {
+      "path": "m04-voice-masters-v1.zip",
+      "bytes": 4318350,
+      "sha256": "f1854565caf771cac5b5c75a02b4884224b4c5a191fac9a9c651a5ead9d39323"
+    },
+    {
+      "path": "m07-voice-masters-v1.zip",
+      "bytes": 4483839,
+      "sha256": "2471e1b33857627c5f258734df756a0dec4bb8b7b7b379dec5e93a8b7831267d"
     }
   ],
   "audio": [

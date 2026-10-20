@@ -1745,3 +1745,121 @@ html {
     display: none;
   }
 }
+
+/* Proactive hunts share the evidence grammar and keep decorative art separate. */
+.campaign-shell main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.campaign-banner {
+  display: grid;
+  grid-template-columns: minmax(160px, 28%) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  margin: 20px 0 28px;
+}
+.campaign-banner picture {
+  display: block;
+  height: 210px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--surface-1);
+}
+.campaign-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 75% 50%;
+}
+.campaign-banner h1 {
+  font-size: clamp(1.8rem, 4vw, 3.3rem);
+  line-height: 1.15;
+  margin: 8px 0 16px;
+}
+.campaign-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.campaign-nav [aria-current="page"] {
+  border-color: var(--accent-cyan);
+  background: var(--surface-2);
+}
+.campaign-shell .panel {
+  margin-bottom: 20px;
+}
+.campaign-shell .question-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.campaign-shell fieldset {
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 20px 0;
+  min-width: 0;
+}
+.campaign-shell legend {
+  padding: 0 8px;
+  font-weight: 600;
+}
+.campaign-shell select,
+.campaign-shell textarea,
+.campaign-shell input[type="number"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.campaign-shell .question button,
+.campaign-shell .record button {
+  white-space: normal;
+}
+.campaign-shell .relationship {
+  flex-wrap: wrap;
+}
+@media (max-width: 767px) {
+  .campaign-shell main {
+    padding: 14px;
+  }
+  .campaign-banner {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .campaign-banner picture {
+    height: 160px;
+  }
+  .campaign-banner img {
+    object-position: 65% 55%;
+  }
+  .campaign-shell .question-list {
+    grid-template-columns: 1fr;
+  }
+  .campaign-shell fieldset {
+    padding: 12px;
+  }
+}
+.scope-matrix {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+.scope-matrix th,
+.scope-matrix td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px;
+  border: 1px solid var(--stroke-subtle);
+  overflow-wrap: anywhere;
+}
+.scope-matrix th:first-child {
+  width: 30%;
+}
+.scope-matrix caption {
+  text-align: left;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}

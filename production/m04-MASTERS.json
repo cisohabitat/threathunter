@@ -1,0 +1,154 @@
+{
+  "missionId": "M04",
+  "reviewStatus": "pending-human-listening",
+  "audio": [
+    {
+      "path": "ambience.flac",
+      "bytes": 81108,
+      "sha256": "05596d25dfdc175a28a16daf34f7827d129dda0d8eca913eb9e6c4bbbde06959",
+      "originalWavSha256": "7a28c6dbc74b6014ec124e2667d38c0127152bea88f87ddd29c014b3f2822a1d",
+      "decodedPcmHash": "SHA256=b0a7274de2f6c08a56f22836cdb88eadc79a30b78fc77e08c8dce8ff5b94fa8d"
+    },
+    {
+      "path": "briefing.flac",
+      "bytes": 466137,
+      "sha256": "365749f525541195327556627d8979d3cd75543a2561236bc3123945e423c8ec",
+      "originalWavSha256": "c4ee35e6441feb01535a8c7d2777d48712e4fd6e64b629cef38dbf33d06d95d9",
+      "decodedPcmHash": "SHA256=31e38ce84b2e9ffe6e9388eb70f045751a21d4cf2821b5e13a27464f8fb557e8"
+    },
+    {
+      "path": "check-ready.flac",
+      "bytes": 229524,
+      "sha256": "b09b9b203c8a135dfa676aba052b2a424c03e880bb0d602347609c11b1043dd5",
+      "originalWavSha256": "7386c3d8c5102469ace56dc36e12dd6cd868d5ed60ac2908789d3a9638e28dc5",
+      "decodedPcmHash": "SHA256=7a3d433c20fd27a8a49eb1f5c0aa7d1eefe4de1074bd4cd9bd2839eb04cc075d"
+    },
+    {
+      "path": "effect-acquire.flac",
+      "bytes": 9458,
+      "sha256": "9f540eb3836d13608adeb36ace1558db38e56982a1dc303d99d670ef011a6217",
+      "originalWavSha256": "cf4a4af882d1ecb5f145596261a8b3be47122ec105880ced05e06956f84e3215",
+      "decodedPcmHash": "SHA256=e166ae4ef65f8c8e0c047e0f7864536d6289160fa399578fb2a07f73737fd2e1"
+    },
+    {
+      "path": "effect-check.flac",
+      "bytes": 9530,
+      "sha256": "07e3f3fe0c38da4abdd0b932d5ddd11bb58218b0b9461bf38838648e932f4178",
+      "originalWavSha256": "7fc28423f0540f7c5c211eef3697f768ae5236f2670004c3463ecadaa89ade42",
+      "decodedPcmHash": "SHA256=2235c15fdc6cff8c8eeae92a90b251c7f18d930ae7063386b2226228deb00de6"
+    },
+    {
+      "path": "effect-select.flac",
+      "bytes": 9437,
+      "sha256": "18cdc6b9bd2a475e209b391b1dff02fe8bb1ea20f8d0d97f2431b365ef49f471",
+      "originalWavSha256": "59b39a2c8d36d27c83bc4be0ca092efa399e7f32ead9451abd5d132c7f81e8cb",
+      "decodedPcmHash": "SHA256=50dd2a1f9af8a3fe7465d8666dffec80fa8ff460e4834ca78c271b4fd341ed0c"
+    },
+    {
+      "path": "effect-submit.flac",
+      "bytes": 9374,
+      "sha256": "9c3ed1b8870a243db546c026ebc274f628c4136dc38221c056f068355a35ec70",
+      "originalWavSha256": "c7715e07f091456ae35c2b1205b70da6315cfe50ca8c6f41d6402ac5d3164b78",
+      "decodedPcmHash": "SHA256=c0f0192cd76b7188f91270679b3dcbbe44dc2073233f08e30283b68d0120d040"
+    },
+    {
+      "path": "finding-explained.flac",
+      "bytes": 295486,
+      "sha256": "b2d364de75a411abd7a2a90723661725c0ee819db5faa495a655bd9e46aa5ebc",
+      "originalWavSha256": "f85ccdfa2f3971b04c4d68724092a8338970f021596d389521e1d1d5f1c08918",
+      "decodedPcmHash": "SHA256=c6d9dd1ee2364b44c03bb0d7e2356493cc54a076718685b558d0dccdbae66104"
+    },
+    {
+      "path": "finding-misuse.flac",
+      "bytes": 294148,
+      "sha256": "7b74eab59ad6d4a8c50796d53dd4536847552a6b61a04504aba6b63ae9d04987",
+      "originalWavSha256": "53a16336288b1e5ca16464a27603458bfdb641a95b8a8f3a771616e1263bfb5f",
+      "decodedPcmHash": "SHA256=94b45fcda6f75d0a73a7667106500954674aac83d8ae9add6ce2b277a6328114"
+    },
+    {
+      "path": "finding-provisional.flac",
+      "bytes": 229268,
+      "sha256": "e47533625c4081518c26b9f6915798f5564555c516002c4070366436d5033e98",
+      "originalWavSha256": "0497b882c753a0676e5b24164106f2dc85986d5680a6858c0cb4bd3607245d3c",
+      "decodedPcmHash": "SHA256=cd094ca279cf8909c33082153607bca9784460a3cd3d7755ba82df1081dcec23"
+    },
+    {
+      "path": "finding-unsupported.flac",
+      "bytes": 267965,
+      "sha256": "ac95f56010cbbc7909869bfe4c605fbaefdf87641ab406013a99a0e7c050c947",
+      "originalWavSha256": "5c7c4848d87f4dbd04eb562c4dbac7035d1e44eb0fa7300ce184b27eca49dcdd",
+      "decodedPcmHash": "SHA256=9e38661cb9a9c0aa58a7a7610afdaae165180d292b810d71802ee20edae81ffc"
+    },
+    {
+      "path": "finding-visibility.flac",
+      "bytes": 274478,
+      "sha256": "92af5cc216a34e79bbe3ff249c50d8c5f16becd6415f8df39bf8f392475dcc11",
+      "originalWavSha256": "11f92c88546d2037754e316dad68bf810e9983653913456effa8d736783761e5",
+      "decodedPcmHash": "SHA256=50203df551edb191fc4ee822c07396d9ca1811cb1db44b8cf437ab2f21b6fc44"
+    },
+    {
+      "path": "morgan-1.flac",
+      "bytes": 239031,
+      "sha256": "317784a32f561b166c833e350aedf28a429593eb001e3a11f04fce91b17c39be",
+      "originalWavSha256": "7ab7ca5d4595622c33afe2f0c5585ef04a29311126053b4633f7a68b20d75e0e",
+      "decodedPcmHash": "SHA256=f625673d3f706194e56663f655b8c6324111ec34b8552cceae3b4fef645c6afe"
+    },
+    {
+      "path": "morgan-2.flac",
+      "bytes": 232605,
+      "sha256": "ecdc47e76aed712def3025f10197fb31b4510d1ded7c31572428cb9ac2d8de8b",
+      "originalWavSha256": "694c2b38fa07e1b32df4c9c3170569b67c7b78182e45494f3757d6ae58b94fc7",
+      "decodedPcmHash": "SHA256=b5daa8e4e72ffc8c414138fe2d667a17c61873a78203dd4b1a555d8214fe72f3"
+    },
+    {
+      "path": "morgan-3.flac",
+      "bytes": 204818,
+      "sha256": "6963611b07622c8f77ba154f6cdbcd58e03a7d84ed1bf0303a9e4024091022a3",
+      "originalWavSha256": "c095a618c6c37ce4e133fe7ebf53cb07b11e5e1146cd57a4c4f28a034e256dc1",
+      "decodedPcmHash": "SHA256=50ee3dd0753be9ac56d45d83b9259df0f2fdf8ce2784ab5dd6cfce62235e1a91"
+    },
+    {
+      "path": "morgan-4.flac",
+      "bytes": 227918,
+      "sha256": "57eeb4f91f56190675cfe27431ea700fa3b3e211ebacda8350a2d33cf0683fe9",
+      "originalWavSha256": "16ddd1507c864b573bf81ac12cad3aeb67d59dfd0c39f64b261aa1ca7d2273f0",
+      "decodedPcmHash": "SHA256=8b91aa8644882331615e6349466b253d374ab19ca2d6b897071928b700cf5ee2"
+    },
+    {
+      "path": "morgan-5.flac",
+      "bytes": 279796,
+      "sha256": "0f1ece860e6416592ff3efabeff7ffcfdbfaaad3c51dcda1fe5d50f8f869cdbd",
+      "originalWavSha256": "b8e07364d654877dac863716d03ecd9e385d122dee7319eee44c0ce22b1c4e69",
+      "decodedPcmHash": "SHA256=0ca041c3ba1b7442b1677fb65cd755ecf1d28b00fbdfd74a21e53a8ad1e46cb4"
+    },
+    {
+      "path": "morgan-6.flac",
+      "bytes": 240663,
+      "sha256": "f85edd074f92635f51d9f7f3c038cdee77ecdec44f07f9952e5296b8a6528b18",
+      "originalWavSha256": "4a4e2c0328321626ebda56e47f17c173eeed834528f5825f9e40c18cd5dbe0e5",
+      "decodedPcmHash": "SHA256=d09c863c78bb24ac5e688a81d64be979425f1977f917f339e7dacd3cacb1e930"
+    },
+    {
+      "path": "outcome-not-occurred.flac",
+      "bytes": 276470,
+      "sha256": "df9fb4e73bb008d085d56fe07740623261eacbcbcb531d1aadaf51132fcdd5d4",
+      "originalWavSha256": "9a6c4b59ccdcbc5d6da33b1619041b6160f3d9613be22fbc00952a11f17db39e",
+      "decodedPcmHash": "SHA256=efa1fc482fe13ef4e55229cd6919da724ab8531e96dbd1f145f521179ad50e09"
+    },
+    {
+      "path": "outcome-occurred.flac",
+      "bytes": 296047,
+      "sha256": "6453257bbf72b25e1865827e3e649b90db263e9a471bd21df7aa0e9078959d83",
+      "originalWavSha256": "c57299e4f4a4ad4e96d29cd17e56387c5548f932af7e484d5b353b82c3007538",
+      "decodedPcmHash": "SHA256=ecba7c1ec807f7fafc19e446e0674ceb86abb1873ae1c1e3af6bf8c7391e66e7"
+    },
+    {
+      "path": "report-submitted.flac",
+      "bytes": 135089,
+      "sha256": "3b67ab1937af4587da557d2435d6843718ef2e57096b456f9e2cb06c58acf311",
+      "originalWavSha256": "1a23a677b0027488c64ff35504707314ab40302126b08f611dcb241a8116ace3",
+      "decodedPcmHash": "SHA256=81713f0a87639ee5e7cc067f8defbffca80723209441c78af6a6d927f0ece96a"
+    }
+  ],
+  "source": "Same stock Piper LJSpeech model and rights record as docs/audio/PRODUCTION.md; scripts/manifest under src/campaign/audio/m04"
+}

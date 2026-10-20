@@ -33,3 +33,11 @@ Listening starts muted each fresh session. Level, caption and screen-reader-frie
 ## Still required for acceptance
 
 Listen to every final clip for pronunciation, pace, clarity, artefacts and level consistency. Review the voice identity/accent and production rights record. Check low-volume and actual phone/iPad speakers, Safari autoplay/interruption, screen-reader coexistence and selected transcript parity. Record reviewer, build, devices and results. Technical asset/decode/browser tests do not establish these human acceptance criteria.
+
+## M04/M07 candidate extension — 20 October 2026
+
+The user deferred reviews and authorised P1 development. Each new mission now has 16 spoken clips, four original effects and ambience, canonical `src/campaign/audio/m04|m07/cues.json` scripts and strict manifests. The same retained stock Piper 1.8.0 LJSpeech-high model, model SHA/source, synthesis settings and rights basis documented above were used; no new real-person imitation or voice cloning occurred. English-US remains a candidate departure from the preferred Singapore English direction; all new listening, pronunciation, identity/accent and physical-speaker reviews are deferred.
+
+The production-only generator accepts an optional M04/M07 argument and refuses to overwrite an existing immutable v1 directory. Voice delivery is 22.05 kHz mono MP3 at 48 kbit/s; original effects/ambience use 32 kbit/s. Full-pack bytes are 936,738 (M04) and 971,690 (M07). Files are versioned under `/audio/m04/` and `/audio/m07/`, with size, duration, SHA-256, script, speaker and trigger attribution. Both packs include every reasoning/outcome alternative regardless of selected hidden world. Outcome narration is gated on a closed report; sparse twins share the same reasoning cue.
+
+`production/m04-voice-masters-v1.zip` and `m07-voice-masters-v1.zip` retain all 21 lossless FLAC masters and their records. `m04-MASTERS.json` / `m07-MASTERS.json` record original WAV hashes, FLAC hashes and decoded PCM hashes; WAV/FLAC decoded PCM was compared for every file. The main master register records archive bytes/hashes. Archives/model weights are not browser assets. No human listening pass is claimed. Browser evidence covers all 21 files in both packs, offline playback, captions/transcript, mute, invariance and media-error recovery; it does not replace listening/device reviews.

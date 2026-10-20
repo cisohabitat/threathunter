@@ -1,0 +1,66 @@
+{
+  "briefing": {
+    "text": "Begin a planned review of the billing service account. Compare the systems it normally uses with the connections actually recorded. An unexpected legacy host may support real business work. Establish the session purpose and billing dependency before recommending a scoped response.",
+    "when": "player_requested_briefing"
+  },
+  "morgan-1": {
+    "text": "Start with the account and its usual application host. Query its recorded connections before choosing where to narrow your hunt.",
+    "when": "player_requested_baseline_hint"
+  },
+  "morgan-2": {
+    "text": "Could approved migration work explain this particular account, host, operator, interval and task? Test the match rather than the label.",
+    "when": "player_requested_alternative_hint"
+  },
+  "morgan-3": {
+    "text": "Cite the observations that support your finding. Use a separate evidence role for the explanation you tested.",
+    "when": "player_requested_evidence_hint"
+  },
+  "morgan-4": {
+    "text": "Enabling process collection now records a stated future window. It cannot recover the creation of an earlier task.",
+    "when": "player_requested_collection_hint"
+  },
+  "morgan-5": {
+    "text": "The legacy host supports billing. Session restrictions belong to the response team; an undocumented or unmanaged host is not a safe shutdown target.",
+    "when": "player_requested_handoff_hint"
+  },
+  "morgan-6": {
+    "text": "Separate what you knew from what the simulation later reveals. Keeping the billing dependency available can be part of a proportionate response.",
+    "when": "player_requested_reflection_hint"
+  },
+  "check-ready": {
+    "text": "Your controlled source verification is ready to review. Its stated target, capability and time limits still apply.",
+    "when": "verified_check_result_delivered"
+  },
+  "report-submitted": {
+    "text": "Case report submitted. Review your investigation and the simulated outcome.",
+    "when": "case_closure_accepted"
+  },
+  "finding-explained": {
+    "text": "Your cited records support the specific approved-work explanation within the scope you investigated. This does not establish that the whole organisation is clear.",
+    "when": "closed_supported_explained_finding"
+  },
+  "finding-misuse": {
+    "text": "Your cited observations link activity outside approved use with distinct technical context. Hand over the specific session and preserve the business dependency.",
+    "when": "closed_supported_likely_misuse_finding"
+  },
+  "finding-visibility": {
+    "text": "You established a meaningful visibility limit. That is not proof that the activity was benign or malicious. A clear owner and follow-up make this finding useful.",
+    "when": "closed_supported_visibility_limited_finding"
+  },
+  "finding-provisional": {
+    "text": "Your bounded preliminary finding records supported concerns and what remains unknown. Further review and collection are still needed.",
+    "when": "closed_supported_provisional_finding"
+  },
+  "finding-unsupported": {
+    "text": "The cited observations did not establish this finding. Revisit the sources, test the alternative, and keep the claim within what your evidence can support.",
+    "when": "closed_unsupported_finding"
+  },
+  "outcome-occurred": {
+    "text": "In the disclosed simulation, the data objective occurred. This operational result does not change the quality of a finding based on the observations available at your decision.",
+    "when": "closed_objective_achieved"
+  },
+  "outcome-not-occurred": {
+    "text": "In the disclosed simulation, the data objective did not occur. The billing dependency remained available. The outcome is separate from the evidence supporting your finding.",
+    "when": "closed_objective_not_achieved"
+  }
+}

@@ -1,0 +1,478 @@
+import { expect, test, type Page, type Locator } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { readFile } from "node:fs/promises";
+
+test.use({ actionTimeout: 15000 });
+
+const shell = (page: Page, mission = "M04") =>
+  page.locator(`[data-mission="${mission}"]`);
+async function open(page: Page, mission: "M04" | "M07", world?: string) {
+  await page.goto("/");
+  await page.getByRole("button", { name: new RegExp(`${mission} ·`) }).click();
+  const area = shell(page, mission);
+  await expect(
+    area.getByRole("button", { name: "Begin proactive hunt" }),
+  ).toBeEnabled();
+  if (world) {
+    const text = await page.evaluate(
+      async ({ mission, world }) => {
+        // @ts-expect-error Vite test fixture module.
+        const { createRun } = await import("/src/campaign/engine.ts");
+        // @ts-expect-error Vite test fixture module.
+        const { exportSave } = await import("/src/campaign/format.ts");
+        return JSON.stringify(
+          exportSave(createRun(mission, "browser-" + mission, world)),
+        );
+      },
+      { mission, world },
+    );
+    await area.locator('input[type="file"]').setInputFiles({
+      name: "mission.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(text),
+    });
+  } else
+    await area.getByRole("button", { name: "Begin proactive hunt" }).click();
+  await saved(area);
+  await area
+    .getByRole("navigation", { name: `${mission} investigation` })
+    .getByRole("button", { name: "Investigate", exact: true })
+    .click();
+  return area;
+}
+async function saved(area: Locator) {
+  await expect(
+    area.getByRole("status").filter({ hasText: "Saved on this device" }),
+  ).toBeVisible({ timeout: 60000 });
+}
+async function acquire(area: Locator, title: string) {
+  await area
+    .locator(".question")
+    .filter({ hasText: title })
+    .getByRole("button")
+    .click();
+  await saved(area);
+}
+async function tab(area: Locator, name: string) {
+  await area
+    .getByRole("navigation", { name: /investigation$/ })
+    .getByRole("button", { name, exact: true })
+    .click();
+}
+async function report(area: Locator, mission: "M04" | "M07") {
+  await tab(area, "Case File");
+  const evidence = area.getByRole("button", {
+    name: "Cite in finding · free",
+    exact: true,
+  });
+  for (let i = 0; i < (await evidence.count()); i++) {
+    await evidence.nth(i).click();
+    await saved(area);
+  }
+  const alternative = area.getByRole("article", {
+    name:
+      mission === "M04"
+        ? "A matching migration record"
+        : "A routing mismatch explains the pipeline gap",
+    exact: true,
+  });
+  await alternative
+    .getByRole("button", { name: "Test another explanation · free" })
+    .click();
+  await saved(area);
+  await area
+    .getByRole("combobox", { name: "Finding", exact: true })
+    .selectOption(mission === "M04" ? "explained" : "visibility");
+  await saved(area);
+  await area
+    .getByRole("combobox", { name: "Claim confidence", exact: true })
+    .selectOption(mission === "M04" ? "medium" : "low");
+  await saved(area);
+  await area
+    .getByRole("combobox", { name: "Alternative tested", exact: true })
+    .selectOption(
+      mission === "M04"
+        ? "approved_work_tested"
+        : "coverage_configuration_tested",
+    );
+  await saved(area);
+  for (const name of mission === "M04"
+    ? [
+        "An unfamiliar relationship is not proof of misuse",
+        "The host supports an essential billing dependency",
+      ]
+    : [
+        "Missing historical collection cannot be reconstructed",
+        "A successful test now does not prove historical coverage",
+      ]) {
+    await area.getByLabel(name, { exact: true }).check();
+    await saved(area);
+  }
+  await area
+    .getByLabel(
+      mission === "M04"
+        ? "My finding concerns BILL-S1 on the discovered host, preserving the billing dependency"
+        : "My finding concerns the CS-PORTAL application source and its stated missing interval",
+      { exact: true },
+    )
+    .check();
+  await saved(area);
+  if (mission === "M04") {
+    await area
+      .getByRole("combobox", { name: "Recommendation", exact: true })
+      .selectOption("close_explained");
+    await saved(area);
+  } else {
+    await area
+      .getByRole("combobox", {
+        name: "Missing historical interval",
+        exact: true,
+      })
+      .selectOption("gap");
+    await saved(area);
+    await area
+      .getByRole("combobox", { name: "Follow-up trigger", exact: true })
+      .selectOption("repeat_application_verification");
+    await saved(area);
+  }
+  await area
+    .getByLabel("Optional notes · not graded", { exact: true })
+    .fill("The finding is bounded to the investigated source and target.");
+  await area
+    .getByRole("button", { name: "Review finding", exact: true })
+    .click();
+  await saved(area);
+  await area.getByRole("button", { name: "Confirm and close hunt" }).click();
+  await saved(area);
+  const debrief = area.getByRole("region", { name: `${mission} hunt debrief` });
+  await expect(debrief).toBeVisible();
+  await debrief
+    .getByText(
+      "Investigation quality · optional score and evidence-linked feedback",
+      { exact: true },
+    )
+    .click();
+  await expect(debrief.locator(".score")).toHaveText("100/100");
+}
+async function portable(page: Page, area: Locator) {
+  const pending = page.waitForEvent("download");
+  await area
+    .getByRole("button", { name: "Export hunt save", exact: true })
+    .click();
+  return (await readFile((await (await pending).path())!)).toString();
+}
+test("M04 earns its relationship discovery, preserves billing, closes at 100 and archives a replay", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const area = await open(page, "M04", "B");
+  await expect(area.getByLabel("Investigation scope")).not.toContainText(
+    "LEGACY-01",
+  );
+  await acquire(area, "Compare account activity by host");
+  await area.getByLabel("Investigation scope").selectOption("LEGACY-01");
+  await saved(area);
+  for (const name of [
+    "Check ownership and billing dependency",
+    "Check the migration approval",
+    "Inspect session origin",
+  ])
+    await acquire(area, name);
+  await report(area, "M04");
+  const closed = JSON.parse(await portable(page, area));
+  expect(closed.committedRevision).toBe(closed.revision);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.reload();
+  await page.getByRole("button", { name: /M04 ·/ }).click();
+  await expect(
+    shell(page).getByRole("region", { name: "M04 hunt debrief" }),
+  ).toBeVisible();
+  await saved(shell(page));
+  await shell(page)
+    .getByRole("button", { name: "Try another approach" })
+    .click();
+  await saved(shell(page));
+  const stored = await page.evaluate(async () => {
+    // @ts-expect-error Vite test module.
+    const { database } = await import("/src/campaign/storage.ts");
+    return {
+      active: await database.rows.get("active:M04"),
+      completed: await database.rows
+        .where("id")
+        .startsWith("completed:M04:")
+        .toArray(),
+    };
+  });
+  expect(stored.active.current.runId).not.toBe(closed.runId);
+  expect(stored.completed[0].current).toEqual(closed);
+  expect(stored.active.current.manifest.world).toBe("B");
+});
+test("M07 proves a future collection window without backfilling history and closes a visibility finding at 100", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const area = await open(page, "M07", "U-M");
+  await area.getByLabel("Investigation scope").selectOption("CS-PORTAL");
+  await saved(area);
+  for (const name of [
+    "Inspect declared coverage",
+    "Compare delivered heartbeats",
+    "Inspect collector routing",
+    "Examine the independent identity source",
+  ])
+    await acquire(area, name);
+  await area
+    .getByRole("button", { name: "Enable future collection · 2 steps" })
+    .click();
+  await saved(area);
+  await area
+    .getByRole("button", { name: "Request controlled verification · 1 step" })
+    .click();
+  await saved(area);
+  await tab(area, "Timeline");
+  await area
+    .getByRole("combobox", { name: "Advance the world", exact: true })
+    .selectOption("3");
+  await area.getByRole("button", { name: "Advance selected steps" }).click();
+  await saved(area);
+  await tab(area, "Investigate");
+  await acquire(area, "Review the future observation window");
+  await expect(
+    area.locator(".panel").filter({ hasText: "Latest observation" }),
+  ).toContainText("Historical collection is not backfilled");
+  await report(area, "M07");
+  const exported = JSON.parse(await portable(page, area));
+  expect(exported.manifest.missionId).toBe("M07");
+  await area.getByLabel("What I knew then").fill("0");
+  await expect(
+    area
+      .getByRole("region", { name: "M07 hunt debrief" })
+      .getByText("Future observation window complete", { exact: true }),
+  ).toHaveCount(0);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+});
+for (const mission of ["M04", "M07"] as const)
+  test(`${mission} switching, full offline voice and free reading preserve the save`, async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(90000);
+    await page.goto("/");
+    await page
+      .getByRole("button", { name: /Independent investigation/ })
+      .click();
+    await page.getByRole("button", { name: "Begin investigation" }).click();
+    await expect(page.getByRole("status")).toHaveText("Saved on this device");
+    const originalM01 = await page.evaluate(async () => {
+      // @ts-expect-error Vite test module.
+      const { database } = await import("/src/persistence/saves.ts");
+      return database.runs.get("active");
+    });
+    const area = await open(page, mission, "U-B");
+    await acquire(
+      area,
+      mission === "M04"
+        ? "Compare account activity by host"
+        : "Inspect declared coverage",
+    );
+    const before = await portable(page, area);
+    const requests: string[] = [];
+    page.on("request", (r) => {
+      if (r.url().includes(`/audio/${mission.toLowerCase()}/`))
+        requests.push(r.url());
+    });
+    await area
+      .getByRole("button", { name: "Voice & sound", exact: true })
+      .click();
+    await area
+      .getByRole("button", { name: "Enable voice and sound", exact: true })
+      .click();
+    await expect(area.getByText(/Voice pack ready/)).toBeVisible({
+      timeout: 60000,
+    });
+    expect(new Set(requests).size).toBe(21);
+    await context.setOffline(true);
+    await area
+      .getByRole("button", { name: "Play briefing", exact: true })
+      .click();
+    await expect(
+      area.getByText("Selected narration · text transcript", { exact: true }),
+    ).toBeVisible();
+    await area.getByRole("button", { name: "Mute all", exact: true }).click();
+    await tab(area, "Brief");
+    await tab(area, "Timeline");
+    expect(await portable(page, area)).toBe(before);
+    await context.setOffline(false);
+    await area
+      .getByRole("button", { name: "Threat Hunter · home", exact: true })
+      .click();
+    const other = mission === "M04" ? "M07" : "M04";
+    await page.getByRole("button", { name: new RegExp(`${other} ·`) }).click();
+    await expect(
+      shell(page, other).getByRole("button", { name: "Begin proactive hunt" }),
+    ).toBeEnabled();
+    await shell(page, other)
+      .getByRole("button", { name: "Begin proactive hunt" })
+      .click();
+    await saved(shell(page, other));
+    await shell(page, other)
+      .getByRole("button", { name: "Threat Hunter · home", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: new RegExp(`${mission} ·`) })
+      .click();
+    expect(await portable(page, shell(page, mission))).toBe(before);
+    expect(
+      await page.evaluate(async () => {
+        // @ts-expect-error Vite test module.
+        const { database } = await import("/src/persistence/saves.ts");
+        return database.runs.get("active");
+      }),
+    ).toEqual(originalM01);
+    await page.setViewportSize({ width: 320, height: 720 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  });
+test("P1 failed writes retain accepted work and corruption recovery archives the original", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  const area = await open(page, "M04", "M");
+  await page.evaluate(async () => {
+    // @ts-expect-error Vite test module.
+    const { database } = await import("/src/campaign/storage.ts");
+    const put = database.rows.put.bind(database.rows);
+    let fail = true;
+    database.rows.put = (...args: unknown[]) => {
+      if (fail) {
+        fail = false;
+        throw new DOMException("Injected quota", "QuotaExceededError");
+      }
+      return put(...args);
+    };
+  });
+  await area
+    .locator(".question")
+    .filter({ hasText: "Compare account activity by host" })
+    .getByRole("button")
+    .click();
+  await expect(area.getByRole("alert")).toContainText("quota");
+  await area
+    .getByRole("button", { name: "Retry saving retained hunt", exact: true })
+    .click();
+  await saved(area);
+  const original = await page.evaluate(async () => {
+    // @ts-expect-error Vite test module.
+    const { database } = await import("/src/campaign/storage.ts");
+    const row = await database.rows.get("active:M04");
+    if (row.revision !== 1 || row.current.commands.length !== 1)
+      throw Error("Action duplicated or not committed");
+    await database.rows.update("active:M04", { "current.hash": "00000000" });
+    return database.rows.get("active:M04");
+  });
+  await page.reload();
+  await page.getByRole("button", { name: /M04 ·/ }).click();
+  const recovered = shell(page);
+  await expect(
+    recovered.getByRole("heading", { name: "Recover this mission" }),
+  ).toBeVisible();
+  await recovered
+    .getByLabel(
+      "I understand recovery replaces the active mission and retains its original for export",
+    )
+    .check();
+  await recovered
+    .getByRole("button", { name: "Restore previous hunt" })
+    .click();
+  await saved(recovered);
+  const pending = page.waitForEvent("download");
+  await recovered
+    .getByRole("button", { name: "Export recovery original", exact: true })
+    .click();
+  expect(
+    JSON.parse((await readFile((await (await pending).path())!)).toString()),
+  ).toEqual({ ...original, id: "original:M04" });
+});
+test("a waiting P1 tab refreshes committed knowledge and takes writer ownership safely", async ({
+  page,
+  context,
+}) => {
+  test.setTimeout(90000);
+  const writer = await open(page, "M04", "B");
+  const second = await context.newPage();
+  await second.goto("/");
+  await second.getByRole("button", { name: /M04 ·/ }).click();
+  const reader = shell(second);
+  await expect(reader.getByText(/Read-only: another tab owns/)).toBeVisible();
+  await acquire(writer, "Compare account activity by host");
+  await reader
+    .getByRole("navigation", { name: "M04 investigation" })
+    .getByRole("button", { name: "Investigate", exact: true })
+    .click();
+  await expect(reader.getByLabel("Investigation scope")).toContainText(
+    "LEGACY-01",
+  );
+  await page.close();
+  await expect(reader.getByLabel("Investigation scope")).toBeEnabled({
+    timeout: 15000,
+  });
+  await reader.getByLabel("Investigation scope").selectOption("LEGACY-01");
+  await saved(reader);
+});
+test("P1 without Web Locks requires explicit temporary play and leaves durable storage untouched", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, "locks", {
+      value: undefined,
+      configurable: true,
+    }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: /M04 ·/ }).click();
+  const area = shell(page);
+  await expect(area.getByRole("alert")).toContainText(
+    "cannot coordinate durable writes",
+  );
+  await expect(
+    area.getByRole("button", { name: "Begin proactive hunt" }),
+  ).toBeDisabled();
+  await area
+    .getByRole("button", { name: "Play temporarily without saving" })
+    .click();
+  await area.getByRole("button", { name: "Begin proactive hunt" }).click();
+  await tab(area, "Investigate");
+  await area
+    .locator(".question")
+    .filter({ hasText: "Compare account activity by host" })
+    .getByRole("button")
+    .click();
+  await expect(area.getByRole("status")).toHaveText(
+    "Temporary session — not saved",
+  );
+  const file = JSON.parse(await portable(page, area));
+  expect(file.committedRevision).toBeNull();
+  expect(file.commands).toHaveLength(1);
+  expect(
+    await page.evaluate(async () => {
+      // @ts-expect-error Vite test module.
+      const { database } = await import("/src/campaign/storage.ts");
+      return database.rows.get("active:M04");
+    }),
+  ).toBeUndefined();
+});

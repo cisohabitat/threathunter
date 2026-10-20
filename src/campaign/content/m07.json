@@ -1,0 +1,182 @@
+{
+  "missionId": "M07",
+  "version": "1.0.0",
+  "rubricVersion": "p1-1.0.0",
+  "policyVersion": "m07-future-collection-1",
+  "title": "The Missing Logs",
+  "question": "Could we observe privileged application actions on both customer-service systems during the review period?",
+  "briefing": "There is no incident alert. Compare declared coverage with actual delivery. Use a harmless verification event, restore only the permitted future collection, and define what a successful observation window can and cannot establish.",
+  "worlds": ["U-B", "U-M"],
+  "openingFactIds": ["review_scope"],
+  "facts": [
+    {
+      "id": "review_scope",
+      "recordId": "R-scope",
+      "title": "A collection question, not an incident alert",
+      "text": "Review privileged application visibility on CS-API and CS-PORTAL for steps -6 through 0. Authentication and application actions are different capabilities. No compromise alert initiated this hunt.",
+      "sourceId": "review_plan",
+      "lineage": "review-plan",
+      "targetId": "CS-PORTAL",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "declared",
+      "recordId": "R-declared",
+      "title": "Declared collection map",
+      "text": "The configuration dashboard declares privileged application-action collection active on CS-API and CS-PORTAL throughout steps -6 through 0. A declaration is not delivery evidence.",
+      "sourceId": "collection_configuration",
+      "lineage": "configuration",
+      "targetId": "CS-PORTAL",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "heartbeat_gap",
+      "recordId": "R-heartbeat",
+      "title": "Declared and observed collection disagree",
+      "text": "The delivery ledger shows CS-API heartbeats through step 0. CS-PORTAL last delivered at step -4; privileged application actions from -3 through 0 have no usable delivery coverage. This does not show whether activity occurred.",
+      "sourceId": "delivery_health",
+      "lineage": "delivery-ledger",
+      "targetId": "CS-PORTAL",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": -4,
+      "availableAt": 0,
+      "coverage": "unavailable",
+      "originId": null
+    },
+    {
+      "id": "configuration",
+      "recordId": "R-configuration",
+      "title": "A routing mismatch explains the pipeline gap",
+      "text": "The CS-PORTAL application collector points to a retired receiver. Detection Engineering owns the permitted future-only repair and repeat verification. This explains a collection failure, not the absence or intent of historical activity.",
+      "sourceId": "collector_config",
+      "lineage": "collector-config",
+      "targetId": "CS-PORTAL",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": null,
+      "availableAt": 0,
+      "coverage": "covered",
+      "originId": null
+    },
+    {
+      "id": "auth_limited",
+      "recordId": "R-auth",
+      "title": "Another source covers a different capability",
+      "text": "Identity logs retained privileged authentication at step -2. They cannot show the subsequent application action, its authorisation or its absence. They cannot fill the missing application interval.",
+      "sourceId": "identity_authentication",
+      "lineage": "identity-auth",
+      "targetId": "CS-PORTAL",
+      "worlds": ["U-B", "U-M"],
+      "eventTick": -2,
+      "availableAt": 0,
+      "coverage": "partial",
+      "originId": null
+    }
+  ],
+  "queries": [
+    {
+      "id": "coverage",
+      "label": "Inspect declared coverage",
+      "sourceId": "collection_configuration",
+      "can": "Identify systems, capabilities and the promised historical interval.",
+      "cannot": "An enabled dashboard setting is not proof of event delivery.",
+      "factIds": ["declared"],
+      "static": true,
+      "scope": "services"
+    },
+    {
+      "id": "health",
+      "label": "Compare delivered heartbeats",
+      "sourceId": "delivery_health",
+      "can": "Compare actual deliveries with the declared interval.",
+      "cannot": "A stopped pipeline does not establish an attacker or historical inactivity.",
+      "factIds": ["heartbeat_gap"],
+      "static": true,
+      "scope": "services"
+    },
+    {
+      "id": "configuration",
+      "label": "Inspect collector routing",
+      "sourceId": "collector_config",
+      "can": "Check whether the source points at the supported receiver.",
+      "cannot": "A configuration cause does not attribute activity in the blind interval.",
+      "factIds": ["configuration"],
+      "static": true,
+      "scope": "services"
+    },
+    {
+      "id": "authentication",
+      "label": "Examine the independent identity source",
+      "sourceId": "identity_authentication",
+      "can": "Check what authentication collection retained.",
+      "cannot": "Authentication cannot establish privileged application actions.",
+      "factIds": ["auth_limited"],
+      "static": true,
+      "scope": "services"
+    },
+    {
+      "id": "window",
+      "label": "Review the future observation window",
+      "sourceId": "cs_app",
+      "can": "Report only the explicitly enabled source, target and future window.",
+      "cannot": "A successful controlled test does not reconstruct the historical gap.",
+      "factIds": [],
+      "static": false,
+      "scope": "services"
+    }
+  ],
+  "sufficientSets": {
+    "explained": [],
+    "misuse": [],
+    "visibility": [
+      [
+        "review_scope",
+        "declared",
+        "heartbeat_gap",
+        "test_failed",
+        "sensor_enabled",
+        "test_received",
+        "window_complete",
+        "auth_limited"
+      ],
+      [
+        "review_scope",
+        "declared",
+        "heartbeat_gap",
+        "configuration",
+        "sensor_enabled",
+        "test_received",
+        "window_complete",
+        "auth_limited"
+      ]
+    ],
+    "provisional": [
+      ["review_scope", "declared", "heartbeat_gap", "auth_limited"]
+    ]
+  },
+  "events": [
+    {
+      "id": "historical-action",
+      "tick": -2,
+      "phase": 4,
+      "worlds": ["U-M"],
+      "actor": "adversary",
+      "description": "An unauthorised privileged application action occurred in the uncollected historical interval.",
+      "requires": [],
+      "effect": "objective"
+    }
+  ],
+  "truth": {
+    "B": "No unauthorised application action occurred. The pipeline misconfiguration was real.",
+    "M": "An unobserved unauthorised action occurred in the missing interval.",
+    "U-B": "No unauthorised application action occurred. The declared-but-missing collection was nevertheless a real operational defect.",
+    "U-M": "An unauthorised application action occurred inside the missing interval. Available authentication and controlled tests could not establish it."
+  }
+}

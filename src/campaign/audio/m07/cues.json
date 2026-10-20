@@ -1,0 +1,66 @@
+{
+  "briefing": {
+    "text": "Start with a collection question, not an incident alert. Could you observe privileged application actions on the two customer service systems during the review period? Compare declared coverage with delivery, test one harmless event, and bound any conclusion about the missing interval.",
+    "when": "player_requested_briefing"
+  },
+  "morgan-1": {
+    "text": "Compare what the collection map promises with what the delivery ledger actually received. A setting marked active is not delivery evidence.",
+    "when": "player_requested_baseline_hint"
+  },
+  "morgan-2": {
+    "text": "A routing mistake may explain a missing pipeline. It does not tell you who acted or what happened while that source was blind.",
+    "when": "player_requested_alternative_hint"
+  },
+  "morgan-3": {
+    "text": "Attach the source and time bounds to your finding. Authentication records and application actions establish different things.",
+    "when": "player_requested_evidence_hint"
+  },
+  "morgan-4": {
+    "text": "A controlled event tests only its stated system, capability and time. A successful test now cannot restore historical coverage.",
+    "when": "player_requested_collection_hint"
+  },
+  "morgan-5": {
+    "text": "Name the source and missing interval. Assign repair, a repeat verification and a bounded review to Detection Engineering.",
+    "when": "player_requested_handoff_hint"
+  },
+  "morgan-6": {
+    "text": "A useful visibility finding can be excellent work. Later hidden activity must not be treated as something your earlier evidence proved.",
+    "when": "player_requested_reflection_hint"
+  },
+  "check-ready": {
+    "text": "Your controlled source verification is ready to review. Its stated target, capability and time limits still apply.",
+    "when": "verified_check_result_delivered"
+  },
+  "report-submitted": {
+    "text": "Case report submitted. Review your investigation and the simulated outcome.",
+    "when": "case_closure_accepted"
+  },
+  "finding-explained": {
+    "text": "Your cited records support the specific approved-work explanation within the scope you investigated. This does not establish that the whole organisation is clear.",
+    "when": "closed_supported_explained_finding"
+  },
+  "finding-misuse": {
+    "text": "Your cited observations link activity outside approved use with distinct technical context. Hand over the specific session and preserve the business dependency.",
+    "when": "closed_supported_likely_misuse_finding"
+  },
+  "finding-visibility": {
+    "text": "You established a meaningful visibility limit. That is not proof that the activity was benign or malicious. A clear owner and follow-up make this finding useful.",
+    "when": "closed_supported_visibility_limited_finding"
+  },
+  "finding-provisional": {
+    "text": "Your bounded preliminary finding records supported concerns and what remains unknown. Further review and collection are still needed.",
+    "when": "closed_supported_provisional_finding"
+  },
+  "finding-unsupported": {
+    "text": "The cited observations did not establish this finding. Revisit the sources, test the alternative, and keep the claim within what your evidence can support.",
+    "when": "closed_unsupported_finding"
+  },
+  "outcome-occurred": {
+    "text": "The disclosed reconstruction contains an unauthorised action in the missing historical interval. The available collection did not establish that action. Your observation based quality assessment remains unchanged.",
+    "when": "closed_objective_achieved"
+  },
+  "outcome-not-occurred": {
+    "text": "The disclosed reconstruction contains no unauthorised application action. The missing collection was still a real operational defect. Your visibility finding is assessed from the same available observations.",
+    "when": "closed_objective_not_achieved"
+  }
+}

@@ -1,18 +1,23 @@
 import { useState } from "react";
 import type { Debrief } from "../domain/contracts";
 import type { useMissionAudio } from "../presentation/sound/useMissionAudio";
-import { cues, debriefCue } from "../presentation/voice/pack";
+import { cues as defaultCues, debriefCue } from "../presentation/voice/pack";
 export function AudioPanel({
   audio,
   debrief,
+  cues = defaultCues,
+  report,
 }: {
   audio: ReturnType<typeof useMissionAudio>;
   debrief: Debrief | null;
+  cues?: ReadonlyMap<string, { id: string; text: string; speaker: string }>;
+  report?: { cue: string; objectiveOccurred: boolean };
 }) {
   const [open, setOpen] = useState(false),
     [guidance, setGuidance] = useState("morgan-1");
+  const closed = Boolean(debrief || report);
   const selectedGuidance =
-    guidance === "morgan-6" && !debrief ? "morgan-1" : guidance;
+    guidance === "morgan-6" && !closed ? "morgan-1" : guidance;
   const cue = audio.lastCue ? cues.get(audio.lastCue) : null;
   const muted = !audio.enabled || audio.prefs.masterMuted;
   return (
@@ -59,15 +64,20 @@ export function AudioPanel({
               <button onClick={() => audio.play("briefing")}>
                 Play briefing
               </button>
-              {debrief ? (
+              {closed ? (
                 <>
-                  <button onClick={() => audio.play(debriefCue(debrief))}>
+                  <button
+                    onClick={() =>
+                      audio.play(report?.cue ?? debriefCue(debrief!))
+                    }
+                  >
                     Read my debrief
                   </button>
                   <button
                     onClick={() =>
                       audio.play(
-                        debrief.objectiveAchieved
+                        (report?.objectiveOccurred ??
+                          debrief!.objectiveAchieved)
                           ? "outcome-occurred"
                           : "outcome-not-occurred",
                       )
@@ -95,7 +105,7 @@ export function AudioPanel({
                 .filter(
                   (c) =>
                     c.id.startsWith("morgan-") &&
-                    (c.id !== "morgan-6" || Boolean(debrief)),
+                    (c.id !== "morgan-6" || closed),
                 )
                 .map((c, i) => (
                   <option key={c.id} value={c.id}>
@@ -113,7 +123,7 @@ export function AudioPanel({
                 ))}
             </select>
           </label>
-          <p>{cues.get(guidance)?.text}</p>
+          <p>{cues.get(selectedGuidance)?.text}</p>
           <button
             disabled={audio.phase !== "ready" || muted}
             onClick={() => audio.play(selectedGuidance)}

@@ -1,6 +1,6 @@
 # GDD implementation and acceptance ledger
 
-Authority: [unchanged GDD v4.3](THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md), especially Sections 18–22. This is an internal M01 release candidate. **Full GDD/P0 acceptance has not passed.** “Implemented” below means code/content exists; it does not substitute for the separately required human or physical-device evidence.
+Authority: [unchanged GDD v4.3](THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md), especially Sections 18–22. This is an internal three-mission candidate (M01/M04/M07). The user deferred review-first expansion ordering; required reviews remain deferred. **Full GDD/P0 acceptance has not passed.** “Implemented” below means code/content exists; it does not substitute for the separately required human or physical-device evidence.
 
 | ID     | Requirement              | Current implementation / evidence                                                                                     | Remaining acceptance                                                                                |
 | ------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -30,14 +30,14 @@ Authority: [unchanged GDD v4.3](THREAT_HUNTER_GAME_DESIGN_DOCUMENT_v4.3.md), esp
 | TH-024 | Discovery rhythm         | Guided comparison, free evidence roles, flexible checks, reflection and replay                                        | Observed unassisted agency, discovery and voluntary continuation                                    |
 | TH-025 | Design bible             | [Creative handoff](creative/README.md), token source/manifest, responsive compositions, actual screen frames          | Creative acceptance on actual build                                                                 |
 | TH-026 | Voice production         | Model/source/rights record, canonical transcripts, delivery/master hashes and branch-safe clips                       | Human listening, identity/accent choice and phone-speaker review                                    |
-| TH-027 | P1 mission readiness     | M04/M07 blueprints remain preserved in GDD Section 11                                                                 | Full authoring/fixtures after P0 passes; no claim that either mission is playable                   |
+| TH-027 | P1 mission readiness     | Playable versioned M04/M07 packages, account/host and future-collection mechanics, own scoring/saves, golden/UI traces and 21-file voice packs per mission                                                                 | Player/device/creative/listening acceptance deferred under the user’s explicit instruction; no P1 release sign-off                   |
 | TH-028 | Creative playtest        | [Protocol and blank scorecards](verification/HUMAN_TEST_PROTOCOL.md) prepared                                         | Eight newcomers + eight generalists + three specialist reviewers; no results fabricated             |
 
 ## Scope and ordering
 
-The GDD explicitly says in Section 22.1: **“Only after P0 passes should M04 and M07 receive their production fixtures and full implementation with the same visual/audio standard.”** Section 21.4 also gates campaign expansion on evidence that the first loop is understandable and worth repeating. Therefore no M04/M07 or twelve-case campaign completion is claimed while M01's required people/device gates remain open. This follows the requested full GDD sequence, rather than waiving its release criteria.
+The GDD explicitly says in Section 22.1: **“Only after P0 passes should M04 and M07 receive their production fixtures and full implementation with the same visual/audio standard.”** Section 21.4 also gates campaign expansion on evidence that the first loop is understandable and worth repeating. The user subsequently instructed **“defer review. continue gdd”**, explicitly superseding that ordering for development. [The decision](DESIGN_DECISIONS.md) and [P1 specification](P1_MISSIONS.md) record the exception. M04/M07 are now implemented candidates; their reviews and P0/P1 release acceptance are still deferred, not passed.
 
-The eventual M02–M12 campaign, procedural hunts, accounts/cloud sync, monetisation, runtime AI, PWA cold start and optional graph work retain the GDD's later-stage scope. They are not disguised as working menus.
+The later M02/M03/M05/M06/M08–M12 cases, procedural hunts, accounts/cloud sync, monetisation, runtime AI, PWA cold start and optional graph work retain the GDD's later-stage scope. They are not disguised as working menus.
 
 ## Evidence to inspect
 

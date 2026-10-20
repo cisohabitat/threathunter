@@ -1,0 +1,178 @@
+import Dexie, { type Table } from "dexie";
+import type { MissionId } from "./contracts";
+import { acknowledge, canonical, type State } from "./engine";
+import type { Envelope } from "./format";
+import { request, ValidatorUnavailable } from "./validator";
+
+export type Row = {
+  id: string;
+  revision: number;
+  current: Envelope;
+  previous: Envelope | null;
+};
+class CampaignDB extends Dexie {
+  rows!: Table<Row, string>;
+  constructor() {
+    super("threat-hunter-campaign-v1");
+    this.version(1).stores({ rows: "id" });
+  }
+}
+export const database = new CampaignDB();
+const activeKey = (mission: MissionId) => `active:${mission}`;
+export function subscribe(notify: () => void) {
+  try {
+    const channel = new BroadcastChannel("threat-hunter-campaign-changes");
+    channel.onmessage = notify;
+    return () => channel.close();
+  } catch {
+    return () => {};
+  }
+}
+function changed() {
+  if (typeof window === "undefined") return;
+  try {
+    const channel = new BroadcastChannel("threat-hunter-campaign-changes");
+    channel.postMessage("changed");
+    channel.close();
+  } catch {
+    /* Transactions and Web Locks still enforce ownership. */
+  }
+}
+export async function validateRow(row: Row, mission: MissionId) {
+  const { state } = await request("import", JSON.stringify(row.current));
+  if (
+    !state ||
+    state.missionId !== mission ||
+    state.view.revision !== row.revision
+  )
+    throw Error("Stored mission/revision does not match its history.");
+  return acknowledge(state, state.view.revision);
+}
+export async function inspect(mission: MissionId) {
+  await request("ready");
+  const row = await database.rows.get(activeKey(mission));
+  if (!row) return { state: null, issue: null };
+  try {
+    return { state: await validateRow(row, mission), issue: null };
+  } catch (error) {
+    if (error instanceof ValidatorUnavailable) throw error;
+    let previous: State | null = null;
+    if (row.previous) {
+      try {
+        previous = await validateRow(
+          { ...row, revision: row.previous.revision, current: row.previous },
+          mission,
+        );
+      } catch (e) {
+        if (e instanceof ValidatorUnavailable) throw e;
+      }
+    }
+    return { state: null, issue: { original: row, previous } };
+  }
+}
+export async function commit(state: State, expectedRevision: number | null) {
+  const prepared = await request("commit", state);
+  if (!prepared.state || !prepared.envelope) throw new ValidatorUnavailable();
+  const id = activeKey(state.missionId),
+    inspected = await database.rows.get(id);
+  if (inspected) await validateRow(inspected, state.missionId);
+  await database.transaction("rw", database.rows, async () => {
+    const current = await database.rows.get(id);
+    if (
+      canonical(current) !== canonical(inspected) ||
+      (expectedRevision === null
+        ? Boolean(current)
+        : !current ||
+          current.revision !== expectedRevision ||
+          current.current.runId !== state.view.runId)
+    )
+      throw Error(
+        "Another tab changed this mission save. Export retained progress before reloading.",
+      );
+    await database.rows.put({
+      id,
+      revision: state.view.revision,
+      current: prepared.envelope!,
+      previous: current?.current ?? null,
+    });
+  });
+  changed();
+  return prepared.state;
+}
+export async function recover(mission: MissionId, original: Row, state: State) {
+  const prepared = await request("commit", state);
+  if (!prepared.state || !prepared.envelope || state.missionId !== mission)
+    throw Error("Recovery mission mismatch.");
+  await database.transaction("rw", database.rows, async () => {
+    const current = await database.rows.get(activeKey(mission));
+    if (canonical(current) !== canonical(original))
+      throw Error(
+        "Stored data changed since recovery inspection. Reload before choosing again.",
+      );
+    await database.rows.put({ ...original, id: `original:${mission}` });
+    await database.rows.put({
+      id: activeKey(mission),
+      revision: state.view.revision,
+      current: prepared.envelope!,
+      previous: null,
+    });
+  });
+  changed();
+  return prepared.state;
+}
+export async function archiveCompleted(state: State) {
+  const id = activeKey(state.missionId),
+    original = await database.rows.get(id);
+  if (!original) throw Error("No durable completed case to archive.");
+  const checked = await validateRow(original, state.missionId);
+  if (
+    !checked.debrief ||
+    checked.view.runId !== state.view.runId ||
+    checked.view.revision !== state.view.revision
+  )
+    throw Error("Save the exact closed finding before replaying.");
+  await database.transaction("rw", database.rows, async () => {
+    if (canonical(await database.rows.get(id)) !== canonical(original))
+      throw Error("Completed save changed before archival.");
+    await database.rows.put({
+      ...original,
+      id: `completed:${state.missionId}:${state.view.runId}`,
+    });
+    await database.rows.delete(id);
+  });
+  changed();
+}
+export async function archives(mission: MissionId) {
+  return database.rows
+    .where("id")
+    .startsWith(`completed:${mission}:`)
+    .primaryKeys();
+}
+export function downloadText(text: string, filename: string) {
+  const url = URL.createObjectURL(
+    new Blob([text], { type: "application/json" }),
+  );
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+export async function download(state: State) {
+  const { text } = await request("export", state);
+  if (!text) throw new ValidatorUnavailable();
+  downloadText(
+    text,
+    `threat-hunter-${state.missionId}-${state.view.runId}.json`,
+  );
+}
+export async function downloadRow(id: string, mission: MissionId, raw = false) {
+  const row = await database.rows.get(id);
+  if (!row) throw Error("Stored record is no longer available.");
+  if (raw)
+    downloadText(
+      JSON.stringify(row, null, 2),
+      `threat-hunter-${mission}-recovery.json`,
+    );
+  else await download(await validateRow(row, mission));
+}
