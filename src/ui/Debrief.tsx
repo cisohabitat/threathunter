@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
 import { HistoryTimeline } from "./HistoryTimeline";
+import {
+  CompareButton,
+  ComparisonPanel,
+  ComparisonProvider,
+} from "../comparison/Comparison";
+import { fromM01 } from "../comparison/model";
 import { refKey, type Debrief as DebriefData } from "../domain/contracts";
 import {
   alternativeLabels,
@@ -267,35 +273,43 @@ export function Debrief({
           Showing observations delivered by step {through}. Later observations
           are hidden; the assessment remains frozen at step {data.closeTick}.
         </p>
-        {data.decisionRecords
-          .filter((r) => r.deliveredTick <= through)
-          .map((r) => (
-            <article
-              className="record"
-              id={anchor(refKey(r.ref))}
-              key={refKey(r.ref)}
-            >
-              <div className="record-top">
-                <span>
-                  {recordTitles[r.ref.recordId]} ·{" "}
-                  {sourceLabels[r.sourceId] ?? r.sourceId}
-                </span>
-                <span>
-                  {cited.has(refKey(r.ref))
-                    ? "Cited in your finding"
-                    : "Not cited in your finding"}
-                </span>
-              </div>
-              <p>{r.observation}</p>
-              <small>
-                Collected through step {r.snapshotCutoff} · delivered at step{" "}
-                {r.deliveredTick}
-                {alternative.has(refKey(r.ref))
-                  ? " · used to test another explanation"
-                  : ""}
-              </small>
-            </article>
-          ))}
+        <ComparisonProvider
+          records={fromM01(
+            data.decisionRecords.filter((r) => r.deliveredTick <= through),
+          )}
+        >
+          <ComparisonPanel />
+          {data.decisionRecords
+            .filter((r) => r.deliveredTick <= through)
+            .map((r) => (
+              <article
+                className="record"
+                id={anchor(refKey(r.ref))}
+                key={refKey(r.ref)}
+              >
+                <div className="record-top">
+                  <span>
+                    {recordTitles[r.ref.recordId]} ·{" "}
+                    {sourceLabels[r.sourceId] ?? r.sourceId}
+                  </span>
+                  <span>
+                    {cited.has(refKey(r.ref))
+                      ? "Cited in your finding"
+                      : "Not cited in your finding"}
+                  </span>
+                </div>
+                <p>{r.observation}</p>
+                <CompareButton reference={r.ref} />
+                <small>
+                  Collected through step {r.snapshotCutoff} · delivered at step{" "}
+                  {r.deliveredTick}
+                  {alternative.has(refKey(r.ref))
+                    ? " · used to test another explanation"
+                    : ""}
+                </small>
+              </article>
+            ))}
+        </ComparisonProvider>
         <details className="debrief-details">
           <summary>Your investigation timeline</summary>
           <HistoryTimeline items={history} />

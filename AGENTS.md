@@ -132,3 +132,13 @@ Run `npm run verify:guidance` against production preview for P1 help/focus, sepa
 - Run `e2e/journey.spec.ts` for low-score transitions across all three cases, retained saves, unavailable-worker retry, damaged rows, stale notifications, narrow-screen access and temporary closure. `npm run verify:journey` checks the production preview and writes `journey.json` and frames 22–23. No player/device acceptance is implied.
 
 Save assertions must distinguish independent live regions. Prefer the labelled save region (`Save and readiness` for M01, mission-specific save/recovery for P1). Home also has an independent progress live-status region; never assume the entire page contains only one `role=status` element. Legacy lab verifiers may use a status-text filter when that text is unique.
+
+## Acquired-observation comparison
+
+- `src/comparison` adapts public record projections only. Identity is the complete immutable `(acquisitionId, recordId)` tuple; never replace a pinned snapshot with the latest record from its source. Display source, public scope, event/cutoff/delivery times, collection and lineage without grading independence or sufficient evidence.
+- Comparison is session-only presentation state. Card selection, native selects, clearing, paging and reading dispatch no engine commands and never write saves, drafts, receipts or assistance logs. Preserve selection across live destinations; reset for a new run.
+- Debrief providers receive only records allowed by the current delivery-step/evidence filter. Resolve choices, content and relationship text from that filtered input; never cache hidden later labels/content. Disable the outer live context after closure so other report cards cannot target an absent live panel.
+- Bound choices to 50 per page plus at most two selected records from the permitted input. Keep native keyboard controls, focus on card selection, responsive columns and source caveats. Same-source/different-lineage and different-source labels alone establish neither independence nor a sufficient finding.
+- Run `src/tests/comparison.test.ts` and `e2e/comparison.spec.ts` for identities, large histories, sparse twins, exact saved-row invariance, narrow layout, accessibility and closed-case cutoff behavior in all three missions. Retain reporting/campaign regressions.
+
+`npm run verify:comparison` requires production preview (4173 by default) and writes `docs/verification/comparison.json`, including the entry hash, real portable-export equality and sampled accessibility/reflow for all three missions. Historical verification reports remain evidence for their captured build only.

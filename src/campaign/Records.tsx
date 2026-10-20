@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { keyOf, type Finding, type PublicRecord } from "./contracts";
+import { CompareButton } from "../comparison/Comparison";
 export function RecordCard({
   record,
   finding,
@@ -39,6 +40,7 @@ export function RecordCard({
           {record.lineage}.
         </p>
       ) : null}
+      <CompareButton reference={record.ref} />
       {finding && update ? (
         <div className="actions">
           <button

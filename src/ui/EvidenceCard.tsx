@@ -5,6 +5,7 @@ import {
   type PublicRecord,
 } from "../domain/contracts";
 import { caveatLabels, recordTitles, sourceLabels } from "./caseLanguage";
+import { CompareButton } from "../comparison/Comparison";
 const contains = (refs: CaseDraft["evidence"], record: PublicRecord) =>
   refs.some((ref) => refKey(ref) === refKey(record.ref));
 export function EvidenceCard({
@@ -70,6 +71,7 @@ export function EvidenceCard({
         {record.deliveredTick}
       </small>
       <div className="evidence-actions">
+        <CompareButton reference={record.ref} />
         <button
           disabled={busy}
           aria-pressed={cited}

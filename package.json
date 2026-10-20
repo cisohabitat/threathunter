@@ -20,7 +20,8 @@
     "verify:history": "node scripts/verify-save-history.mjs",
     "verify:campaign": "node scripts/verify-campaign.mjs",
     "verify:guidance": "node scripts/verify-guidance.mjs",
-    "verify:journey": "node scripts/verify-journey.mjs"
+    "verify:journey": "node scripts/verify-journey.mjs",
+    "verify:comparison": "node scripts/verify-comparison.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.3.3",

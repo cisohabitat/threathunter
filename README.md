@@ -15,6 +15,8 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 5. Open **Case File** and move through **Explanation → Evidence → Unknowns → Next step**. Your evidence-card choices carry over. Choose a finding/confidence, describe the alternative you tested, record relevant limits and select a next action. You can revisit any step and review at any time. Optional notes have an explicit save button and are also saved when reviewing.
 6. Select **Review finding**, then **Confirm and close case** when ready. The debrief explains your finding and separates it from the operational outcome. Use **What I knew then** to view only observations delivered by a selected step. Expand the optional quality breakdown for your score, specific feedback and links to the relevant observations.
 
+Use **Compare observation · free** on acquired cards, or open **Compare acquired observations** and choose two snapshots. Compare their source, recorded scope, event time, cutoff, delivery time and lineage side by side. A repeated observation is not a second acquisition, and different source labels do not establish independent corroboration. Comparison never cites evidence or changes your finding. Selections last only for the loaded case session; they are separate from portable saves. Debrief comparisons respect **What I knew then** and any evidence filter.
+
 Reading, navigation and evidence citation are free. New acquisitions, verification requests and deliberately advancing the world consume simulation steps. There is no real-time countdown. An unresolved finding is valid when its limits and follow-up are explained.
 
 Use **Hide guidance** / **How to play** to change assistance at any time. The game remembers that preference; independent mode uses the same facts, costs and scoring.
@@ -145,3 +147,5 @@ The overview distinguishes saved open/closed cases, preserved completed archives
 `npm run verify:journey` verifies production-preview continuation, low-score completion, a read-only progress check and unchanged prior-case export. It requires preview on port 4173 and writes a report and phone/tablet reference frames.
 
 The journey's progress announcement is separate from **Save and readiness**. A completed overview check does not save an investigation; rely on its case's **Saved on this device** status.
+
+Run `npm run verify:comparison` against a production preview on port 4173 (or `THREAT_HUNTER_TEST_URL`). It imports real three-mission fixtures, compares snapshots at 320px, checks sampled accessibility and unchanged portable exports, and writes [comparison evidence](docs/verification/comparison.json). This is automated lab evidence, not human or device acceptance.

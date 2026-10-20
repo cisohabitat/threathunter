@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-20",
+  "method": "Chromium production preview; real portable imports/exports, two native selectors, immutable first snapshot, 320px reflow and sampled axe comparison region. Automated lab only; no physical-device or human acceptance.",
+  "entry": "/assets/index-B_NqEdO2.js",
+  "entrySha256": "a7f3aa0be8443b42584b31687d5f11276f332372639f63be1f8b6c100c77e5f3",
+  "results": [
+    {
+      "mission": "M01",
+      "portableSaveSha256": "8ae573a42c4662896d49ada1f07bdc68d6a6d8940af6b3c8e3840d9132c5dcfa",
+      "comparisonLeavesPortableBytesUnchanged": true,
+      "firstSnapshotPreserved": true,
+      "reflow320": true,
+      "sampledAxeViolations": 0
+    },
+    {
+      "mission": "M04",
+      "portableSaveSha256": "96b42e6ff532cf141cb36db51c4ce0e3843e054cff4f9963a17e97645f0f3e8a",
+      "comparisonLeavesPortableBytesUnchanged": true,
+      "firstSnapshotPreserved": true,
+      "reflow320": true,
+      "sampledAxeViolations": 0
+    },
+    {
+      "mission": "M07",
+      "portableSaveSha256": "39c94e573653a4cf876544976e4968f1077cbeef66a8c5fac577b2da5f000560",
+      "comparisonLeavesPortableBytesUnchanged": true,
+      "firstSnapshotPreserved": true,
+      "reflow320": true,
+      "sampledAxeViolations": 0
+    }
+  ]
+}

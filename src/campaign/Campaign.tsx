@@ -10,6 +10,8 @@ import { CampaignDebrief } from "./Debrief";
 import { CampaignGuide, CampaignFieldGuide } from "./Guide";
 import { ContinueJourney } from "../journey/Journey";
 import type { CaseId } from "../journey/contracts";
+import { ComparisonPanel, ComparisonProvider } from "../comparison/Comparison";
+import { fromP1 } from "../comparison/model";
 
 import {
   claimLabels,
@@ -716,335 +718,347 @@ export default function Campaign({
     });
   }
   return (
-    <div className="app-shell campaign-shell" data-mission={missionId}>
-      <a href={`#main-${missionId}`} className="skip-link">
-        Skip to investigation
-      </a>
-      <header className="topbar">
-        <button
-          className="wordmark"
-          onClick={() => {
-            audio.playMuted();
-            onExit();
-          }}
-        >
-          Threat Hunter · home
-        </button>
-        <span>{missionId} · INTERNAL CANDIDATE</span>
-        {game.view ? (
-          <span>STEP {game.view.tick} · no live countdown</span>
-        ) : null}
-      </header>
-      <section
-        className="save-strip"
-        aria-label={`${missionId} save and recovery`}
-      >
-        <span role="status">{game.busy ? "Working…" : game.status}</span>
-        <div>
-          {game.view ? (
-            <button onClick={() => void game.download()}>
-              Export hunt save
-            </button>
-          ) : (
-            <label className="file-button">
-              Import hunt save
-              <input
-                type="file"
-                accept="application/json"
-                disabled={
-                  game.busy ||
-                  (!game.temporary &&
-                    (game.readOnly ||
-                      !game.writerAvailable ||
-                      Boolean(game.issue)))
-                }
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    if (file.size > 2 * 1024 * 1024) game.rejectOversized();
-                    else await game.restore(await file.text());
-                  }
-                }}
-              />
-            </label>
-          )}
-          {game.storedAvailable ? (
-            <button
-              onClick={() => void game.download(`active:${missionId}`, true)}
-            >
-              Export stored recovery data
-            </button>
-          ) : null}
-          {game.originalAvailable ? (
-            <button
-              onClick={() => void game.download(`original:${missionId}`, true)}
-            >
-              Export recovery original
-            </button>
-          ) : null}
-        </div>
-      </section>
-      <AudioPanel
-        audio={audio}
-        debrief={null}
-        cues={cueMaps[missionId]}
-        report={
-          game.debrief
-            ? {
-                cue: findingCue(game.debrief),
-                objectiveOccurred: game.debrief.objectiveOccurred,
-              }
-            : undefined
-        }
-      />
-      {game.readOnly && !game.temporary ? (
-        <p className="notice">
-          Read-only: another tab owns this mission’s save. You may read/export,
-          or explicitly create temporary progress.
-        </p>
-      ) : null}
-      {game.error ? (
-        <section className="error" role="alert">
-          <p>{game.error}</p>
-          <p>
-            Stored progress is retained. Export before discarding any unsaved
-            work.
-          </p>
-          <div className="actions">
-            <button
-              disabled={
-                game.busy ||
-                !game.writerAvailable ||
-                game.readOnly ||
-                !game.view
-              }
-              onClick={() => void game.retry()}
-            >
-              Retry saving retained hunt
-            </button>
-            <button disabled={game.busy} onClick={game.playTemporarily}>
-              Play temporarily without saving
-            </button>
-          </div>
-          <label className="audio-check">
-            <input
-              type="checkbox"
-              checked={confirmReload}
-              onChange={(e) => setConfirmReload(e.target.checked)}
-            />
-            I exported retained progress or accept discarding its unsaved
-            changes
-          </label>
+    <ComparisonProvider
+      key={game.view?.runId ?? missionId}
+      records={fromP1(game.debrief ? [] : (game.view?.records ?? []))}
+    >
+      <div className="app-shell campaign-shell" data-mission={missionId}>
+        <a href={`#main-${missionId}`} className="skip-link">
+          Skip to investigation
+        </a>
+        <header className="topbar">
           <button
-            disabled={!confirmReload || game.busy}
+            className="wordmark"
             onClick={() => {
-              game.reloadSaved();
-              setConfirmReload(false);
+              audio.playMuted();
+              onExit();
             }}
           >
-            Reload saved hunt
+            Threat Hunter · home
           </button>
-        </section>
-      ) : null}
-      {game.temporary ? (
-        <section className="notice" aria-label="Temporary hunt">
-          <p>
-            Temporary session. Last verified durable revision:{" "}
-            {game.durableRevision ?? "none"}. Temporary actions do not replace
-            the saved case.
-          </p>
-          <button
-            onClick={() => void game.retry()}
-            disabled={
-              game.busy || game.readOnly || !game.writerAvailable || !game.view
-            }
-          >
-            Try saving retained hunt
-          </button>
-        </section>
-      ) : null}
-      {game.issue ? (
-        <section className="panel">
-          <h2>Recover this mission</h2>
-          <p>
-            Export the original first. Recovery archives it before restoring a
-            validated previous save or starting a separate case.
-          </p>
-          <label className="audio-check">
-            <input
-              type="checkbox"
-              checked={confirmRecovery}
-              onChange={(e) => setConfirmRecovery(e.target.checked)}
-            />
-            I understand recovery replaces the active mission and retains its
-            original for export
-          </label>
-          <button
-            disabled={
-              !confirmRecovery ||
-              !game.issue.previous ||
-              game.busy ||
-              game.readOnly
-            }
-            onClick={() => void game.recover(true)}
-          >
-            Restore previous hunt
-          </button>
-          <button
-            disabled={
-              !confirmRecovery ||
-              game.busy ||
-              game.readOnly ||
-              !game.writerAvailable
-            }
-            onClick={() => void game.recover(false)}
-          >
-            Restart mission with recovery original retained
-          </button>
-        </section>
-      ) : null}
-      <main id={`main-${missionId}`} tabIndex={-1}>
-        <div className="campaign-banner">
-          <picture>
-            <source
-              media="(max-width: 767px)"
-              srcSet="/art/northstar-investigation-portrait-v1.webp"
-            />
-            <img
-              src="/art/northstar-investigation-landscape-v1.webp"
-              alt=""
-              onError={(e) => {
-                e.currentTarget.hidden = true;
-              }}
-            />
-          </picture>
+          <span>{missionId} · INTERNAL CANDIDATE</span>
+          {game.view ? (
+            <span>STEP {game.view.tick} · no live countdown</span>
+          ) : null}
+        </header>
+        <section
+          className="save-strip"
+          aria-label={`${missionId} save and recovery`}
+        >
+          <span role="status">{game.busy ? "Working…" : game.status}</span>
           <div>
-            <p className="eyebrow">
-              NORTHSTAR · PLANNED REVIEW · NO OPENING ALERT
-            </p>
-            <h1 ref={heading} tabIndex={-1}>
-              {pack.title}
-            </h1>
-            <p>{pack.question}</p>
+            {game.view ? (
+              <button onClick={() => void game.download()}>
+                Export hunt save
+              </button>
+            ) : (
+              <label className="file-button">
+                Import hunt save
+                <input
+                  type="file"
+                  accept="application/json"
+                  disabled={
+                    game.busy ||
+                    (!game.temporary &&
+                      (game.readOnly ||
+                        !game.writerAvailable ||
+                        Boolean(game.issue)))
+                  }
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.size > 2 * 1024 * 1024) game.rejectOversized();
+                      else await game.restore(await file.text());
+                    }
+                  }}
+                />
+              </label>
+            )}
+            {game.storedAvailable ? (
+              <button
+                onClick={() => void game.download(`active:${missionId}`, true)}
+              >
+                Export stored recovery data
+              </button>
+            ) : null}
+            {game.originalAvailable ? (
+              <button
+                onClick={() =>
+                  void game.download(`original:${missionId}`, true)
+                }
+              >
+                Export recovery original
+              </button>
+            ) : null}
           </div>
-        </div>
-        {game.view ? (
-          <>
-            <CampaignGuide
-              key={game.view.runId}
-              view={game.view}
-              audio={audio}
-              show={showHelp}
-            />
-            <CampaignFieldGuide view={game.view} />
-          </>
+        </section>
+        <AudioPanel
+          audio={audio}
+          debrief={null}
+          cues={cueMaps[missionId]}
+          report={
+            game.debrief
+              ? {
+                  cue: findingCue(game.debrief),
+                  objectiveOccurred: game.debrief.objectiveOccurred,
+                }
+              : undefined
+          }
+        />
+        {game.readOnly && !game.temporary ? (
+          <p className="notice">
+            Read-only: another tab owns this mission’s save. You may
+            read/export, or explicitly create temporary progress.
+          </p>
         ) : null}
-        {!game.view ? (
-          <section className="panel">
-            <h2>Your starting question</h2>
-            <p>{pack.briefing}</p>
+        {game.error ? (
+          <section className="error" role="alert">
+            <p>{game.error}</p>
             <p>
-              This mission has its own local save. Switching cases keeps
-              accepted in-memory work; export for an independent backup. Player,
-              physical-device, artwork and listening reviews are deferred.
+              Stored progress is retained. Export before discarding any unsaved
+              work.
             </p>
+            <div className="actions">
+              <button
+                disabled={
+                  game.busy ||
+                  !game.writerAvailable ||
+                  game.readOnly ||
+                  !game.view
+                }
+                onClick={() => void game.retry()}
+              >
+                Retry saving retained hunt
+              </button>
+              <button disabled={game.busy} onClick={game.playTemporarily}>
+                Play temporarily without saving
+              </button>
+            </div>
+            <label className="audio-check">
+              <input
+                type="checkbox"
+                checked={confirmReload}
+                onChange={(e) => setConfirmReload(e.target.checked)}
+              />
+              I exported retained progress or accept discarding its unsaved
+              changes
+            </label>
             <button
-              className="primary"
-              disabled={game.blocked}
-              onClick={async () => {
-                await game.start();
-                navigate("Investigate");
+              disabled={!confirmReload || game.busy}
+              onClick={() => {
+                game.reloadSaved();
+                setConfirmReload(false);
               }}
             >
-              Begin proactive hunt
+              Reload saved hunt
             </button>
           </section>
-        ) : game.debrief ? (
-          <>
-            <CampaignDebrief
-              data={game.debrief}
-              missionId={missionId}
-              busy={game.blocked}
-              replay={async () => {
-                await game.replay();
-                navigate("Investigate");
-              }}
-            />
-            <ContinueJourney
-              mission={missionId}
-              open={(mission) => {
-                audio.playMuted();
-                onOpenMission(mission);
-              }}
-              saved={game.durableRevision === game.view.revision}
-            />
-          </>
-        ) : (
-          <>
-            <nav
-              className="campaign-nav"
-              aria-label={`${missionId} investigation`}
+        ) : null}
+        {game.temporary ? (
+          <section className="notice" aria-label="Temporary hunt">
+            <p>
+              Temporary session. Last verified durable revision:{" "}
+              {game.durableRevision ?? "none"}. Temporary actions do not replace
+              the saved case.
+            </p>
+            <button
+              onClick={() => void game.retry()}
+              disabled={
+                game.busy ||
+                game.readOnly ||
+                !game.writerAvailable ||
+                !game.view
+              }
             >
-              {["Brief", "Investigate", "Case File", "Timeline"].map((s) => (
-                <button
-                  key={s}
-                  aria-current={screen === s ? "page" : undefined}
-                  onClick={() => navigate(s)}
-                >
-                  {s}
+              Try saving retained hunt
+            </button>
+          </section>
+        ) : null}
+        {game.issue ? (
+          <section className="panel">
+            <h2>Recover this mission</h2>
+            <p>
+              Export the original first. Recovery archives it before restoring a
+              validated previous save or starting a separate case.
+            </p>
+            <label className="audio-check">
+              <input
+                type="checkbox"
+                checked={confirmRecovery}
+                onChange={(e) => setConfirmRecovery(e.target.checked)}
+              />
+              I understand recovery replaces the active mission and retains its
+              original for export
+            </label>
+            <button
+              disabled={
+                !confirmRecovery ||
+                !game.issue.previous ||
+                game.busy ||
+                game.readOnly
+              }
+              onClick={() => void game.recover(true)}
+            >
+              Restore previous hunt
+            </button>
+            <button
+              disabled={
+                !confirmRecovery ||
+                game.busy ||
+                game.readOnly ||
+                !game.writerAvailable
+              }
+              onClick={() => void game.recover(false)}
+            >
+              Restart mission with recovery original retained
+            </button>
+          </section>
+        ) : null}
+        <main id={`main-${missionId}`} tabIndex={-1}>
+          <div className="campaign-banner">
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/art/northstar-investigation-portrait-v1.webp"
+              />
+              <img
+                src="/art/northstar-investigation-landscape-v1.webp"
+                alt=""
+                onError={(e) => {
+                  e.currentTarget.hidden = true;
+                }}
+              />
+            </picture>
+            <div>
+              <p className="eyebrow">
+                NORTHSTAR · PLANNED REVIEW · NO OPENING ALERT
+              </p>
+              <h1 ref={heading} tabIndex={-1}>
+                {pack.title}
+              </h1>
+              <p>{pack.question}</p>
+            </div>
+          </div>
+          {game.view ? (
+            <>
+              <CampaignGuide
+                key={game.view.runId}
+                view={game.view}
+                audio={audio}
+                show={showHelp}
+              />
+              <CampaignFieldGuide view={game.view} />
+            </>
+          ) : null}
+          {!game.view ? (
+            <section className="panel">
+              <h2>Your starting question</h2>
+              <p>{pack.briefing}</p>
+              <p>
+                This mission has its own local save. Switching cases keeps
+                accepted in-memory work; export for an independent backup.
+                Player, physical-device, artwork and listening reviews are
+                deferred.
+              </p>
+              <button
+                className="primary"
+                disabled={game.blocked}
+                onClick={async () => {
+                  await game.start();
+                  navigate("Investigate");
+                }}
+              >
+                Begin proactive hunt
+              </button>
+            </section>
+          ) : game.debrief ? (
+            <>
+              <CampaignDebrief
+                data={game.debrief}
+                missionId={missionId}
+                busy={game.blocked}
+                replay={async () => {
+                  await game.replay();
+                  navigate("Investigate");
+                }}
+              />
+              <ContinueJourney
+                mission={missionId}
+                open={(mission) => {
+                  audio.playMuted();
+                  onOpenMission(mission);
+                }}
+                saved={game.durableRevision === game.view.revision}
+              />
+            </>
+          ) : (
+            <>
+              <ComparisonPanel />
+              <nav
+                className="campaign-nav"
+                aria-label={`${missionId} investigation`}
+              >
+                {["Brief", "Investigate", "Case File", "Timeline"].map((s) => (
+                  <button
+                    key={s}
+                    aria-current={screen === s ? "page" : undefined}
+                    onClick={() => navigate(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </nav>
+              <div hidden={screen !== "Brief"}>
+                <section className="panel">
+                  <h2>The review brief</h2>
+                  <p>{pack.briefing}</p>
+                  <h3>How to play</h3>
+                  <p>
+                    {missionId === "M04"
+                      ? "Compare the account’s activity by host. Select the relationship you discover, check the dependency, then compare approval and session/task/application evidence. A host missing from inventory is a question, not a verdict."
+                      : "Inspect declared coverage, compare heartbeats and select one system. Compare collector configuration and authentication limits. Request a controlled test, open a future collection window and inspect only what it actually covers."}
+                  </p>
+                  <p>
+                    Cite observations and mark the alternative you tested. Build
+                    your Case File, review it, then explicitly close. Useful
+                    uncertainty can score as well as a supported explanation.
+                  </p>
+                  <p>
+                    Only accepted acquisitions, checks, sensor activation and
+                    deliberate advances move time. Nothing counts down while you
+                    read.
+                  </p>
+                </section>
+              </div>
+              <div hidden={screen !== "Investigate"}>
+                <Investigation view={game.view} game={game} />
+              </div>
+              <div hidden={screen !== "Case File"}>
+                <CaseFile key={game.view.runId} view={game.view} game={game} />
+              </div>
+              <div hidden={screen !== "Timeline"}>
+                <Timeline view={game.view} game={game} />
+              </div>
+            </>
+          )}
+          {game.archiveIds.length ? (
+            <details className="panel">
+              <summary>Completed {missionId} investigations</summary>
+              {game.archiveIds.map((id, i) => (
+                <button key={id} onClick={() => void game.download(id)}>
+                  Export completed hunt {i + 1}
                 </button>
               ))}
-            </nav>
-            <div hidden={screen !== "Brief"}>
-              <section className="panel">
-                <h2>The review brief</h2>
-                <p>{pack.briefing}</p>
-                <h3>How to play</h3>
-                <p>
-                  {missionId === "M04"
-                    ? "Compare the account’s activity by host. Select the relationship you discover, check the dependency, then compare approval and session/task/application evidence. A host missing from inventory is a question, not a verdict."
-                    : "Inspect declared coverage, compare heartbeats and select one system. Compare collector configuration and authentication limits. Request a controlled test, open a future collection window and inspect only what it actually covers."}
-                </p>
-                <p>
-                  Cite observations and mark the alternative you tested. Build
-                  your Case File, review it, then explicitly close. Useful
-                  uncertainty can score as well as a supported explanation.
-                </p>
-                <p>
-                  Only accepted acquisitions, checks, sensor activation and
-                  deliberate advances move time. Nothing counts down while you
-                  read.
-                </p>
-              </section>
-            </div>
-            <div hidden={screen !== "Investigate"}>
-              <Investigation view={game.view} game={game} />
-            </div>
-            <div hidden={screen !== "Case File"}>
-              <CaseFile key={game.view.runId} view={game.view} game={game} />
-            </div>
-            <div hidden={screen !== "Timeline"}>
-              <Timeline view={game.view} game={game} />
-            </div>
-          </>
-        )}
-        {game.archiveIds.length ? (
-          <details className="panel">
-            <summary>Completed {missionId} investigations</summary>
-            {game.archiveIds.map((id, i) => (
-              <button key={id} onClick={() => void game.download(id)}>
-                Export completed hunt {i + 1}
-              </button>
-            ))}
-          </details>
-        ) : null}
-      </main>
-      <footer className="global-footer">
-        <p>
-          Fictional training environment · candidate synthetic voice · local
-          browser storage · reviews deferred, not passed.
-        </p>
-      </footer>
-    </div>
+            </details>
+          ) : null}
+        </main>
+        <footer className="global-footer">
+          <p>
+            Fictional training environment · candidate synthetic voice · local
+            browser storage · reviews deferred, not passed.
+          </p>
+        </footer>
+      </div>
+    </ComparisonProvider>
   );
 }

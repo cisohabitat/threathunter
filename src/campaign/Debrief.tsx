@@ -4,6 +4,8 @@ import { packages } from "./content";
 import { claimLabels, handoffLabels } from "./labels";
 import { Records } from "./Records";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
+import { ComparisonPanel, ComparisonProvider } from "../comparison/Comparison";
+import { fromP1 } from "../comparison/model";
 
 export function CampaignDebrief({
   data,
@@ -126,7 +128,10 @@ export function CampaignDebrief({
             </button>
           </>
         ) : null}
-        <Records records={records} />
+        <ComparisonProvider records={fromP1(records)}>
+          <ComparisonPanel />
+          <Records records={records} />
+        </ComparisonProvider>
         <details>
           <summary>Your investigation timeline</summary>
           <HistoryTimeline items={history} />
