@@ -102,7 +102,11 @@ test("failed audio loading leaves text investigation and saving available", asyn
   await expect(
     page.getByRole("heading", { name: "Now compare unusual with usual." }),
   ).toBeVisible();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
 });
 
 test("foreground replacement, orientation and backgrounding never replay stale speech or advance the case", async ({

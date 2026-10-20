@@ -12,12 +12,20 @@ test("complete a case, resume an immutable save, and continue offline", async ({
   await expect(
     page.getByRole("heading", { name: "Start with a question." }),
   ).toBeVisible();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page
     .getByRole("button", { name: "Collect through step 0 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.reload();
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await expect(
@@ -34,7 +42,11 @@ test("complete a case, resume an immutable save, and continue offline", async ({
     .getByRole("button", { name: "Collect through step 1 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page
     .getByRole("navigation")
     .getByRole("button", { name: /Case File/ })

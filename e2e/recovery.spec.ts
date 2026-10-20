@@ -33,14 +33,22 @@ test("damaged current save recovers pending checks from the previous commit exac
     await database.runs.update("active", { "current.hash": "00000000" });
   });
   await page.reload();
-  await expect(page.getByRole("status")).toHaveText("Save needs recovery");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Save needs recovery");
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export recovery original" }).click();
   expect((await download).suggestedFilename()).toContain("recovery-original");
   await page
     .getByRole("button", { name: "Restore previous save · step 1" })
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await expect(page.locator(".step-badge")).toContainText("STEP 1");
   const before = await page.evaluate(async () => {
@@ -95,9 +103,17 @@ test("unsupported save requires explicit restart and keeps original data", async
   await expect(restart).toBeDisabled();
   await page.getByRole("checkbox", { name: /I understand restarting/ }).check();
   await restart.click();
-  await expect(page.getByRole("status")).toHaveText("No active case");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("No active case");
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Browser import.
@@ -121,13 +137,21 @@ test("quota failure retains actions and retry saves them without applying them t
   await page.goto("/");
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.evaluate(() => localStorage.setItem("test-fail-save", "yes"));
   await page
     .getByRole("button", { name: "Collect through step 0 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Not saved");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Not saved");
   await expect(page.locator(".step-badge")).toContainText("STEP 1");
   expect(
     await page.evaluate(async () => {
@@ -149,7 +173,11 @@ test("quota failure retains actions and retry saves them without applying them t
   await expect(page.locator(".step-badge")).toContainText("STEP 2");
   await page.evaluate(() => localStorage.removeItem("test-fail-save"));
   await page.getByRole("button", { name: "Try saving this session" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.reload();
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await expect(page.locator(".step-badge")).toContainText("STEP 2");
@@ -169,7 +197,11 @@ test("waiting tab refreshes the committed case when writer ownership transfers",
   await page.goto("/");
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const second = await context.newPage();
   await second.goto("/");
   await expect(second.getByText(/Read-only: another tab/)).toBeVisible();
@@ -177,7 +209,11 @@ test("waiting tab refreshes the committed case when writer ownership transfers",
     .getByRole("button", { name: "Collect through step 0 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.close();
   await expect(second.getByText(/Read-only: another tab/)).toHaveCount(0);
   await second.getByRole("button", { name: "Resume investigation" }).click();
@@ -204,7 +240,11 @@ test("trying another approach retains the original completed case and replays it
     .last()
     .click();
   await page.getByRole("button", { name: "Confirm and close case" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.getByRole("button", { name: "Try another approach →" }).click();
   await expect(
     page.getByText("Saved completed investigations · export for review", {
@@ -212,7 +252,11 @@ test("trying another approach retains the original completed case and replays it
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const replay = await page.evaluate(async () => {
     // @ts-expect-error Browser import.
     const { load, database } = await import("/src/persistence/saves.ts");
@@ -294,9 +338,11 @@ test("rejected Web Locks access offers temporary play without a durable write", 
     .getByRole("button", { name: "Continue explicitly without saving" })
     .click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText(
-    "Temporary session — not saved",
-  );
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Temporary session — not saved");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Browser import.
@@ -314,7 +360,11 @@ test("waiting reader receives committed observations and notes before taking own
   await page.goto("/");
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const second = await context.newPage();
   await second.goto("/");
   await expect(second.getByText(/Read-only: another tab/)).toBeVisible();
@@ -354,7 +404,11 @@ test("waiting reader receives committed observations and notes before taking own
     "Second committed note arrives while the reader is elsewhere.",
   );
   await page.getByRole("button", { name: "Save notes · free" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await second
     .getByRole("navigation", { name: "Investigation", exact: true })
     .getByRole("button", { name: /Case File/ })

@@ -63,7 +63,11 @@ test("legacy save upgrades only on successful commit and retains its original ba
     .getByRole("button", { name: "Collect through step 1 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const after = await page.evaluate(async () => {
     // @ts-expect-error Vite browser module.
     const { database, load } = await import("/src/persistence/saves.ts");
@@ -122,7 +126,11 @@ test("failed upgrade keeps legacy data and memory-only receipts until retry comm
     .getByRole("button", { name: "Collect through step 0 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Not saved");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Not saved");
   const downloading = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export save", exact: true }).click();
   const download = await downloading;
@@ -147,7 +155,11 @@ test("failed upgrade keeps legacy data and memory-only receipts until retry comm
   await page
     .getByRole("button", { name: "Retry saving retained progress" })
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const saved = await page.evaluate(async () => {
     // @ts-expect-error Vite browser module.
     const { load } = await import("/src/persistence/saves.ts");

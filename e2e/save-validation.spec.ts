@@ -60,7 +60,10 @@ test("large legacy case upgrades, exports, paginates and closes without dropping
   );
   await page.getByRole("button", { name: /Advance selected steps/ }).click();
   await expect(
-    page.getByRole("status").filter({ hasText: "Saved on this device" }),
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status")
+      .filter({ hasText: "Saved on this device" }),
   ).toBeVisible({ timeout: 60000 });
   const row = await page.evaluate(async () => {
     // @ts-expect-error Vite browser import.
@@ -91,7 +94,10 @@ test("large legacy case upgrades, exports, paginates and closes without dropping
     timeout: 60000,
   });
   await expect(
-    page.getByRole("status").filter({ hasText: "Saved on this device" }),
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status")
+      .filter({ hasText: "Saved on this device" }),
   ).toBeVisible({ timeout: 60000 });
   expect(
     await page.evaluate(async () => {
@@ -154,7 +160,11 @@ test("long-history import validates in a worker and preserves every free edit", 
     mimeType: "application/json",
     buffer: Buffer.from(text),
   });
-  await expect(page.getByRole("status")).toHaveText("Saved on this device", {
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device", {
     timeout: 60000,
   });
   const restored = await page.evaluate(async () => {
@@ -195,13 +205,21 @@ test("worker failure retains the durable row and retry commits the action only o
   await page.goto("/");
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page.evaluate(() => Reflect.set(window, "failSaveValidation", true));
   await page
     .getByRole("button", { name: "Collect through step 0 · 1 step" })
     .first()
     .click();
-  await expect(page.getByRole("status")).toHaveText("Not saved");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Not saved");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Vite browser import.
@@ -214,7 +232,11 @@ test("worker failure retains the durable row and retry commits the action only o
   await page
     .getByRole("button", { name: "Retry saving retained progress" })
     .click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Vite browser import.
@@ -235,7 +257,11 @@ test("blocked validator startup preserves an existing case and offers a raw reco
   test.setTimeout(60000);
   await page.goto("/");
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   const before = await page.evaluate(async () => {
     // @ts-expect-error Vite browser import.
     const { database } = await import("/src/persistence/saves.ts");
@@ -251,9 +277,11 @@ test("blocked validator startup preserves an existing case and offers a raw reco
     });
   });
   await page.reload();
-  await expect(page.getByRole("status")).toHaveText(
-    "Not saved — save validation unavailable",
-  );
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Not saved — save validation unavailable");
   await expect(
     page.getByText("Save needs recovery", { exact: true }),
   ).toHaveCount(0);
@@ -270,9 +298,11 @@ test("blocked validator startup preserves an existing case and offers a raw reco
     .getByRole("button", { name: "Continue explicitly without saving" })
     .click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await expect(page.getByRole("status")).toHaveText(
-    "Temporary session — not saved",
-  );
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Temporary session — not saved");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Vite browser import.

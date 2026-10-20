@@ -143,3 +143,5 @@ On home, **Check saved progress** reads and validates the three cases already st
 The overview distinguishes saved open/closed cases, preserved completed archives, recovery needs and unavailable validation. It checks at most five archives per mission and explicitly labels incomplete/unavailable checks. Recovery backups and temporary/unsaved closures do not count as saved completion. **Refresh saved progress** after saving or importing; where supported, save-change notifications mark an older snapshot as stale. Checking progress never repairs, rewrites, upgrades or removes a case, and creates no separate profile or cloud account.
 
 `npm run verify:journey` verifies production-preview continuation, low-score completion, a read-only progress check and unchanged prior-case export. It requires preview on port 4173 and writes a report and phone/tablet reference frames.
+
+The journey's progress announcement is separate from **Save and readiness**. A completed overview check does not save an investigation; rely on its case's **Saved on this device** status.

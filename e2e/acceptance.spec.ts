@@ -36,7 +36,11 @@ test("keyboard investigation, source limits, retained notes, world reconstructio
   await page.keyboard.press("Enter");
   await page.getByRole("button", { name: "Begin investigation" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("status")).toHaveText("Saved on this device");
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device");
   await page
     .getByText("Field guide · terms, scope and authority", { exact: true })
     .click();
@@ -219,9 +223,11 @@ test("a browser without Web Locks plays only explicitly in memory and never writ
     .first()
     .click();
   await expect(page.locator(".step-badge")).toContainText("STEP 1");
-  await expect(page.getByRole("status")).toHaveText(
-    "Temporary session — not saved",
-  );
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Temporary session — not saved");
   expect(
     await page.evaluate(async () => {
       // @ts-expect-error Browser import.

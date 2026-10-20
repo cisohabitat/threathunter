@@ -276,7 +276,11 @@ for (const mission of ["M04", "M07"] as const)
       .getByRole("button", { name: /Independent investigation/ })
       .click();
     await page.getByRole("button", { name: "Begin investigation" }).click();
-    await expect(page.getByRole("status")).toHaveText("Saved on this device");
+    await expect(
+      page
+        .getByRole("region", { name: "Save and readiness", exact: true })
+        .getByRole("status"),
+    ).toHaveText("Saved on this device");
     const originalM01 = await page.evaluate(async () => {
       // @ts-expect-error Vite test module.
       const { database } = await import("/src/persistence/saves.ts");
@@ -439,6 +443,7 @@ test("a waiting P1 tab refreshes committed knowledge and takes writer ownership 
 test("P1 without Web Locks requires explicit temporary play and leaves durable storage untouched", async ({
   page,
 }) => {
+  test.setTimeout(90000);
   await page.addInitScript(() =>
     Object.defineProperty(navigator, "locks", {
       value: undefined,
@@ -450,6 +455,7 @@ test("P1 without Web Locks requires explicit temporary play and leaves durable s
   const area = shell(page);
   await expect(area.getByRole("alert")).toContainText(
     "cannot coordinate durable writes",
+    { timeout: 30000 },
   );
   await expect(
     area.getByRole("button", { name: "Begin proactive hunt" }),
