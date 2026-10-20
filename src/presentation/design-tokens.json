@@ -1,0 +1,22 @@
+{
+  "source": "src/ui/styles.css :root",
+  "version": "northstar-ui-v1",
+  "colors": {
+    "--bg-deep": "#0b1422",
+    "--surface-1": "#132338",
+    "--surface-2": "#1b3047",
+    "--text-primary": "#f2f6fa",
+    "--text-secondary": "#b7c8d9",
+    "--accent-cyan": "#64d9e7",
+    "--accent-amber": "#f0b867",
+    "--status-risk": "#ec847a",
+    "--focus-ring": "#c1eff5",
+    "--stroke-subtle": "#34506a"
+  },
+  "body": "System sans-serif, 16px base with scalable content",
+  "spacing": "4px grid; panels 16-30px; see responsive CSS",
+  "focus": "3px cyan outline inset to avoid viewport overflow",
+  "touchTargets": "44px minimum for critical labelled controls",
+  "motion": "nonessential Motion effects; honors reduced motion",
+  "reviewStatus": "pending-human-acceptance"
+}

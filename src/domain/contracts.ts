@@ -1,4 +1,9 @@
 import { z } from "zod";
+import type {
+  WorldEvent,
+  CollectionRecord,
+  Acquisition,
+} from "../engine/scheduler";
 export const queryIds = ["Q-H", "Q-D", "Q-C", "Q-F"] as const;
 export const dispositionIds = [
   "explained",
@@ -58,7 +63,14 @@ export const draftSchema = z
   .strict();
 export type CaseDraft = z.infer<typeof draftSchema>;
 const envelope = {
-  commandId: z.string().min(1).max(100),
+  commandId: z
+    .string()
+    .min(1)
+    .max(100)
+    .refine(
+      (id) => !["__proto__", "constructor", "prototype"].includes(id),
+      "Reserved command ID",
+    ),
   runId: z.string().min(1).max(100),
   expectedRevision: z.number().int().nonnegative(),
 };
@@ -146,6 +158,11 @@ export type QualityReport = {
   }[];
 };
 export type Debrief = {
+  reconstruction: {
+    worldEvents: WorldEvent[];
+    collectionRecords: CollectionRecord[];
+    acquisitions: Acquisition[];
+  };
   quality: QualityReport;
   truth: string;
   closeTick: number;

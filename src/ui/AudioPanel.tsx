@@ -11,6 +11,8 @@ export function AudioPanel({
 }) {
   const [open, setOpen] = useState(false),
     [guidance, setGuidance] = useState("morgan-1");
+  const selectedGuidance =
+    guidance === "morgan-6" && !debrief ? "morgan-1" : guidance;
   const cue = audio.lastCue ? cues.get(audio.lastCue) : null;
   const muted = !audio.enabled || audio.prefs.masterMuted;
   return (
@@ -86,11 +88,15 @@ export function AudioPanel({
           <label>
             Morgan guidance
             <select
-              value={guidance}
+              value={selectedGuidance}
               onChange={(e) => setGuidance(e.target.value)}
             >
               {Array.from(cues.values())
-                .filter((c) => c.id.startsWith("morgan-"))
+                .filter(
+                  (c) =>
+                    c.id.startsWith("morgan-") &&
+                    (c.id !== "morgan-6" || Boolean(debrief)),
+                )
                 .map((c, i) => (
                   <option key={c.id} value={c.id}>
                     {
@@ -110,7 +116,7 @@ export function AudioPanel({
           <p>{cues.get(guidance)?.text}</p>
           <button
             disabled={audio.phase !== "ready" || muted}
-            onClick={() => audio.play(guidance)}
+            onClick={() => audio.play(selectedGuidance)}
           >
             Play guidance
           </button>

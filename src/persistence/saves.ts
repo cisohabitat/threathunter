@@ -21,6 +21,29 @@ class SaveDB extends Dexie {
   }
 }
 export const database = new SaveDB();
+// Notifications carry no save contents. Only waiting readers reload committed data.
+function notifySaveChanges() {
+  if (typeof window === "undefined") return;
+  try {
+    const channel = new BroadcastChannel("threat-hunter-save-changes");
+    channel.postMessage({ type: "save_changed" });
+    channel.close();
+  } catch {
+    /* Coordination remains protected by Web Locks and transactions. */
+  }
+}
+export function subscribeSaveChanges(onChange: () => void) {
+  try {
+    const channel = new BroadcastChannel("threat-hunter-save-changes");
+    channel.onmessage = (event) => {
+      if (event.data?.type === "save_changed") onChange();
+    };
+    return () => channel.close();
+  } catch {
+    return () => {};
+  }
+}
+
 function validateRow(row: Row) {
   const state = importSave(JSON.stringify(row.current));
   if (state.view.revision !== row.revision)
@@ -79,6 +102,7 @@ export async function resolveRecovery(
       });
     else await database.runs.delete("active");
   });
+  notifySaveChanges();
   return recovered;
 }
 export async function downloadStoredSave(original?: Row) {
@@ -115,6 +139,7 @@ export async function commit(
       previous: old?.current ?? null,
     });
   });
+  notifySaveChanges();
   return committed;
 }
 export async function load() {
@@ -123,6 +148,7 @@ export async function load() {
 }
 export async function clearSave() {
   await database.runs.delete("active");
+  notifySaveChanges();
 }
 export function downloadSave(state: EngineState) {
   downloadJSON(exportSave(state), `threat-hunter-${state.view.runId}.json`);
@@ -138,4 +164,47 @@ function downloadJSON(value: unknown, filename: string) {
   link.download = filename;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export async function archiveCompleted(runId: string, revision: number) {
+  await database.transaction("rw", database.runs, async () => {
+    const row = await database.runs.get("active");
+    if (!row || row.current.runId !== runId || row.revision !== revision)
+      throw Error(
+        "The saved case changed. Export progress and reload before replaying.",
+      );
+    const saved = validateRow(row);
+    if (!saved.debrief || saved.view.phase !== "closed")
+      throw Error("Save the closed finding before starting a replay.");
+    await database.runs.put({
+      ...row,
+      id: `completed:${runId}`,
+      previous: null,
+    });
+    await database.runs.delete("active");
+  });
+  notifySaveChanges();
+}
+export async function completedCases() {
+  const rows = await database.runs
+    .where("id")
+    .startsWith("completed:")
+    .toArray();
+  return rows.flatMap((row) => {
+    try {
+      const state = validateRow(row);
+      return state.debrief
+        ? [{ id: row.id, closeTick: state.debrief.closeTick }]
+        : [];
+    } catch {
+      return [];
+    } // Never offer a damaged archive as a valid portable case.
+  });
+}
+export async function downloadCompleted(id: string) {
+  if (!id.startsWith("completed:"))
+    throw Error("Invalid completed-case reference.");
+  const row = await database.runs.get(id);
+  if (!row) throw Error("Completed case is unavailable.");
+  downloadSave(validateRow(row));
 }

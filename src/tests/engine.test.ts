@@ -316,3 +316,24 @@ describe("evidence-linked debrief feedback", () => {
     expect(result.quality.total).toBe(91);
   });
 });
+
+it.each(["__proto__", "constructor", "prototype"])(
+  "rejects reserved receipt ID %s without clock, state or prototype mutation",
+  (commandId) => {
+    const state = createRun("reserved", "B");
+    const result = processCommand(state, {
+      kind: "ADVANCE",
+      durationTicks: 1,
+      runId: "reserved",
+      expectedRevision: 0,
+      commandId,
+    });
+    expect(result.state).toBe(state);
+    expect(result.receipt.status).toBe("rejected");
+    expect(result.receipt.errorCode).toBe("INVALID_PAYLOAD");
+    expect(state.view.tick).toBe(0);
+    expect(state.commands).toHaveLength(0);
+    expect(Object.getPrototypeOf(state.receipts)).toBe(Object.prototype);
+    expect(Object.keys(state.receipts)).toEqual([]);
+  },
+);

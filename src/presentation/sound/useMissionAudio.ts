@@ -87,12 +87,22 @@ export function useMissionAudio(
     document.addEventListener("visibilitychange", onHidden);
     return () => document.removeEventListener("visibilitychange", onHidden);
   }, []);
-  const play = useCallback((id: string) => {
-    if (!cues.get(id)?.text) return;
-    setLastCue(id);
-    setError("");
-    mixer.current?.voice(id);
-  }, []);
+  const play = useCallback(
+    (id: string) => {
+      if (!cues.get(id)?.text) return;
+      if (
+        (id === "morgan-6" ||
+          id.startsWith("finding-") ||
+          id.startsWith("outcome-")) &&
+        view?.phase !== "closed"
+      )
+        return;
+      setLastCue(id);
+      setError("");
+      mixer.current?.voice(id);
+    },
+    [view?.phase],
+  );
   useEffect(() => {
     if (!view) {
       previous.current = null;

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { importSave as readOldSnapshot } from "./legacyFormat";
 import fixture from "../content/m01.json";
 import { commandSchema, type Command } from "../domain/contracts";
 import {
@@ -27,7 +28,13 @@ const snapshotSchema = z
     manifest: z
       .object({
         missionId: z.literal("M01"),
-        engineVersion: z.literal("m01-snapshot-1"),
+        engineVersion: z.literal("m01-snapshot-2"),
+        contentVersion: z.literal("M01-4.0.0"),
+        rubricVersion: z.literal("4.0.0"),
+        policyVersion: z.literal("M01-handoff-1"),
+        profileVersion: z.literal("M01-authored-worlds-1"),
+        selectionAlgorithm: z.literal("finite-private-selection-v1"),
+        seed: z.null(),
         fixtureHash: hash,
         world,
       })
@@ -140,7 +147,13 @@ export function exportSave(
     runId: state.view.runId,
     manifest: {
       missionId: "M01" as const,
-      engineVersion: "m01-snapshot-1" as const,
+      engineVersion: "m01-snapshot-2" as const,
+      contentVersion: "M01-4.0.0" as const,
+      rubricVersion: "4.0.0" as const,
+      policyVersion: "M01-handoff-1" as const,
+      profileVersion: "M01-authored-worlds-1" as const,
+      selectionAlgorithm: "finite-private-selection-v1" as const,
+      seed: null,
       fixtureHash,
       world: state.world,
     },
@@ -183,9 +196,40 @@ function parseJSON(text: string): unknown {
   });
 }
 export function importSave(text: string): EngineState {
+  const raw = parseJSON(text);
+  if (
+    raw &&
+    typeof raw === "object" &&
+    "manifest" in raw &&
+    raw.manifest &&
+    typeof raw.manifest === "object" &&
+    "engineVersion" in raw.manifest &&
+    raw.manifest.engineVersion === "m01-snapshot-1"
+  ) {
+    const old = readOldSnapshot(text);
+    const migrated = acknowledge(
+      replay(createRun(old.view.runId, old.world), old.commands),
+      old.persistence.committedRevision,
+    );
+    // This migration may add a causal ledger, never change any original fact,
+    // receipt, clock, finding or numeric assessment.
+    const { simulation: _ledger, ...comparable } = structuredClone(migrated);
+    void _ledger;
+    if (comparable.debrief) {
+      const { reconstruction: _reconstruction, ...originalReport } =
+        comparable.debrief;
+      void _reconstruction;
+      Object.assign(comparable, { debrief: originalReport });
+    }
+    if (canonical(comparable) !== canonical(old))
+      throw Error(
+        "Old snapshot cannot be migrated without changing its original result.",
+      );
+    return migrated;
+  }
   const saved = z
     .discriminatedUnion("schemaVersion", [legacySchema, snapshotSchema])
-    .parse(parseJSON(text));
+    .parse(raw);
   const { hash: savedHash, ...data } = saved;
   if (checksum(data) !== savedHash)
     throw Error("Save checksum does not match.");

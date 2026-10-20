@@ -88,7 +88,7 @@ button.primary:hover {
 }
 :focus-visible {
   outline: 3px solid var(--focus-ring);
-  outline-offset: 4px;
+  outline-offset: -3px;
 }
 h1,
 h2,
@@ -202,7 +202,7 @@ strong {
 .save-strip button,
 .file-button {
   padding: 3px 10px;
-  min-height: 36px;
+  min-height: 44px;
   font-size: 13px;
 }
 .file-button {
@@ -911,7 +911,7 @@ p {
     letter-spacing: 0.12em;
   }
   .hero-copy h1 {
-    font-size: 76px;
+    font-size: clamp(2.75rem, 14vw, 4.5rem);
   }
   .hero-description {
     font-size: 17px;
@@ -1489,7 +1489,7 @@ summary {
   border-color: var(--accent-cyan);
 }
 .audio-settings {
-  max-height: 62vh;
+  max-height: 28vh;
   overflow: auto;
   padding: 20px 0;
 }
@@ -1546,8 +1546,8 @@ summary {
 }
 .voice-transcript summary {
   font-size: 12px;
-  min-height: 30px;
-  padding: 4px 0;
+  min-height: 44px;
+  padding: 8px 0;
   color: var(--text-secondary);
 }
 .voice-transcript p {
@@ -1578,5 +1578,170 @@ summary {
   .audio-levels {
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+  }
+}
+
+.field-guide dt {
+  font-weight: 650;
+  margin-top: 1rem;
+  color: var(--accent-cyan);
+}
+.field-guide dd {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+}
+.source-capability {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+summary {
+  min-height: 44px;
+  padding-block: 10px;
+  cursor: pointer;
+}
+
+.workspace-heading {
+  flex-wrap: wrap;
+}
+.workspace-heading > div {
+  min-width: 0;
+}
+.workspace-tools {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.step-badge {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.completed-cases {
+  margin: 16px 4vw;
+}
+.completed-cases button {
+  display: block;
+  margin-top: 12px;
+}
+
+.topbar {
+  height: auto;
+  min-height: 94px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-block: 16px;
+}
+.wordmark,
+.header-meta {
+  min-width: 0;
+  max-width: 100%;
+}
+.wordmark > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.header-meta {
+  flex-wrap: wrap;
+}
+.build-badge,
+.workspace-heading h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.audio-check {
+  min-height: 44px;
+}
+.feedback-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.error label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-height: 44px;
+  padding-block: 8px;
+}
+.error label input {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+
+body {
+  overflow-wrap: anywhere;
+}
+
+@media (max-height: 500px) {
+  .audio-controls {
+    position: relative;
+  }
+  .audio-toolbar button[aria-pressed] {
+    position: fixed;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 40;
+    background: var(--surface-1);
+    box-shadow: 0 4px 20px #0008;
+  }
+  body {
+    padding-bottom: 96px;
+  }
+  html {
+    scroll-padding-bottom: 96px;
+  }
+}
+
+/* Expanded/zoomed media controls must never cover the investigation workspace. */
+.audio-controls {
+  position: relative;
+}
+.audio-toolbar button[aria-pressed] {
+  position: fixed;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 40;
+  max-width: 40vw;
+  background: var(--surface-1);
+  box-shadow: 0 4px 20px #0008;
+}
+body {
+  padding-bottom: 96px;
+}
+html {
+  scroll-padding-bottom: 96px;
+}
+
+@media (max-width: 1199px) {
+  .workspace {
+    display: block;
+  }
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--stroke-subtle);
+    padding: 16px 20px;
+  }
+  .sidebar > .eyebrow,
+  .sidebar > h2,
+  .case-status,
+  .sidebar-bottom {
+    display: none;
+  }
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(4em, 1fr));
+    gap: 4px;
+  }
+  .sidebar nav button {
+    min-width: 0;
+    max-width: 100%;
+    justify-content: center;
+    padding: 10px 4px;
+    gap: 4px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .sidebar nav button > span {
+    display: none;
   }
 }

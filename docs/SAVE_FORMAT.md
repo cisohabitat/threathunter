@@ -6,13 +6,13 @@ The gameplay ruleset remains M01 `4.0.0`. Portable format versions and the snaps
 
 The envelope contains `schemaVersion: 2`, `ruleset`, `runId`, the full accepted `commands`, `revision`, `latestCommittedRevision`, `manifest`, `snapshot`, final `stateHash`, `metadata` and envelope `hash`.
 
-The manifest pins mission `M01`, the deterministic world selection, the canonical fixture checksum and snapshot engine ID `m01-snapshot-1`. A mismatch is incompatible; it never rerolls or silently translates the case. The snapshot stores its `throughRevision`, full engine state and gameplay hash. Normal writers snapshot the latest state. The reader also supports earlier boundaries with a trailing command slice, covered by tests. Revisions count accepted commands, including free commands; they are separate from simulation ticks.
+The manifest pins mission `M01`, the deterministic world selection, the canonical fixture checksum and snapshot engine ID `m01-snapshot-2`. The manifest also pins content, rubric, policy, authored-profile and selection-algorithm versions, with a null seed for the finite recorded selection. Unknown versions are incompatible; they never reroll or silently translate the case. The snapshot stores its `throughRevision`, full engine state and gameplay hash. Normal writers snapshot the latest state. The reader also supports earlier boundaries with a trailing command slice, covered by tests. Revisions count accepted commands, including free commands; they are separate from simulation ticks.
 
 Snapshot state contains the immutable delivered observations and references, draft, pending requests, internal facts/cache, original receipt ledger, command prefix, history and closed report. These private fields never become a React player projection merely because they are in a save.
 
 ## Validation and replay
 
-1. Enforce 2 MiB, 20,000-command and depth-64 bounds, reject unsafe object keys, parse strict outer schemas and verify the envelope checksum.
+1. Enforce 2 MiB, 20,000-command and depth-64 bounds, reject unsafe object keys and reserved receipt-map command IDs (`__proto__`, `constructor`, `prototype`), parse strict outer schemas and verify the envelope checksum.
 2. Verify content compatibility, revision bounds and snapshot boundary.
 3. Independently reconstruct the command prefix and its expected receipt acknowledgements. Compare the complete canonical snapshot, including every nested field, with that audited state. This supplies runtime structural and semantic validation for the nested snapshot; TypeScript assertions alone do not validate it.
 4. Clone the validated snapshot. Apply only `commands.slice(throughRevision)` to it, reject duplicate/rejected commands and restore the recorded acknowledgement boundary.
@@ -35,3 +35,9 @@ The legacy envelope contains run ID, world, ruleset, commands and checksum. It i
 The previous save can be recovered only after validation. Damaged/incompatible records remain available through the raw original export and explicit recovery/restart controls. Recovery archives the most recent original atomically and rejects a changed inspected row. A raw recovery record is an inspection artifact, not a portable save. No automatic migration of future incompatible rulesets or snapshot versions is promised; add explicit compatibility handling and tests when those change.
 
 Storage is browser-origin scoped and can be evicted or cleared. Export before switching devices or deployment hostnames. Physical termination, eviction, private-mode behavior and unsupported-Web-Locks fallback remain release checks.
+
+## Causal-ledger generation and completed cases
+
+`m01-snapshot-2` adds the deterministic seven-phase simulation, authored dependencies, source-origin/collection records, immutable acquisition catalogue and post-close reconstruction. The retained `legacyEngine.ts`/`legacyFormat.ts` reader validates `m01-snapshot-1` envelopes using their original structure and hashes. A deterministic replay with the new engine may add the ledger only if every original state/report/receipt field remains canonically identical; otherwise migration is rejected. Tests cover each world, closed findings, committed receipts and earlier snapshot boundaries. Old local rows are still not rewritten just by reading them.
+
+A completed durable run is archived transactionally before a replay/new case clears the active slot. The archive retains the frozen report and is exportable. Same-world replay uses a new run ID, fresh clock and new finding; it cannot edit the original score. Temporary-session restart preserves the separate durable case. Browser storage remains best-effort, so export archives for an independent backup.

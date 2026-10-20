@@ -1,4 +1,14 @@
+import {
+  createSimulation,
+  schedule,
+  resolveTick,
+  activityFact,
+  recordAcquisition,
+  continueAfterHandoff,
+  type Simulation,
+} from "./scheduler";
 import fixture from "../content/m01.json";
+import { validateMission } from "../content/validate";
 import {
   commandSchema,
   emptyDraft,
@@ -11,10 +21,12 @@ import {
   type PublicRecord,
 } from "../domain/contracts";
 import { assess } from "../evaluation/score";
+validateMission(fixture);
 export type EngineState = {
   schemaVersion: 1;
   ruleset: "4.0.0";
   world: World;
+  simulation: Simulation;
   // Storage acknowledgement only; excluded from gameplay hashes and projections.
   persistence: { committedRevision: number | null };
   view: PlayerView;
@@ -74,14 +86,13 @@ function deliver(
   };
   state.view.records.push(record);
   state.facts[refKey(record.ref)] = fact;
-  if (fact === "scope_unexpected" && state.view.responseWindowOpenedAt === null)
-    state.view.responseWindowOpenedAt = state.view.tick;
 }
 export function createRun(runId: string, world: World): EngineState {
   const state: EngineState = {
     schemaVersion: 1,
     ruleset: "4.0.0",
     world,
+    simulation: createSimulation(world),
     persistence: { committedRevision: null },
     view: {
       runId,
@@ -111,32 +122,66 @@ export function createRun(runId: string, world: World): EngineState {
     debrief: null,
   };
   deliver(state, "anomalous_session", "opening", 0);
+  recordAcquisition(state.simulation, {
+    id: "opening",
+    queryId: "opening",
+    sourceId: "identity",
+    subjectIds: ["U-01", "S-01"],
+    cutoffTick: 0,
+    deliveredTick: 0,
+    recordRefs: [state.view.records[0].ref],
+    coverage: "covered",
+  });
   return state;
 }
 export const project = (state: EngineState): PlayerView =>
   structuredClone(state.view);
-function advance(state: EngineState, n: number) {
+function advance(state: EngineState, n: number, complete?: () => void) {
   for (let i = 0; i < n; i++) {
     state.view.tick++;
-    const due = state.view.pendingChecks.filter(
-      (c) => c.dueTick === state.view.tick,
-    );
-    for (const check of due) {
-      deliver(
-        state,
-        fixture.worlds[state.world].facts.VERIFY,
-        check.requestId,
-        check.dueTick,
-      );
-      state.checkCompleted = true;
-      state.view.history.push({
-        tick: state.view.tick,
-        text: "Verified-directory check delivered.",
-      });
-    }
-    state.view.pendingChecks = state.view.pendingChecks.filter(
-      (c) => c.dueTick > state.view.tick,
-    );
+    resolveTick(state.simulation, state.world, {
+      complete: () => {
+        const due = state.view.pendingChecks.filter(
+          (c) => c.dueTick === state.view.tick,
+        );
+        for (const check of due) {
+          deliver(
+            state,
+            fixture.worlds[state.world].facts.VERIFY,
+            check.requestId,
+            check.dueTick,
+          );
+          recordAcquisition(state.simulation, {
+            id: check.requestId,
+            queryId: "directory_callback",
+            sourceId: "directory_callback",
+            subjectIds: ["U-01", "S-01"],
+            cutoffTick: check.dueTick,
+            deliveredTick: state.view.tick,
+            recordRefs: [state.view.records[state.view.records.length - 1].ref],
+            coverage: "covered",
+          });
+          state.checkCompleted = true;
+          state.view.history.push({
+            tick: state.view.tick,
+            text: "Verified-directory check delivered.",
+          });
+        }
+        state.view.pendingChecks = state.view.pendingChecks.filter(
+          (c) => c.dueTick > state.view.tick,
+        );
+        if (i === n - 1) complete?.();
+      },
+      project: () => {
+        if (
+          state.view.responseWindowOpenedAt === null &&
+          state.view.records.some(
+            (r) => state.facts[refKey(r.ref)] === "scope_unexpected",
+          )
+        )
+          state.view.responseWindowOpenedAt = state.view.tick;
+      },
+    });
   }
 }
 export function processCommand(
@@ -204,14 +249,34 @@ export function processCommand(
         cmd.queryId === "Q-H"
           ? fixture.commonFacts["Q-H"]
           : world.facts[cmd.queryId];
-      if (
-        cmd.queryId === "Q-F" &&
-        world.visibility === "complete" &&
-        cutoff < 2
-      )
-        fact = "scope_empty";
-      advance(state, 1);
-      deliver(state, fact, cmd.commandId, cutoff);
+      if (cmd.queryId === "Q-F")
+        fact = activityFact(state.simulation, state.world, cutoff);
+      schedule(state.simulation, {
+        id: `query.${cmd.commandId}`,
+        tick: start + 1,
+        phase: 6,
+        priority: 1,
+        actor: "investigator",
+        scope: "S-01",
+        description: "Captured source snapshot delivered to the investigator.",
+        requires: {},
+        effects: [],
+      });
+      advance(state, 1, () => {
+        deliver(state, fact, cmd.commandId, cutoff);
+        recordAcquisition(state.simulation, {
+          id: cmd.commandId,
+          queryId: cmd.queryId,
+          sourceId:
+            fixture.recordByFact[fact as keyof typeof fixture.recordByFact]
+              .source,
+          subjectIds: ["U-01", "S-01"],
+          cutoffTick: cutoff,
+          deliveredTick: v.tick,
+          recordRefs: [v.records[v.records.length - 1].ref],
+          coverage: fact.includes("gap") ? "unavailable" : "covered",
+        });
+      });
       state.cache[cacheKey] = true;
       v.history.push({
         tick: v.tick,
@@ -226,6 +291,18 @@ export function processCommand(
         requestedTick: start,
         dueTick: start + 3,
         kind: "directory_callback",
+      });
+      schedule(state.simulation, {
+        id: `check.${cmd.commandId}`,
+        tick: start + 3,
+        phase: 6,
+        priority: 0,
+        actor: "investigator",
+        scope: "S-01",
+        description:
+          "Verified-directory check completed at its scheduled due step.",
+        requires: {},
+        effects: ["record_owner_result"],
       });
       advance(state, 1);
       v.history.push({
@@ -256,13 +333,33 @@ export function processCommand(
       );
       const sessionRevoked =
         v.draft.nextStep === "handoff_revoke_session" && likely;
-      const misuse = fixture.worlds[state.world].worldClass === "misuse";
+      const continuation = continueAfterHandoff(
+        state.simulation,
+        state.world,
+        cmd.commandId,
+        sessionRevoked
+          ? "revoke"
+          : v.draft.nextStep === "handoff_revoke_session"
+            ? "unsupported"
+            : v.draft.nextStep === "handoff_review_monitor"
+              ? "review"
+              : "none",
+        Math.max(8, start + 2),
+      );
+      // The private world finishes its continuation. The player projection,
+      // acquired facts and pending-at-decision snapshot remain frozen below.
+      state.simulation = continuation;
       state.debrief = {
         quality,
         truth: fixture.truthNarrative[state.world],
         closeTick: start,
         resolvedThrough: Math.max(8, start + 2),
-        objectiveAchieved: misuse && (!sessionRevoked || start + 2 > 8),
+        objectiveAchieved: continuation.objectiveAchieved,
+        reconstruction: {
+          worldEvents: continuation.ledger,
+          collectionRecords: continuation.collection,
+          acquisitions: state.simulation.acquisitions,
+        },
         sessionRevoked,
         response: sessionRevoked
           ? `Response team revokes S-01 at step ${start + 2}.`

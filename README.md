@@ -31,9 +31,15 @@ This is a **candidate synthetic voice pack, pending human listening/device revie
 
 **Saved on this device** appears only after a successful local transaction. If saving fails, your accepted action stays in memory. Use **Export save**, **Retry saving retained progress**, or explicitly continue without saving. Temporary mode shows the last committed revision; **Try saving this session** saves the retained actions together without charging their steps again. A write conflict preserves both versions: export your temporary progress, then explicitly reload the saved case.
 
-A damaged or incompatible save opens recovery choices instead of starting over silently. **Export recovery original** downloads the untouched stored record for inspection; it is not a portable import file. Restore a validated previous save when available, or confirm a restart. The most recent recovery original remains on this device and available for export after recovery. Export it elsewhere for a separate backup; browser storage can still be cleared or evicted. New **Export save** files use format 2. Existing format-1 files remain readable by this build; older deployed builds cannot read format 2. Loading an old local save does not rewrite it: the next successful save upgrades it and retains its original as the previous backup.
+A damaged or incompatible save opens recovery choices instead of starting over silently. **Export recovery original** downloads the untouched stored record for inspection; it is not a portable import file. Restore a validated previous save when available, or confirm a restart. The most recent recovery original remains on this device and available for export after recovery. Export it elsewhere for a separate backup; browser storage can still be cleared or evicted. New **Export save** files use format 2 with a versioned causal simulation snapshot. Existing format-1 files remain readable by this build; older deployed builds cannot read format 2. Loading an old local save does not rewrite it: the next successful save upgrades it and retains its original as the previous backup.
 
-A waiting read-only tab refreshes the committed case when the writer tab closes. Reloading discards unsaved memory only after an explicit choice in the recovery controls. Physical browser termination and storage eviction still need device testing.
+**Try another approach** preserves the completed case and starts a fresh run of the same authored situation. On home, **Saved completed investigations** exports those frozen cases for later review. **Start a separate case** selects a new situation.
+
+A waiting read-only tab refreshes the committed case when the writer tab closes. Reloading discards unsaved memory only after an explicit choice in the recovery controls. Browsers without Web Locks support read/export and explicitly chosen temporary play; they do not write shared saves. Actual device termination, storage eviction and private-session behavior still need device testing.
+
+The home now selects separate landscape/portrait candidate artwork, with a text-safe composition and SVG failure fallback. Source PNGs and lossless audio masters are versioned outside site delivery. The art and voice still require human acceptance.
+
+Use **Field guide** for terminology, scoped entity profiles and authority. Each source question also explains what it can and cannot establish. These free views never advance time.
 
 ## Authoritative design
 
@@ -59,16 +65,18 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
-npx playwright install --with-deps chromium
+npm run check:budgets
+npx playwright install --with-deps chromium firefox webkit
 npm run test:e2e
+npm run test:e2e:cross
 ```
 
-Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. The latest local verification passed 53 unit/asset tests and 30 browser checks. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance, injected quota failure/retry, damaged-save recovery, incompatible-save restart, writer handoff, old-save upgrades (including failed writes), receipt durability and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
+Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. See the [current verification ledger](docs/verification/RESULTS.md) for executed results, browser-engine coverage, production measurements and remaining device gaps. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance, injected quota failure/retry, damaged-save recovery, incompatible-save restart, writer handoff, old-save upgrades (including failed writes), receipt durability and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 
 ## Architecture
 
 - React + TypeScript + Vite + Tailwind, using the GDD palette and an original SVG night-scene composition.
-- Pure authoritative engine and evidence-based scoring, isolated from rendering and wall-clock time. Post-close feedback links to delivered observations and a frozen copy of the finding; the M01 numeric rubric and source fixture remain unchanged.
+- Pure authoritative engine and evidence-based scoring, isolated from rendering and wall-clock time. Seven fixed scheduler phases resolve business/adversary dependencies, control-first ties, source recording and queries/checks; an explicitly revealed post-close timeline distinguishes the world, collection and acquisitions. Post-close feedback links to delivered observations and a frozen copy of the finding; the M01 numeric rubric and source fixture remain unchanged.
 - Zustand stores navigation only. Components receive permitted `PlayerView` projections; hidden truth appears only in the closed-case debrief.
 - Zod command/import schemas; Dexie transactions, expected-revision checks and previous-save retention. Format-2 saves include a versioned case manifest, engine/acquisition snapshots, draft, pending checks, original receipts, canonical commands, revision boundaries and state hashes. Snapshot fields are audited against deterministic command replay before restoration; only commands after the snapshot boundary execute on the restored state.
 - Web Locks restrict writes to one tab where supported. A failed save is shown as **Not saved**; retry retains accepted actions, temporary mode is explicit, and damaged-save recovery preserves the original for export. The controller receives committed receipts only after the transaction completes; failed writes keep memory-only receipts.
@@ -84,8 +92,10 @@ After the application is loaded, all active-case text and rules are local. Offli
 
 GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the observed CI runs were queued when last inspected.
 
-See [implementation status and release gates](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. M04, M07 and campaign expansion follow P0 acceptance.
+See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), and [implementation status](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. M04, M07 and campaign expansion follow P0 acceptance.
 
 ## Keeping documentation current
 
 Every task must review `AGENTS.md` and this README, updating relevant guidance in the same change as the implementation. Keep player instructions, commands, deployment details and limitations synchronized. Update [implementation status](docs/IMPLEMENTATION_STATUS.md) when capabilities or release evidence change. The full maintenance policy is in [AGENTS.md](AGENTS.md).
+
+Waiting read-only tabs receive committed-save notifications where BroadcastChannel is available and may inspect the current case. Ownership transfer reloads durable state; read-only note buffers follow accepted notes even after returning from another screen, without replacing a writer’s local unfinished edits. Missing or rejected Web Locks access permits explicit temporary play and export, with durable writes disabled.

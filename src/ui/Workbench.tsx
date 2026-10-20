@@ -1,3 +1,4 @@
+import { sources } from "../content/fieldGuide";
 import { useEffect, useRef } from "react";
 import { EvidenceCard } from "./EvidenceCard";
 import type { Action, PlayerView, QueryId } from "../domain/contracts";
@@ -113,6 +114,14 @@ export function Workbench({
               <small>{q.source} · U-01 / S-01</small>
               <h3>{q.label}</h3>
               <p>{q.description}</p>
+              <details className="source-capability">
+                <summary>What this source can establish</summary>
+                <p>{sources[q.id].can}</p>
+                <p>
+                  <strong>Limit:</strong> {sources[q.id].cannot}
+                </p>
+                <p>{sources[q.id].coverage}</p>
+              </details>
               <button
                 disabled={busy}
                 onClick={() =>

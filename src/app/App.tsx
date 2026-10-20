@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FieldGuide } from "../ui/FieldGuide";
 import { AudioPanel } from "../ui/AudioPanel";
 import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
@@ -19,11 +20,14 @@ function readGuidancePreference() {
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
 export default function App() {
   const game = useGame(),
-    { screen, setScreen } = useNavigation(),
+    { screen, setScreen: changeScreen } = useNavigation(),
     [hint, setHint] = useState(-1),
     [home, setHome] = useState(true),
     [replace, setReplace] = useState(false),
-    [confirmRecovery, setConfirmRecovery] = useState(false);
+    [confirmRecovery, setConfirmRecovery] = useState(false),
+    [artFailed, setArtFailed] = useState(false),
+    [artReady, setArtReady] = useState(false),
+    [artUnavailable, setArtUnavailable] = useState(false);
   const [guided, setGuided] = useState(readGuidancePreference);
   function chooseGuidance(value: boolean) {
     setGuided(value);
@@ -36,19 +40,34 @@ export default function App() {
       /* Guidance still works without preference storage. */
     }
   }
+  function setScreen(next: Screen) {
+    const navigation = useNavigation.getState();
+    if (!home && game.view)
+      navigation.rememberScroll(`${game.view.runId}:${screen}`, window.scrollY);
+    const top = home
+      ? 0
+      : (navigation.scrollPositions[`${game.view?.runId}:${next}`] ?? 0);
+    changeScreen(next);
+    requestAnimationFrame(() => {
+      window.scrollTo({ left: 0, top, behavior: "instant" });
+      document
+        .querySelector<HTMLElement>(".workspace-heading h1")
+        ?.focus({ preventScroll: true });
+    });
+  }
   const reduced = useReducedMotion();
   const v = game.view;
   const audio = useMissionAudio(
     v,
     game.debrief,
-    game.debrief ? "debrief" : home ? "home" : screen,
+    home ? "home" : game.debrief ? "debrief" : screen,
   );
   const blocked =
     game.busy || game.readOnly || Boolean(game.error && !game.temporary);
   const importFile = async (file: File | undefined) => {
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      await game.restore("");
+      game.rejectOversizedImport();
       return;
     }
     await game.restore(await file.text());
@@ -74,7 +93,8 @@ export default function App() {
             <span className="build-badge">INTERNAL BUILD · 0.1</span>
             {v ? (
               <span>
-                STEP <strong>{v.tick.toString().padStart(2, "0")}</strong>
+                STEP <strong>{v.tick.toString().padStart(2, "0")}</strong> ·{" "}
+                {v.pendingChecks.length} pending
               </span>
             ) : (
               <span>NORTHSTAR SERVICES</span>
@@ -93,6 +113,7 @@ export default function App() {
                   type="file"
                   accept="application/json"
                   disabled={
+                    (!game.writerAvailable && !game.temporary) ||
                     game.busy ||
                     game.readOnly ||
                     Boolean(game.recovery && !game.temporary)
@@ -106,7 +127,13 @@ export default function App() {
                 Export recovery original
               </button>
             ) : null}
-            <span>Case ready · optional sound below</span>
+            <span>
+              {artReady
+                ? "Case ready · optional sound below"
+                : artUnavailable
+                  ? "Text ready · artwork unavailable"
+                  : "Text ready · preparing artwork"}
+            </span>
           </div>
         </div>
         <AudioPanel audio={audio} debrief={game.debrief} />
@@ -148,7 +175,7 @@ export default function App() {
                 Check stored save again
               </button>
             ) : null}
-            {game.canRetry && !game.recovery ? (
+            {game.canRetry && game.writerAvailable && !game.recovery ? (
               <button
                 disabled={game.busy || game.readOnly}
                 onClick={game.retrySave}
@@ -166,7 +193,9 @@ export default function App() {
                 </p>
                 {game.recovery.previousStep !== null ? (
                   <button
-                    disabled={game.busy || game.readOnly}
+                    disabled={
+                      game.busy || game.readOnly || !game.writerAvailable
+                    }
                     onClick={() => game.recover("previous")}
                   >
                     Restore previous save · step {game.recovery.previousStep}
@@ -184,7 +213,12 @@ export default function App() {
                   is kept for export.
                 </label>
                 <button
-                  disabled={!confirmRecovery || game.busy || game.readOnly}
+                  disabled={
+                    !confirmRecovery ||
+                    game.busy ||
+                    game.readOnly ||
+                    !game.writerAvailable
+                  }
                   onClick={() => game.recover("restart")}
                 >
                   Restart after preserving original
@@ -203,6 +237,12 @@ export default function App() {
             </p>
           </div>
         ) : null}
+        {!game.writerAvailable ? (
+          <div className="notice">
+            Autosave is read-only in this browser. Temporary play and exports
+            remain available; use a browser with Web Locks to save safely.
+          </div>
+        ) : null}
         {game.temporary ? (
           <div className="notice">
             Temporary progress is not saved.{" "}
@@ -212,7 +252,7 @@ export default function App() {
             {game.view ? (
               <button onClick={game.export}>Export temporary progress</button>
             ) : null}
-            {game.view && !game.recovery ? (
+            {game.view && game.writerAvailable && !game.recovery ? (
               <button
                 disabled={game.busy || game.readOnly}
                 onClick={game.retrySave}
@@ -222,10 +262,54 @@ export default function App() {
             ) : null}
           </div>
         ) : null}
+        {home && game.completed.length ? (
+          <details className="panel completed-cases">
+            <summary>
+              Saved completed investigations · export for review
+            </summary>
+            <p>
+              These are separate frozen cases. Export one, then import it with
+              no active case to review its debrief.
+            </p>
+            {game.completed.map((completed, index) => (
+              <button
+                key={completed.id}
+                onClick={() => game.exportCompleted(completed.id)}
+              >
+                Export completed investigation {index + 1} · closed at step{" "}
+                {completed.closeTick}
+              </button>
+            ))}
+          </details>
+        ) : null}
         <main id="main" tabIndex={-1}>
           {home || !v ? (
             <section className="home">
-              <img className="hero-art" src="/art/northstar-night.svg" alt="" />
+              <picture>
+                {!artFailed ? (
+                  <source
+                    media="(max-width: 767px)"
+                    srcSet="/art/northstar-investigation-portrait-v1.webp"
+                  />
+                ) : null}
+                <img
+                  className="hero-art"
+                  src={
+                    artFailed
+                      ? "/art/northstar-night.svg"
+                      : "/art/northstar-investigation-landscape-v1.webp"
+                  }
+                  width="1440"
+                  height="810"
+                  alt=""
+                  fetchPriority="high"
+                  onLoad={() => setArtReady(true)}
+                  onError={() => {
+                    if (artFailed) setArtUnavailable(true);
+                    else setArtFailed(true);
+                  }}
+                />
+              </picture>
               <div className="hero-shade" />
               <m.div
                 className="hero-copy"
@@ -270,7 +354,7 @@ export default function App() {
                     className="primary"
                     disabled={
                       game.busy ||
-                      game.readOnly ||
+                      (!v && game.readOnly) ||
                       Boolean(!v && game.error && !game.temporary)
                     }
                     onClick={async () => {
@@ -323,10 +407,10 @@ export default function App() {
             <Debrief
               data={game.debrief}
               restart={async () => {
-                await game.restart();
+                await game.replay();
                 setHome(true);
               }}
-              busy={game.busy}
+              busy={blocked}
             />
           ) : (
             <div className="workspace">
@@ -362,7 +446,7 @@ export default function App() {
                   </p>
                   <button
                     onClick={() => {
-                      const next = (hint + 1) % hints.length;
+                      const next = (hint + 1) % 5;
                       setHint(next);
                       audio.play(`morgan-${next + 1}`);
                     }}
@@ -381,7 +465,7 @@ export default function App() {
                 <div className="workspace-heading">
                   <div>
                     <p className="eyebrow">NORTHSTAR / FINANCE / S-01</p>
-                    <h1>
+                    <h1 tabIndex={-1}>
                       {screen === "Leads"
                         ? "Start with a question."
                         : screen === "Explore"
@@ -404,6 +488,7 @@ export default function App() {
                     </span>
                   </div>
                 </div>
+                <FieldGuide />
                 {guided ? (
                   <InvestigationGuide
                     view={v}
@@ -517,6 +602,7 @@ export default function App() {
                 ) : screen === "Case File" ? (
                   <CaseEditor
                     key={v.runId}
+                    readOnly={game.readOnly}
                     view={v}
                     busy={blocked}
                     send={game.send}

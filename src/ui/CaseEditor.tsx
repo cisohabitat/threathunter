@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useNavigation } from "../stores/view";
+import { useEffect, useRef, useState } from "react";
 import {
   refKey,
   type PlayerView,
@@ -35,15 +36,56 @@ export function CaseEditor({
   view,
   send,
   busy,
+  readOnly,
 }: {
   view: PlayerView;
   send: (action: Action) => Promise<void>;
   busy: boolean;
+  readOnly: boolean;
 }) {
+  const remembered = useNavigation.getState().editor;
+  const section = useRef<HTMLElement>(null);
+  const wasReview = useRef(false);
   const [review, setReview] = useState(false),
-    [stage, setStage] = useState(0),
-    [notes, setNotes] = useState(view.draft.optionalNotes);
+    [stage, updateStage] = useState(
+      remembered?.runId === view.runId ? remembered.stage : 0,
+    ),
+    [notes, updateNotes] = useState(
+      remembered?.runId === view.runId
+        ? remembered.notes
+        : view.draft.optionalNotes,
+    );
+  const setStage = (next: number) => {
+    updateStage(next);
+    useNavigation.getState().rememberEditor(view.runId, next, notes);
+  };
+  const setNotes = (next: string) => {
+    updateNotes(next);
+    useNavigation.getState().rememberEditor(view.runId, stage, next);
+  };
   const d = view.draft;
+  const lastSavedNotes = useRef(d.optionalNotes);
+  useEffect(() => {
+    const previous = lastSavedNotes.current;
+    lastSavedNotes.current = d.optionalNotes;
+    if (
+      notes !== d.optionalNotes &&
+      (readOnly || (previous !== d.optionalNotes && notes === previous))
+    ) {
+      updateNotes(d.optionalNotes);
+      useNavigation
+        .getState()
+        .rememberEditor(view.runId, stage, d.optionalNotes);
+    }
+  }, [d.optionalNotes, notes, readOnly, stage, view.runId]);
+  useEffect(() => {
+    if (review) section.current?.querySelector<HTMLElement>("h2")?.focus();
+    else if (wasReview.current)
+      section.current
+        ?.querySelector<HTMLElement>('.case-stages button[aria-current="step"]')
+        ?.focus();
+    wasReview.current = review;
+  }, [review]);
   const patch = (changes: Partial<CaseDraft>) =>
     send({
       kind: "EDIT_CASE",
@@ -61,9 +103,15 @@ export function CaseEditor({
   };
   if (review)
     return (
-      <section className="panel review">
+      <section
+        ref={section}
+        className="panel review"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") setReview(false);
+        }}
+      >
         <p className="eyebrow">Confirm your finding · S-01 only</p>
-        <h2>What can you defend?</h2>
+        <h2 tabIndex={-1}>What can you defend?</h2>
         <div className="finding-summary">
           <h3>{dispositionLabels[d.disposition]}</h3>
           <p>{d.confidence} confidence · scoped to this session</p>
@@ -159,7 +207,7 @@ export function CaseEditor({
       </section>
     );
   return (
-    <section className="panel case-editor">
+    <section ref={section} className="panel case-editor">
       <p className="eyebrow">Your case · S-01 only</p>
       <h2>Build a defensible finding.</h2>
       <p className="muted">
@@ -374,6 +422,7 @@ export function CaseEditor({
           <label>
             Optional notes · not graded
             <textarea
+              disabled={busy}
               maxLength={4000}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -381,8 +430,8 @@ export function CaseEditor({
           </label>
           {notes !== d.optionalNotes ? (
             <p className="muted">
-              Notes have unsaved changes. Save them before leaving this screen;
-              reviewing also saves them.
+              Notes have unsaved changes. They stay in memory when changing
+              tabs. Save them before reloading; reviewing also saves them.
             </p>
           ) : null}
           <button

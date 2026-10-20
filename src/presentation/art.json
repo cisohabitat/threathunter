@@ -1,0 +1,33 @@
+{
+  "version": "northstar-investigation-v1",
+  "reviewStatus": "pending-human-acceptance",
+  "producer": "OpenAI image generation tool; model identifier not exposed",
+  "generationDate": "2026-10-19",
+  "source": "Original generated candidate compositions for this project; no external reference or real-person likeness requested. Portrait re-composed from the generated landscape.",
+  "masterArchive": "production/art-masters-v1.zip",
+  "fallback": "/art/northstar-night.svg",
+  "compositions": [
+    {
+      "path": "/art/northstar-investigation-landscape-v1.webp",
+      "width": 1440,
+      "height": 810,
+      "focal": [
+        0.73,
+        0.52
+      ],
+      "bytes": 66944,
+      "sha256": "a759f520e1c59de1e3e84b7280f2f4f7ac8b8b2ba4896072becb803804086b72"
+    },
+    {
+      "path": "/art/northstar-investigation-portrait-v1.webp",
+      "width": 720,
+      "height": 1280,
+      "focal": [
+        0.65,
+        0.72
+      ],
+      "bytes": 55588,
+      "sha256": "cefffe0c8664aad284cff542428e5b09300edb32d8c4b1abd8127dd692577d3b"
+    }
+  ]
+}

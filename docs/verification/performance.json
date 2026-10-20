@@ -1,0 +1,22 @@
+{
+  "buildBundle": "/assets/index-BS3FtPJI.js",
+  "bundleSha256": "9296f7d4cc831783140b4bb32d99f39c878dc941aa2ac3afd1e306b356cff573",
+  "browser": "156.0.8078.4",
+  "profile": {
+    "network": "4 Mbps down / 1 Mbps up / 100 ms RTT",
+    "cpu": "4x Chromium emulation during cold load",
+    "viewport": "390x844"
+  },
+  "coldCaseReadyMs": 2228,
+  "interactions": {
+    "samples": 100,
+    "method": "Synthetic click to two animation frames, healthy local browser after load; includes frame wait",
+    "p95Ms": 35.799999999813735
+  },
+  "durableCommands": {
+    "samples": 10,
+    "method": "Playwright click to Saved label after IndexedDB transaction, healthy local storage; includes automation overhead",
+    "p95Ms": 87.82102300000042
+  },
+  "limits": "Linux Chromium lab measurement only. No reference physical phone or iPad; not a physical-device acceptance result. Long-task and actual touchscreen latency require device profiling."
+}

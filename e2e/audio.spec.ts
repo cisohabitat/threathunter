@@ -23,6 +23,7 @@ test("optional full voice pack plays offline, can be skipped/muted and never cha
     page.getByText("Play muted · voice available", { exact: true }),
   ).toBeVisible();
   expect(requests).toHaveLength(0);
+  await expect(page.locator('select option[value="morgan-6"]')).toHaveCount(0);
   await page.getByRole("button", { name: "Enable voice and sound" }).click();
   await expect(
     page.getByText("Voice pack ready · enabled", { exact: true }),
@@ -102,4 +103,64 @@ test("failed audio loading leaves text investigation and saving available", asyn
     page.getByRole("heading", { name: "Now compare unusual with usual." }),
   ).toBeVisible();
   await expect(page.getByRole("status")).toHaveText("Saved on this device");
+});
+
+test("foreground replacement, orientation and backgrounding never replay stale speech or advance the case", async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Begin investigation" }).click();
+  await page
+    .getByRole("button", { name: "Voice & sound", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Enable voice and sound" }).click();
+  await expect(
+    page.getByText("Voice pack ready · enabled", { exact: true }),
+  ).toBeVisible({ timeout: 30000 });
+  await page
+    .getByRole("button", { name: "Play briefing", exact: true })
+    .click();
+  await page
+    .getByRole("combobox", { name: "Morgan guidance", exact: true })
+    .selectOption("morgan-3");
+  await page
+    .getByRole("button", { name: "Play guidance", exact: true })
+    .click();
+  await expect(page.locator(".voice-caption")).toContainText(
+    "Attach the observation",
+  );
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.locator(".voice-caption")).toContainText(
+    "Attach the observation",
+  );
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: true,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect(
+    page.getByRole("button", { name: "Skip speech", exact: true }),
+  ).toBeDisabled();
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: false,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect(
+    page.getByRole("button", { name: "Skip speech", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Play guidance", exact: true })
+    .click();
+  await page
+    .getByRole("navigation", { name: "Investigation", exact: true })
+    .getByRole("button", { name: /Explore/ })
+    .click();
+  await expect(page.locator(".voice-caption")).toHaveCount(0);
+  await expect(page.locator(".step-badge")).toContainText("STEP 0");
 });

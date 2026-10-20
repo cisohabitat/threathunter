@@ -7,8 +7,12 @@ import {
 } from "../engine/engine";
 import type { Action, Debrief, PlayerView } from "../domain/contracts";
 import {
+  archiveCompleted,
+  completedCases,
+  downloadCompleted,
   commit,
   inspectSave,
+  subscribeSaveChanges,
   resolveRecovery,
   downloadStoredSave,
   type SaveInspection,
@@ -17,6 +21,14 @@ import {
   importSave,
 } from "../persistence/saves";
 export function useGame() {
+  const replayWorld = useRef<EngineState["world"] | null>(null);
+  const [completed, setCompleted] = useState<
+    { id: string; closeTick: number }[]
+  >([]);
+  const [writerAvailable, setWriterAvailable] = useState(
+    Boolean(navigator.locks),
+  );
+  const [refreshEpoch, refreshSaved] = useState(0);
   const engine = useRef<EngineState | null>(null),
     locked = useRef(false),
     durableRevision = useRef<number | null>(null);
@@ -46,7 +58,10 @@ export function useGame() {
         },
       )
       .catch(() => {
-        if (!disposed) setReadOnly(true);
+        if (!disposed) {
+          setWriterAvailable(false);
+          setReadOnly(false);
+        }
       });
     return () => {
       disposed = true;
@@ -63,6 +78,10 @@ export function useGame() {
     [recovery, setRecovery] = useState<SaveInspection["issue"]>(null),
     [archived, setArchived] = useState(false),
     [canRetry, setCanRetry] = useState(false);
+  useEffect(() => {
+    if (!readOnly) return;
+    return subscribeSaveChanges(() => refreshSaved((value) => value + 1));
+  }, [readOnly]);
   const expose = (state: EngineState) => {
     engine.current = state;
     setView(project(state));
@@ -74,6 +93,11 @@ export function useGame() {
     inspectSave()
       .then(({ state, issue, archived }) => {
         if (!active) return;
+        completedCases()
+          .then(setCompleted)
+          .catch(() => {
+            /* Active-case recovery stays available. */
+          });
         setRecovery(issue);
         setArchived(archived);
         durableRevision.current = state?.view.revision ?? null;
@@ -93,7 +117,9 @@ export function useGame() {
         setError(
           issue
             ? "The current save is damaged or incompatible. Your stored data has not been changed."
-            : "",
+            : !writerAvailable
+              ? "This browser cannot safely coordinate autosave between tabs. Export the saved case or explicitly play without saving."
+              : "",
         );
       })
       .catch(() => {
@@ -108,9 +134,14 @@ export function useGame() {
     return () => {
       active = false;
     };
-  }, [readOnly]);
+  }, [readOnly, writerAvailable, refreshEpoch]);
   async function start() {
-    if (locked.current || readOnly || (!temporary && error) || engine.current)
+    if (
+      locked.current ||
+      readOnly ||
+      (!temporary && (!writerAvailable || error)) ||
+      engine.current
+    )
       return;
     locked.current = true;
     setBusy(true);
@@ -119,7 +150,10 @@ export function useGame() {
       durableRevision.current = null;
       const id = crypto.randomUUID();
       const bytes = crypto.getRandomValues(new Uint8Array(1));
-      const world = (["B", "M", "U-B", "U-M"] as const)[bytes[0] % 4];
+      const world =
+        replayWorld.current ??
+        (["B", "M", "U-B", "U-M"] as const)[bytes[0] % 4];
+      replayWorld.current = null;
       const state = createRun(id, world);
       expose(state);
       if (!temporary) {
@@ -138,7 +172,12 @@ export function useGame() {
     }
   }
   async function send(action: Action) {
-    if (locked.current || readOnly || (!temporary && error) || !engine.current)
+    if (
+      locked.current ||
+      readOnly ||
+      (!temporary && (!writerAvailable || error)) ||
+      !engine.current
+    )
       return;
     locked.current = true;
     setBusy(true);
@@ -171,12 +210,23 @@ export function useGame() {
       setBusy(false);
     }
   }
-  async function restart() {
-    if (locked.current || readOnly) return;
+  async function restart(replay = false) {
+    if (locked.current || readOnly || (!writerAvailable && !temporary)) return;
     locked.current = true;
     setBusy(true);
     try {
-      if (!temporary) await clearSave();
+      const previousWorld =
+        replay && engine.current?.debrief ? engine.current.world : null;
+      if (!temporary) {
+        if (engine.current?.debrief)
+          await archiveCompleted(
+            engine.current.view.runId,
+            engine.current.view.revision,
+          );
+        else await clearSave();
+      }
+      replayWorld.current = previousWorld;
+      setCompleted(await completedCases().catch(() => []));
       durableRevision.current = null;
       setCanRetry(false);
       engine.current = null;
@@ -192,7 +242,7 @@ export function useGame() {
     }
   }
   async function restore(text: string) {
-    if (locked.current || readOnly) return;
+    if (locked.current || readOnly || (!writerAvailable && !temporary)) return;
     locked.current = true;
     setBusy(true);
     try {
@@ -209,14 +259,29 @@ export function useGame() {
       );
       setError("");
     } catch (e) {
-      setError(`Import failed: ${String(e)}`);
+      const message =
+        e instanceof Error && e.name === "ZodError"
+          ? "This file has unsupported save fields or versions. Select a compatible Threat Hunter export."
+          : e instanceof SyntaxError
+            ? "This file is not valid JSON."
+            : e instanceof Error
+              ? e.message
+              : "The save could not be read.";
+      setError(`Import failed: ${message}`);
     } finally {
       locked.current = false;
       setBusy(false);
     }
   }
   async function retrySave() {
-    if (locked.current || readOnly || !engine.current || recovery) return;
+    if (
+      locked.current ||
+      readOnly ||
+      !writerAvailable ||
+      !engine.current ||
+      recovery
+    )
+      return;
     locked.current = true;
     setBusy(true);
     try {
@@ -235,7 +300,14 @@ export function useGame() {
     }
   }
   async function recover(choice: "previous" | "restart") {
-    if (locked.current || readOnly || !recovery || engine.current) return;
+    if (
+      locked.current ||
+      readOnly ||
+      !writerAvailable ||
+      !recovery ||
+      engine.current
+    )
+      return;
     locked.current = true;
     setBusy(true);
     try {
@@ -259,6 +331,7 @@ export function useGame() {
     debrief,
     busy,
     readOnly,
+    writerAvailable,
     status,
     error,
     temporary,
@@ -277,10 +350,20 @@ export function useGame() {
       }
     },
     durableRevision: durableRevision.current,
+    completed,
+    exportCompleted: async (id: string) => {
+      try {
+        await downloadCompleted(id);
+      } catch (e) {
+        setError(String(e));
+      }
+    },
+    replay: () => restart(true),
     start,
     send,
     restart,
     restore,
+    rejectOversizedImport: () => setError("Import failed: Save exceeds 2 MiB."),
     export: () => {
       if (engine.current) downloadSave(engine.current);
     },

@@ -141,3 +141,29 @@ it("rolls back a quota failure and retries the prepared state without replaying 
   expect(resumed?.commands).toHaveLength(1);
   expect(resumed?.view.tick).toBe(1);
 });
+
+it("archives only the exact durably closed run and preserves its frozen report for export", async () => {
+  const { archiveCompleted, completedCases } =
+    await import("../persistence/saves");
+  let state = createRun("completed", "B");
+  await commit(state, null);
+  await expect(archiveCompleted("completed", 0)).rejects.toThrow("closed");
+  state = processCommand(state, {
+    kind: "CLOSE_CASE",
+    draft: state.view.draft,
+    commandId: "close",
+    runId: "completed",
+    expectedRevision: 0,
+  }).state;
+  await commit(state, 0);
+  await expect(archiveCompleted("completed", 0)).rejects.toThrow("changed");
+  await archiveCompleted("completed", 1);
+  expect(await load()).toBeNull();
+  const archived = await database.runs.get("completed:completed");
+  expect(importSave(JSON.stringify(archived?.current)).debrief).toEqual(
+    state.debrief,
+  );
+  expect(await completedCases()).toEqual([
+    { id: "completed:completed", closeTick: 0 },
+  ]);
+});

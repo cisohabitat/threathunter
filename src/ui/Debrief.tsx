@@ -158,6 +158,62 @@ export function Debrief({
           </details>
         </section>
       </div>
+      <details className="panel" aria-label="Simulation reconstruction">
+        <summary>Reveal world, collection and acquisition timeline</summary>
+        <p>
+          This reveals the authored world through step {data.resolvedThrough},
+          including events you could not know at your decision. It does not
+          change your finding or score.
+        </p>
+        <h2>What happened in the simulation</h2>
+        <ol className="timeline">
+          {data.reconstruction.worldEvents.map((event) => (
+            <li key={event.id}>
+              <strong>{event.tick.toString().padStart(2, "0")}</strong>
+              <div>
+                <p>{event.description}</p>
+                <small>
+                  Phase {event.phase} · {event.actor} ·{" "}
+                  {event.status === "applied" ? "Applied" : "Did not apply"}
+                </small>
+                {event.reason ? <p>{event.reason}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+        <h2>What sources recorded</h2>
+        {data.reconstruction.collectionRecords.length ? (
+          data.reconstruction.collectionRecords.map((record) => (
+            <p key={record.id}>
+              {sourceLabels[record.sourceId] ?? record.sourceId} ·{" "}
+              {record.capability.replaceAll("_", " ")} · catalogue/event step{" "}
+              {record.eventTick}; available from step {record.availableTick}.
+              Recorded context is not automatically an observation you acquired.
+            </p>
+          ))
+        ) : (
+          <p>
+            No application access-scope record was collected in this world. This
+            is a visibility limit, not evidence that no activity occurred.
+          </p>
+        )}
+        <h2>What reached you before closure</h2>
+        <p>
+          The opening lead was available at step 0. Later acquisitions retain
+          their original scope, cutoff and delivery step.
+        </p>
+        {data.reconstruction.acquisitions.map((acquisition) => (
+          <p key={acquisition.id}>
+            {sourceLabels[acquisition.sourceId] ?? "Verified directory"} ·
+            collected through step {acquisition.cutoffTick} · delivered at step{" "}
+            {acquisition.deliveredTick} ·{" "}
+            {acquisition.coverage === "unavailable"
+              ? "collection unavailable"
+              : "stated coverage only"}
+            .
+          </p>
+        ))}
+      </details>
       <section className="panel">
         <p className="eyebrow">Evidence reconstruction</p>
         <h2>Known at your decision</h2>
