@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { HistoryTimeline } from "./HistoryTimeline";
 import { refKey, type Debrief as DebriefData } from "../domain/contracts";
 import {
   alternativeLabels,
@@ -47,14 +48,22 @@ export function Debrief({
   const notChecked = availableQuestions.filter(
     ([id]) => !data.decisionRecords.some((r) => r.ref.recordId === id),
   );
-  const ticks = [
-    ...new Set([
-      0,
-      data.closeTick,
-      ...data.decisionRecords.map((r) => r.deliveredTick),
-      ...data.decisionHistory.map((h) => h.tick),
-    ]),
-  ].sort((a, b) => a - b);
+  const ticks = useMemo(
+    () =>
+      [
+        ...new Set([
+          0,
+          data.closeTick,
+          ...data.decisionRecords.map((r) => r.deliveredTick),
+          ...data.decisionHistory.map((h) => h.tick),
+        ]),
+      ].sort((a, b) => a - b),
+    [data],
+  );
+  const history = useMemo(
+    () => data.decisionHistory.filter((h) => h.tick <= through),
+    [data, through],
+  );
   const takeaways = data.quality.reasons
     .filter(
       (r) =>
@@ -223,17 +232,36 @@ export function Debrief({
         </p>
         <label>
           What I knew then
-          <select
-            value={through}
-            onChange={(e) => setThrough(Number(e.target.value))}
-          >
-            {ticks.map((t) => (
-              <option key={t} value={t}>
-                Through step {t}
-                {t === data.closeTick ? " · decision snapshot" : ""}
-              </option>
-            ))}
-          </select>
+          {ticks.length > 100 ? (
+            <input
+              type="number"
+              min={0}
+              max={data.closeTick}
+              step={1}
+              value={through}
+              onChange={(event) => {
+                const value = event.target.valueAsNumber;
+                if (
+                  Number.isInteger(value) &&
+                  value >= 0 &&
+                  value <= data.closeTick
+                )
+                  setThrough(value);
+              }}
+            />
+          ) : (
+            <select
+              value={through}
+              onChange={(e) => setThrough(Number(e.target.value))}
+            >
+              {ticks.map((t) => (
+                <option key={t} value={t}>
+                  Through step {t}
+                  {t === data.closeTick ? " · decision snapshot" : ""}
+                </option>
+              ))}
+            </select>
+          )}
         </label>
         <p className="muted">
           Showing observations delivered by step {through}. Later observations
@@ -270,16 +298,7 @@ export function Debrief({
           ))}
         <details className="debrief-details">
           <summary>Your investigation timeline</summary>
-          <ol className="timeline">
-            {data.decisionHistory
-              .filter((h) => h.tick <= through)
-              .map((h, i) => (
-                <li key={i}>
-                  <strong>{h.tick.toString().padStart(2, "0")}</strong>
-                  <p>{h.text}</p>
-                </li>
-              ))}
-          </ol>
+          <HistoryTimeline items={history} />
         </details>
       </section>
       <div className="debrief-grid">

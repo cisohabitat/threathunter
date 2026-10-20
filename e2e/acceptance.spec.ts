@@ -8,7 +8,14 @@ test("keyboard investigation, source limits, retained notes, world reconstructio
   await page.goto("/");
   const audit = async () => {
     const result = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .withTags([
+        "wcag2a",
+        "wcag2aa",
+        "wcag21a",
+        "wcag21aa",
+        "wcag22a",
+        "wcag22aa",
+      ])
       .analyze();
     expect(
       result.violations.map((v) => ({

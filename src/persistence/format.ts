@@ -109,10 +109,26 @@ export function exportLegacySave(state: EngineState): LegacySaveEnvelope {
   };
   return { ...data, hash: checksum(data) };
 }
-export function exportSave(
-  state: EngineState,
-  throughRevision = state.view.revision,
-) {
+export function exportSave(state: EngineState, throughRevision?: number) {
+  const latest = snapshotSave(state, throughRevision ?? state.view.revision);
+  if (saveBytes(latest) <= MAX_SAVE_BYTES) return latest;
+  // A revision-zero checkpoint retains the complete log and final hash without
+  // repeating the growing receipt/history ledgers. Explicit boundaries stay exact.
+  if (throughRevision === undefined && state.view.revision > 0) {
+    const compact = snapshotSave(state, 0);
+    if (saveBytes(compact) <= MAX_SAVE_BYTES) return compact;
+  }
+  throw Error("Save exceeds 2 MiB. Retained progress has not been changed.");
+}
+export const MAX_SAVE_BYTES = 2 * 1024 * 1024;
+function saveBytes(value: unknown) {
+  return new TextEncoder().encode(JSON.stringify(value)).length;
+}
+// Portable downloads use these exact compact bytes, not larger pretty JSON.
+export function serializeSave(state: EngineState) {
+  return JSON.stringify(exportSave(state));
+}
+function snapshotSave(state: EngineState, throughRevision: number) {
   if (
     !Number.isInteger(throughRevision) ||
     throughRevision < 0 ||
@@ -165,7 +181,7 @@ export function exportSave(
   return { ...data, hash: checksum(data) };
 }
 function parseJSON(text: string): unknown {
-  if (new TextEncoder().encode(text).length > 2 * 1024 * 1024)
+  if (new TextEncoder().encode(text).length > MAX_SAVE_BYTES)
     throw Error("Save exceeds 2 MiB.");
   let depth = 0,
     quoted = false,

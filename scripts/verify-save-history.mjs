@@ -12,12 +12,15 @@ const samples = [];
 let text;
 let boundedLegacy;
 let sameBuildReplayComparison;
+let boundedText;
+let readSave;
 try {
   const { createRun, processCommand, replayCommands } =
     await server.ssrLoadModule("/src/engine/engine.ts");
   const { exportSave, importSave } = await server.ssrLoadModule(
     "/src/persistence/format.ts",
   );
+  readSave = importSave;
   let state = createRun("history-lab", "M");
   for (let i = 0; i < 750; i++) {
     state = processCommand(state, {
@@ -70,7 +73,7 @@ try {
       durationTicks: 1,
     })),
   };
-  const boundedText = JSON.stringify({ ...data, hash: checksum(data) });
+  boundedText = JSON.stringify({ ...data, hash: checksum(data) });
   assert(Buffer.byteLength(boundedText) <= 2 * 1024 * 1024);
   const boundedStarted = performance.now();
   const bounded = importSave(boundedText);
@@ -187,6 +190,80 @@ try {
     .getByRole("status")
     .filter({ hasText: "Saved on this device" })
     .waitFor({ timeout: 30000 });
+  const large = await browser.newPage({ reducedMotion: "reduce" });
+  await large.goto(
+    process.env.THREAT_HUNTER_TEST_URL ?? "http://127.0.0.1:4173",
+  );
+  await large.getByRole("button", { name: "Begin investigation" }).waitFor();
+  await large.waitForFunction(
+    () =>
+      !Array.from(document.querySelectorAll("button")).find((b) =>
+        b.textContent.includes("Begin investigation"),
+      )?.disabled,
+  );
+  const largeStarted = performance.now();
+  await large.locator('input[type="file"]').setInputFiles({
+    name: "bounded-legacy.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(boundedText),
+  });
+  await large
+    .getByRole("status")
+    .filter({ hasText: "Saved on this device" })
+    .waitFor({ timeout: 60000 });
+  const largeImportAndCommitMs = Math.round(performance.now() - largeStarted);
+  const downloaded = large.waitForEvent("download");
+  await large.getByRole("button", { name: "Export save", exact: true }).click();
+  const portable = await readFile(await (await downloaded).path());
+  assert(portable.length <= 2 * 1024 * 1024);
+  const envelope = JSON.parse(portable.toString());
+  assert.equal(envelope.snapshot.throughRevision, 0);
+  assert.equal(envelope.latestCommittedRevision, 20000);
+  assert.deepEqual(envelope.commands, JSON.parse(boundedText).commands);
+  const exportedState = readSave(portable.toString());
+  assert.equal(exportedState.view.tick, 20000);
+  assert.equal(Object.keys(exportedState.receipts).length, 20000);
+  assert(
+    Object.values(exportedState.receipts).every(
+      (e) => e.receipt.durability === "committed",
+    ),
+  );
+  await large.reload();
+  await large.getByRole("button", { name: "Resume investigation" }).click();
+  await large
+    .getByRole("navigation", { name: "Investigation", exact: true })
+    .getByRole("button", { name: /Timeline/ })
+    .click();
+  assert.equal(await large.locator("ol.timeline > li").count(), 50);
+  await large.locator(".timeline-pages").screenshot({
+    path: "docs/verification/screens/12-timeline-pagination.png",
+    animations: "disabled",
+  });
+  await large
+    .getByRole("button", { name: "Latest actions", exact: true })
+    .click();
+  assert.equal(
+    await large.locator("ol.timeline > li").count(),
+    exportedState.view.history.length % 50 || 50,
+  );
+  assert.equal(
+    await large.locator("ol.timeline > li strong").last().textContent(),
+    "20000",
+  );
+  const boundedBrowser = {
+    commands: 20000,
+    importAndCommitMs: largeImportAndCommitMs,
+    portableBytes: portable.length,
+    snapshotThroughRevision: 0,
+    reloadPassed: true,
+    exportReimportPassed: true,
+    committedReceipts: 20000,
+    firstPageItems: 50,
+    lastPageItems: exportedState.view.history.length % 50 || 50,
+    latestTick: 20000,
+    method:
+      "Actual production Chromium file import, durable commit, portable download/pure-reader reimport, reload and Timeline first/latest pages; limit leaves no room for another command",
+  };
   const html = await readFile("dist/index.html", "utf8");
   const entry = html.match(/<script[^>]+src="([^"]+)"/)[1];
   await writeFile(
@@ -203,6 +280,7 @@ try {
         validationSamples: samples,
         boundedLegacy,
         sameBuildReplayComparison,
+        boundedBrowser,
         workerImport: responsiveness,
         restored: {
           revision: 750,
@@ -212,7 +290,7 @@ try {
           reloadPassed: true,
         },
         limits:
-          "Owned replay removes per-command whole-state copies; validation, checksums, serialization and cloning still cost time. Serialization, cloning and rendering still use the main thread. The 20,000-command result is Node format-1 import only, not browser rendering, durable format-2 migration or physical-device acceptance. Large snapshot exports may exceed the existing 2 MiB limit. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes.",
+          "Owned replay removes per-command whole-state copies; validation, checksums, serialization and cloning still cost time. Serialization, cloning and rendering still use the main thread. The maximum-size browser case verifies durable format-2 import/export/reload and bounded Timeline rendering; it does not establish physical-device acceptance. Default exports use a revision-zero checkpoint if the latest snapshot exceeds 2 MiB; histories whose complete log plus minimal envelope still exceeds that bound are rejected without truncation. Validation has a 20-second per-request deadline; oversized/incompatible data is rejected without writes.",
       },
       null,
       2,
@@ -224,6 +302,7 @@ try {
       boundedLegacy,
       sameBuildReplayComparison,
       workerImport: responsiveness,
+      boundedBrowser,
     }),
   );
 } finally {

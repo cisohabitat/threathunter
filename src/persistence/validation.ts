@@ -2,6 +2,7 @@ import {
   importSave,
   exportSave,
   markCommitted,
+  serializeSave,
   type SaveEnvelope,
 } from "./format";
 import type { EngineState } from "../engine/engine";
@@ -14,7 +15,7 @@ export class ValidationUnavailableError extends Error {
     this.name = "ValidationUnavailableError";
   }
 }
-type Result = { state?: EngineState; envelope?: SaveEnvelope };
+type Result = { state?: EngineState; envelope?: SaveEnvelope; text?: string };
 function prepare(state: EngineState): Result {
   const acknowledged = markCommitted(state);
   const envelope = exportSave(acknowledged);
@@ -40,14 +41,20 @@ function stop() {
   }
   pending.clear();
 }
-function request(text?: string, state?: EngineState): Promise<Result> {
+function request(
+  text?: string,
+  state?: EngineState,
+  exportOnly = false,
+): Promise<Result> {
   // Non-browser unit/authoring callers retain the same pure synchronous reader.
   if (typeof Worker === "undefined" && typeof window !== "undefined")
     return Promise.reject(new ValidationUnavailableError());
   if (typeof Worker === "undefined")
     return Promise.resolve().then(() =>
       state
-        ? prepare(state)
+        ? exportOnly
+          ? { text: serializeSave(state) }
+          : prepare(state)
         : { state: text === undefined ? undefined : importSave(text) },
     );
   return new Promise((resolve, reject) => {
@@ -67,6 +74,7 @@ function request(text?: string, state?: EngineState): Promise<Result> {
             id: number;
             state?: EngineState;
             envelope?: SaveEnvelope;
+            text?: string;
             error?: { name: string; message: string };
           }>,
         ) => {
@@ -82,12 +90,13 @@ function request(text?: string, state?: EngineState): Promise<Result> {
             job.resolve({
               state: event.data.state,
               envelope: event.data.envelope,
+              text: event.data.text,
             });
         };
       }
       const id = ++sequence;
       pending.set(id, { resolve, reject, timer: setTimeout(stop, 20000) });
-      worker.postMessage({ id, text, state });
+      worker.postMessage({ id, text, state, exportOnly });
     } catch {
       stop();
       reject(new ValidationUnavailableError());
@@ -107,4 +116,9 @@ export async function prepareCommit(state: EngineState) {
   const result = await request(undefined, state);
   if (!result.state || !result.envelope) throw new ValidationUnavailableError();
   return { state: result.state, envelope: result.envelope };
+}
+export async function prepareExport(state: EngineState) {
+  const { text } = await request(undefined, state, true);
+  if (!text) throw new ValidationUnavailableError();
+  return text;
 }

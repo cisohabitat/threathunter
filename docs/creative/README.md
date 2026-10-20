@@ -33,3 +33,7 @@ Review each frame for next-action clarity, readable hierarchy, focus/selection/p
 - Listen to every final clip using the [audio review sheet](../verification/audio-review.csv). Approve identity/accent (English US is a candidate departure from the preferred Singapore English direction), pauses, pronunciation, artifacts and levels.
 - Evaluate all six gameplay screens with newcomers/generalists and three specialist reviewers using the GDD's separate clarity, discovery, fairness and visual-appeal measures.
 - Review actual device interruption, accessibility and media decoding. Do not replace these with headless browser results.
+
+## Timeline revision reference
+
+[Current pagination control](../verification/screens/12-timeline-pagination.png) was captured from the production preview with a 20,000-command case. Before: every history entry was rendered in one list. After: at most 50 entries, an announced range, and first/previous/next/latest native buttons; the full ordered log remains accessible and exportable. Other composition frames remain the earlier baseline, not recaptured or reapproved here. Human/device visual acceptance remains pending.

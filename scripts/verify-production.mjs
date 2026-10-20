@@ -135,7 +135,7 @@ try {
     path: "docs/verification/screens/08-debrief-tablet-portrait.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Threat Hunter home" }).click();
+  await page.getByRole("button", { name: "Threat Hunter Silent Intrusion home" }).click();
   await page.setViewportSize({ width: 1440, height: 900 });
   await capture(page, {
     path: "docs/verification/screens/09-home-desktop.png",

@@ -1,5 +1,10 @@
 import { expect, it } from "vitest";
-import { createRun, processCommand, type EngineState } from "../engine/engine";
+import {
+  createRun,
+  processCommand,
+  replayCommands,
+  type EngineState,
+} from "../engine/engine";
 import type { Action } from "../domain/contracts";
 import {
   checksum,
@@ -8,7 +13,50 @@ import {
   importSave,
   gameplayHash,
   markCommitted,
+  serializeSave,
+  MAX_SAVE_BYTES,
 } from "../persistence/format";
+it("fits a large legacy history into portable format 2 without losing receipts or acknowledgements", () => {
+  const initial = createRun("r", "M");
+  const state = markCommitted(
+    replayCommands(
+      initial,
+      Array.from({ length: 5000 }, (_, i) => ({
+        kind: "ADVANCE" as const,
+        runId: "r",
+        commandId: i.toString(36),
+        expectedRevision: i,
+        durationTicks: 1,
+      })),
+    ),
+  );
+  const before = gameplayHash(state);
+  const save = exportSave(state);
+  expect(save.snapshot.throughRevision).toBe(0);
+  expect(
+    new TextEncoder().encode(serializeSave(state)).length,
+  ).toBeLessThanOrEqual(MAX_SAVE_BYTES);
+  expect(read(save)).toEqual(state);
+  expect(gameplayHash(state)).toBe(before);
+  expect(() => exportSave(state, 5000)).toThrow("2 MiB");
+  expect(exportSave(state, 0)).toEqual(save);
+}, 20000);
+it("rejects histories that cannot fit even with a minimal checkpoint without truncation or receipt changes", () => {
+  const initial = createRun("oversize", "B");
+  const state = replayCommands(
+    initial,
+    Array.from({ length: 1100 }, (_, i) => ({
+      kind: "EDIT_CASE" as const,
+      runId: "oversize",
+      commandId: `edit-${i}`,
+      expectedRevision: i,
+      draft: { ...initial.view.draft, optionalNotes: "x".repeat(2000) },
+    })),
+  );
+  expect(() => serializeSave(state)).toThrow("2 MiB");
+  expect(state.commands).toHaveLength(1100);
+  expect(state.persistence.committedRevision).toBeNull();
+});
 function act(state: EngineState, action: Action) {
   const result = processCommand(state, {
     ...action,

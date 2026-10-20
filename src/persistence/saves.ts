@@ -1,12 +1,13 @@
 import Dexie, { type Table } from "dexie";
 import { canonical, type EngineState } from "../engine/engine";
-import { exportSave, markCommitted, type SaveEnvelope } from "./format";
+import { markCommitted, type SaveEnvelope } from "./format";
 export { exportSave, importSave, checksum } from "./format";
 export { validateSave } from "./validation";
 import {
   validateSave,
   prepareSaveValidation,
   prepareCommit,
+  prepareExport,
   ValidationUnavailableError,
 } from "./validation";
 type Row = {
@@ -163,12 +164,18 @@ export async function clearSave() {
   await database.runs.delete("active");
   notifySaveChanges();
 }
-export function downloadSave(state: EngineState) {
-  downloadJSON(exportSave(state), `threat-hunter-${state.view.runId}.json`);
+export async function downloadSave(state: EngineState) {
+  downloadText(
+    await prepareExport(state),
+    `threat-hunter-${state.view.runId}.json`,
+  );
 }
 function downloadJSON(value: unknown, filename: string) {
+  downloadText(JSON.stringify(value, null, 2), filename);
+}
+function downloadText(text: string, filename: string) {
   const url = URL.createObjectURL(
-    new Blob([JSON.stringify(value, null, 2)], {
+    new Blob([text], {
       type: "application/json",
     }),
   );
@@ -223,7 +230,7 @@ export async function downloadCompleted(id: string) {
     throw Error("Invalid completed-case reference.");
   const row = await database.runs.get(id);
   if (!row) throw Error("Completed case is unavailable.");
-  downloadSave(await validateRow(row));
+  await downloadSave(await validateRow(row));
 }
 
 // Recovery export is deliberately raw: unavailable validation must not prevent backup.

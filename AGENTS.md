@@ -96,3 +96,10 @@ When browser validation cannot start for an existing save, offer an explicit raw
 - Replay still validates every command, expected revision, authority/scope and receipt ID. Reject duplicate log entries, including idempotent repeats; on any invalid history, discard the owned copy without touching the supplied checkpoint or command payloads.
 - Prove complete-state equality with ordinary immutable transitions across worlds, mixed actions, closure and split checkpoints. Preserve sufficient sets, receipts, due ticks, debrief reconstruction and compatibility IDs. The frozen snapshot-1 reader stays unchanged.
 - `verify:history` now includes a same-build immutable/owned replay comparison and a 20,000-command format-1 Node import within the 2 MiB limit. This does not establish browser rendering speed for a 20,000-entry timeline or physical-device acceptance.
+
+## Portable size and timeline bounds
+
+- Default format-2 writers prefer the latest checkpoint, falling back to revision zero if the complete compact envelope exceeds 2 MiB. Explicit checkpoint boundaries remain exact and fail if oversized. Preserve every command, original acknowledgement boundary and final hash; never raise import bounds or truncate history to make a save fit. No compatibility ID changed.
+- Browser portable exports use `prepareExport` in the preloaded worker and compact JSON bytes. Export must not call `markCommitted` or promote volatile receipts. Handle async export errors in the controller. Raw recovery downloads remain separate inspection records.
+- `HistoryTimeline` renders at most 50 public entries with accessible page controls. Navigation state remembers the live page per run; debrief filters by delivery step before pagination. Histories with over 100 distinct steps use a bounded numeric step control instead of thousands of select options. Reading and page changes dispatch no engine commands.
+- Include WCAG 2.1 A as well as AA in sampled accessibility audits; accessible button names must include all visible title text. Keep save/readiness copy inside its labelled region.

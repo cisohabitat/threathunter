@@ -109,3 +109,9 @@ For performance-only reruns, `npm run verify:production -- --no-screens` keeps t
 When browser validation cannot start for an existing save, offer an explicit raw stored-data recovery export without validating or rewriting it. Keep that recovery copy distinct from portable imports; temporary play must leave the original row unchanged.
 
 Save-history audits now replay into a detached engine state, avoiding a copy of the growing history for every command. Live commands remain immutable, and validation/migration rules are unchanged. `npm run verify:history` also checks complete-state equivalence against ordinary replay and a bounded 20,000-command Node import; large browser timeline rendering and physical-device performance remain separate acceptance work.
+
+## Large histories and portable exports
+
+Timeline and debrief history show up to 50 entries per page, with keyboard-accessible first/previous/next/latest controls. Timeline remembers its page when you change investigation screens. Pagination and the debrief delivery-step filter are free and never alter the finding.
+
+Normal exports are compact format-2 JSON prepared in the background validator without changing receipt acknowledgements. When a full snapshot exceeds 2 MiB, the writer uses a revision-zero checkpoint plus every original command and the final state hash. The reader reconstructs the same case; no actions are removed. If even the minimal envelope exceeds 2 MiB, saving/export reports an error and retains progress. The 20,000-command limit still applies. See [save compatibility](docs/SAVE_FORMAT.md) and [current verification](docs/verification/RESULTS.md).

@@ -1,13 +1,20 @@
-import { importSave, exportSave, markCommitted } from "./format";
+import { importSave, exportSave, markCommitted, serializeSave } from "./format";
 import type { EngineState } from "../engine/engine";
 
 // This worker has no database or command adapter. It validates an isolated copy.
 self.onmessage = (
-  event: MessageEvent<{ id: number; text?: string; state?: EngineState }>,
+  event: MessageEvent<{
+    id: number;
+    text?: string;
+    state?: EngineState;
+    exportOnly?: boolean;
+  }>,
 ) => {
   const { id, text, state: input } = event.data;
   try {
-    if (input) {
+    if (input && event.data.exportOnly) {
+      self.postMessage({ id, text: serializeSave(input) });
+    } else if (input) {
       const state = markCommitted(input);
       const envelope = exportSave(state);
       importSave(JSON.stringify(envelope));

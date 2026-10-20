@@ -5,6 +5,22 @@ afterEach(() => {
   vi.useRealTimers();
   vi.resetModules();
 });
+it("exports retained progress without acknowledging volatile receipts", async () => {
+  const { createRun, processCommand } = await import("../engine/engine");
+  const { prepareExport } = await import("../persistence/validation");
+  const { importSave } = await import("../persistence/format");
+  const state = processCommand(createRun("export-memory", "B"), {
+    kind: "ADVANCE",
+    durationTicks: 1,
+    runId: "export-memory",
+    commandId: "volatile",
+    expectedRevision: 0,
+  }).state;
+  const restored = importSave(await prepareExport(state));
+  expect(restored).toEqual(state);
+  expect(restored.persistence.committedRevision).toBeNull();
+  expect(state.receipts.volatile.receipt.durability).toBe("memory_only");
+});
 it("terminates an unresponsive validator and rejects queued work without accepting state", async () => {
   vi.useFakeTimers();
   const terminate = vi.fn();

@@ -9,6 +9,7 @@ import { InvestigationGuide } from "../ui/InvestigationGuide";
 import { CaseEditor } from "../ui/CaseEditor";
 import { Workbench } from "../ui/Workbench";
 import { Debrief } from "../ui/Debrief";
+import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { briefing, hints } from "../presentation/voice/scripts";
 function readGuidancePreference() {
   try {
@@ -20,7 +21,12 @@ function readGuidancePreference() {
 const screens: Screen[] = ["Leads", "Explore", "Case File", "Timeline"];
 export default function App() {
   const game = useGame(),
-    { screen, setScreen: changeScreen } = useNavigation(),
+    {
+      screen,
+      setScreen: changeScreen,
+      timelinePages,
+      rememberTimeline,
+    } = useNavigation(),
     [hint, setHint] = useState(-1),
     [home, setHome] = useState(true),
     [replace, setReplace] = useState(false),
@@ -82,11 +88,13 @@ export default function App() {
           <button
             className="wordmark"
             onClick={() => setHome(true)}
-            aria-label="Threat Hunter home"
+            aria-label="Threat Hunter Silent Intrusion home"
           >
-            <span className="logo-mark">⌖</span>
+            <span className="logo-mark" aria-hidden="true">
+              ⌖
+            </span>
             <span>
-              THREAT HUNTER<small>SILENT INTRUSION</small>
+              THREAT HUNTER <small>SILENT INTRUSION</small>
             </span>
           </button>
           <div className="header-meta">
@@ -101,7 +109,11 @@ export default function App() {
             )}
           </div>
         </header>
-        <div className="save-strip">
+        <div
+          className="save-strip"
+          role="region"
+          aria-label="Save and readiness"
+        >
           <span role="status">{game.busy ? "Working…" : game.status}</span>
           <div>
             {v ? (
@@ -627,16 +639,11 @@ export default function App() {
                       Reading, orientation changes and closing the browser do
                       not advance the world.
                     </p>
-                    <ol className="timeline">
-                      {v.history.map((item, i) => (
-                        <li key={i}>
-                          <strong>
-                            {item.tick.toString().padStart(2, "0")}
-                          </strong>
-                          <p>{item.text}</p>
-                        </li>
-                      ))}
-                    </ol>
+                    <HistoryTimeline
+                      items={v.history}
+                      page={timelinePages[v.runId] ?? 0}
+                      onPageChange={(page) => rememberTimeline(v.runId, page)}
+                    />
                     <h3>Pending requests</h3>
                     {v.pendingChecks.length ? (
                       v.pendingChecks.map((p) => (

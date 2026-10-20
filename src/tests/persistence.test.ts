@@ -8,7 +8,35 @@ import {
   importSave,
 } from "../persistence/saves";
 import { markCommitted } from "../persistence/format";
-import { createRun, processCommand } from "../engine/engine";
+import { createRun, processCommand, replayCommands } from "../engine/engine";
+it("durably upgrades a size-bound legacy log and retains its original backup", async () => {
+  const { exportLegacySave } = await import("../persistence/format");
+  const state = replayCommands(
+    createRun("r", "M"),
+    Array.from({ length: 20000 }, (_, i) => ({
+      kind: "ADVANCE" as const,
+      runId: "r",
+      commandId: i.toString(36),
+      expectedRevision: i,
+      durationTicks: 1,
+    })),
+  );
+  const original = exportLegacySave(state);
+  await database.runs.put({
+    id: "active",
+    revision: 20000,
+    current: original,
+    previous: null,
+  });
+  const loaded = await load();
+  expect((await database.runs.get("active"))?.current).toEqual(original);
+  const committed = await commit(loaded!, 20000);
+  const row = await database.runs.get("active");
+  expect(row?.current.schemaVersion).toBe(2);
+  expect(row?.previous).toEqual(original);
+  expect(await load()).toEqual(committed);
+  expect(committed).toEqual(markCommitted(state));
+}, 60000);
 beforeEach(async () => {
   await database.runs.clear();
 });

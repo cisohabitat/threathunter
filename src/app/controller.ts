@@ -392,8 +392,12 @@ export function useGame() {
     restart,
     restore,
     rejectOversizedImport: () => setError("Import failed: Save exceeds 2 MiB."),
-    export: () => {
-      if (engine.current) downloadSave(engine.current);
+    export: async () => {
+      try {
+        if (engine.current) await downloadSave(engine.current);
+      } catch (e) {
+        setError(String(e));
+      }
     },
     enableTemporary: () => {
       setTemporary(true);

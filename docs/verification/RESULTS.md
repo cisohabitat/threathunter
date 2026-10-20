@@ -71,7 +71,7 @@ Abrupt-process recovery passed again with identical durable-row hashes and exact
 
 The game remains static with local IndexedDB; no backend/API credentials are required for these boundaries. See [save-history.json](save-history.json), [performance.json](performance.json), and [crash-recovery.json](crash-recovery.json). New publication and hosted-CI results require their own observed run. Physical-device, participant and listening/creative acceptance remain pending; see [the GDD ledger](../GDD_ACCEPTANCE.md).
 
-## Current owned-replay iteration
+## Owned-replay baseline — c97a4fb
 
 Executed 20 October 2026: lint, strict TypeScript, **88 unit/asset tests**, **36 Chromium desktop/phone storage/offline flows**, and **18 Linux WebKit flows** passed. This WebKit run used one worker and passed cleanly. Unit evidence includes complete-state equality at every mixed-action prefix across four worlds/five seeds, closure, split checkpoints, rejected histories and frozen caller/payload isolation. Live command semantics, the GDD and save compatibility remain unchanged.
 
@@ -83,4 +83,29 @@ A valid **1,827,650-byte format-1 file with 20,000 commands** validated in **529
 
 The final production lab recorded cold case-ready **2,058 ms**, ordinary synthetic interaction **35.6 ms p95**, and short-case durable command **98.1 ms p95**, with the same declared methods/limits. Initial entry plus validator JS totals **231,189 bytes gzip**; JS/CSS plus largest art totals **305,565 bytes**. Payload checks and abrupt-process recovery passed; the durable row survived unchanged and the pending check delivered once. Existing screen references remain baseline frames (`--no-screens` was used).
 
-Current reports: [save-history.json](save-history.json), [performance.json](performance.json), [crash-recovery.json](crash-recovery.json). The previous source build 3328a92's [hosted run](https://github.com/cisohabitat/threathunter/actions/runs/39354485679) passed; this new publication needs its own observed CI/deployment result. Physical-device, participant, listening/creative reviews, large-browser-history work and the GDD P1 gate remain open.
+Current reports: [save-history.json](save-history.json), [performance.json](performance.json), [crash-recovery.json](crash-recovery.json). The c97a4fb source build's [hosted run](https://github.com/cisohabitat/threathunter/actions/runs/39356069250) passed, and its exact production deployment reached READY. Physical-device, participant, listening/creative reviews, large-browser-history work and the GDD P1 gate remain open.
+
+## Current portable-history and timeline iteration
+
+Executed 20 October 2026: lint, strict TypeScript/build, budgets and **92 unit/asset tests** passed. The Chromium full run passed 52 checks; its two new large-case checks initially reloaded before closure committed. The corrected test waits for Saved and asserts the actual stored closed phase/revision. Both corrected desktop/phone reruns passed, giving **54 verified journeys across runs**. Linux WebKit passed ten of eleven selected journeys initially; its first home-opacity wait failed. The isolated keyboard/accessibility rerun passed (15.4 seconds), giving **11 verified WebKit journeys across runs**. No local Firefox or physical Safari pass is claimed.
+
+The new 5,000-command browser journey covers untouched legacy loading, original backup retention on upgrade, compact portable download, exact command/acknowledgement equality, first/latest/keyboard page controls, remembered page on navigation, axe on the timeline, continued investigation, durable closure, numeric decision-step filtering and closed-case reload. Sampled accessibility audits now include WCAG 2.1 A; the expanded scan found and corrected the home button's visible-label/name mismatch and the readiness landmark. A unit check separately proves that portable export preserves volatile receipts.
+
+| Boundary | Current evidence |
+| --- | --- |
+| Maximum valid legacy file → worker/commit | 20,000 commands, 1,827,650 input bytes; actual production Chromium import/commit 6,969 ms |
+| Committed case → portable format 2 | 1,833,140 bytes, revision-zero checkpoint, complete exact log and 20,000 committed receipts |
+| Portable bytes → reconstruction | Pure-reader reimport checks tick/receipt count and acknowledgement; browser reload checks restored timeline |
+| Large projection → reading | 50 first-page entries and two latest-page entries; latest tick 20,000 |
+| Continued large play → closure | Separate 5,000-command Chromium desktop/phone and WebKit journeys; committed closure survives reload |
+| Unrepresentable full log | Explicit size error; no truncation, false acknowledgement or partial write |
+
+The maximum-count case is a boundary test, not a normal gameplay path, and cannot accept a 20,001st command within the existing portable schema. Complete logs that exceed 2 MiB even with the minimal envelope remain unsupported. Earlier-boundary replay is existing format-2 behavior; no format, fixture or compatibility ID changed. The frozen snapshot-1 reader remains unchanged.
+
+The 750-edit production import/commit/reload took **2,333 ms**, with **23.2 ms p95** over 86 heartbeat samples, **623.4 ms maximum gap**, and an observed **616 ms long task**. The worker does not remove main-thread serialization, cloning or rendering costs. This trial does not establish a controlled speedup or zero jank. Same-build Node immutable/owned replay was 3,710 / 31 ms with equal complete state; reader samples were 88 / 230 / 516 ms for 100 / 350 / 750 commands. Node's separate maximum-count import took 904 ms.
+
+The production lab recorded **2,683 ms** cold readiness at 4 Mbps / 100 ms RTT / 4x emulated CPU; 100 synthetic interactions measured **34.7 ms p95**, and ten healthy-storage short-case commits measured **155.5 ms p95**, including automation overhead. Entry plus validator JS is **231,909 bytes gzip**; critical JS/CSS plus largest selected art is **306,300 bytes**. All payload gates passed; Vite's separate raw-chunk advisory remains. Abrupt-process recovery passed with identical durable-row hashes and one pending-check delivery.
+
+[save-history.json](save-history.json), [performance.json](performance.json) and [crash-recovery.json](crash-recovery.json) contain the declared methods. The first production-profiler attempt stopped at an outdated home-button locator; after correcting it, profiling and crash recovery passed. Existing general frames remain baseline captures (`--no-screens`); [the added actual pagination frame](screens/12-timeline-pagination.png) records the new range/buttons. Before this change, timelines rendered every history item; now each page renders at most 50 while the complete history remains available. No human visual approval is inferred from this capture.
+
+The unchanged GDD still requires physical reference devices, assistive technology, creative/listening approval, eight newcomer sessions, eight generalist sessions and three specialist reviewers. Blank scorecards remain pending. Those gates precede M04/M07 production. This publication's CI/deployment must be checked independently from the prior c97a4fb success.
