@@ -1,3 +1,4 @@
+import { PlayPrimer } from "../ui/PlayPrimer";
 import { BackupImport } from "../ui/BackupImport";
 import { useEffect, useRef, useState } from "react";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
@@ -458,6 +459,10 @@ export default function Expansion({
             {!v ? (
               <section className="panel">
                 <h2>Your starting question</h2>
+                <PlayPrimer />
+                <button onClick={() => onOpenMission("M01")}>
+                  New here? Learn with The Midnight Login →
+                </button>
                 {slot !== "free" ? (
                   <p>{p.briefing}</p>
                 ) : (

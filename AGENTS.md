@@ -1,5 +1,13 @@
 # Threat Hunter repository instructions
 
+## First-case comprehension
+
+- Home explains the play loop and puts Begin before optional assistance setup. Keep both assistance modes visible and retain the player's preference. P1 and expansion/free introductions offer an explicit M01 learning link without starting or discarding any case.
+- In M01, put `InvestigationGuide` ahead of reference tools. `ui/onboarding.ts` derives the next move only from delivered public observations and accepted citations: compare, save the comparison, choose a check, save its result, then make a finding. A partial comparison citation must not claim both records are saved. Missing collection is a delivered result, never a hidden answer or a promise of sufficient evidence.
+- Keep Begin and Compare fully visible without scrolling at 320×740 and 390×844 with normal text. Enlarged text must reflow and scroll normally. Guide transitions focus their heading and keep the next interaction in view; reading and navigation never issue commands.
+- Guidance never chooses the finding, confidence, alternative status, limitations or handoff. Review/explicit close stays available for an incomplete finding at any stage. Preserve immutable source records, scoring, engines, save formats and original voice scripts.
+- `onboarding.test.ts` checks accepted-evidence progression, partial citations, pending checks and identical sparse-twin rendering. `e2e/onboarding.spec.ts` checks initial viewports, a guide-to-export flow, sampled axe and M01 learning links. Automated completion is not human comprehension acceptance.
+
 ## Progress protection follow-up
 
 - M01 warns before unloading whenever accepted progress is not durable or its remembered Case File notes differ from the accepted draft. Read the navigation store at unload time so the warning survives leaving Case File or hiding M01 behind another destination. Saving successfully clears the warning; exports do not acknowledge durability.

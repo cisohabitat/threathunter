@@ -93,6 +93,9 @@ export default function App({
   }
   function setScreen(next: Screen) {
     const navigation = useNavigation.getState();
+    const firstReport =
+      next === "Case File" &&
+      navigation.scrollPositions[`${game.view?.runId}:${next}`] === undefined;
     if (!home && game.view)
       navigation.rememberScroll(`${game.view.runId}:${screen}`, window.scrollY);
     const top = home
@@ -101,6 +104,13 @@ export default function App({
     changeScreen(next);
     requestAnimationFrame(() => {
       window.scrollTo({ left: 0, top, behavior: "instant" });
+      if (firstReport) {
+        const question =
+          document.querySelector<HTMLElement>(".case-editor > h2");
+        question?.scrollIntoView({ block: "start", behavior: "instant" });
+        question?.focus({ preventScroll: true });
+        return;
+      }
       document
         .querySelector<HTMLElement>(".workspace-heading h1")
         ?.focus({ preventScroll: true });
@@ -144,7 +154,7 @@ export default function App({
         <a href="#main" className="skip-link">
           Skip to main content
         </a>
-        <div className="app-shell">
+        <div className={`app-shell m01-shell${guided ? " guided-play" : ""}`}>
           <header className="topbar">
             <button
               className="wordmark"
@@ -200,7 +210,7 @@ export default function App({
                   Export recovery original
                 </button>
               ) : null}
-              <span>
+              <span className="art-readiness">
                 {artReady
                   ? "Case ready · optional sound below"
                   : artUnavailable
@@ -411,30 +421,13 @@ export default function App({
                     doesn’t <em>fit.</em>
                   </h1>
                   <p className="hero-description">
-                    An unfamiliar session. A plausible explanation.
-                    <br />
-                    Find what the evidence actually supports.
+                    A finance account was used at 02:13. Was it approved work,
+                    unauthorised use, or still unexplained?
                   </p>
-                  <fieldset className="assistance-choice">
-                    <legend>How would you like to play?</legend>
-                    <div className="actions">
-                      <button
-                        aria-pressed={guided}
-                        onClick={() => chooseGuidance(true)}
-                      >
-                        Guided investigation{" "}
-                        <small>Recommended · Morgan explains each step</small>
-                      </button>
-                      <button
-                        aria-pressed={!guided}
-                        onClick={() => chooseGuidance(false)}
-                      >
-                        Independent investigation{" "}
-                        <small>Explore at your own pace</small>
-                      </button>
-                    </div>
-                  </fieldset>
-                  <div className="actions">
+                  <p className="home-play-loop">
+                    Read a record → Check an explanation → Make your call
+                  </p>
+                  <div className="actions start-actions">
                     <button
                       className="primary"
                       disabled={
@@ -455,6 +448,28 @@ export default function App({
                       Read the brief ↓
                     </a>
                   </div>
+                  <p className="first-case-label">
+                    START HERE · THE MIDNIGHT LOGIN · 10–15 MINUTES
+                  </p>
+                  <fieldset className="assistance-choice">
+                    <legend>How would you like to play?</legend>
+                    <div className="actions">
+                      <button
+                        aria-pressed={guided}
+                        onClick={() => chooseGuidance(true)}
+                      >
+                        Guided investigation{" "}
+                        <small>Recommended · Morgan explains each step</small>
+                      </button>
+                      <button
+                        aria-pressed={!guided}
+                        onClick={() => chooseGuidance(false)}
+                      >
+                        Independent investigation{" "}
+                        <small>Explore at your own pace</small>
+                      </button>
+                    </div>
+                  </fieldset>
                   <p className="hero-foot">
                     TWELVE CASES. YOUR JUDGEMENT. NO COUNTDOWN.
                   </p>
@@ -623,11 +638,11 @@ export default function App({
                       <p className="eyebrow">NORTHSTAR / FINANCE / S-01</p>
                       <h1 tabIndex={-1}>
                         {screen === "Leads"
-                          ? "Start with a question."
+                          ? "The Midnight Login"
                           : screen === "Explore"
-                            ? "Every source has limits."
+                            ? "Choose what to check"
                             : screen === "Case File"
-                              ? "What does it mean?"
+                              ? "Make your call"
                               : "What happened, and when?"}
                       </h1>
                     </div>
@@ -644,8 +659,6 @@ export default function App({
                       </span>
                     </div>
                   </div>
-                  <FieldGuide />
-                  <ComparisonPanel />
                   {guided ? (
                     <InvestigationGuide
                       view={v}
@@ -817,6 +830,10 @@ export default function App({
                       </button>
                     </section>
                   )}
+                  <div className="investigation-reference">
+                    <FieldGuide />
+                    <ComparisonPanel />
+                  </div>
                   <div className="case-footer">
                     <p>
                       Still undecided? An honest, scoped unresolved finding is a

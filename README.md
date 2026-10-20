@@ -8,10 +8,14 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 
 ## How to play M01: The Midnight Login
 
+**Your job:** explain one unusual login. Decide whether it looks like approved work, unauthorised use, or something you cannot yet explain. You finish by submitting your finding; you can include uncertainty.
+
+The basic loop is **read a record → check an explanation → make your call**. Start with **Begin investigation**. In Guided investigation, the panel at the top shows your next move and keeps each returned result beside the next action. It does not choose the answer for you. The glossary and comparison tools are below the investigation, available when you need them. The first report visit opens at its question; **Next** moves to the next report part, while later visits retain your place.
+
 1. Choose **Guided investigation** (recommended), then **Begin investigation** or **Resume investigation**.
 2. Morgan explains your role: investigate an unfamiliar finance login at 02:13 and decide what the evidence supports.
 3. Select **Compare sign-ins · 1 step**. Read the side-by-side comparison, then **Add these observations to Case File · free**.
-4. Choose your next check: approved work, device registration, session activity or verified-owner contact. Explore shows the newest observation first and keeps earlier snapshots available. Use **Cite in finding**, **Test another explanation**, or **Note a limitation** directly on an evidence card; all three are free.
+4. Choose your next check: approved work, device registration, session activity or verified-owner contact. The guide shows what the check returned and offers **Add this observation to Case File · free**. This saves the record in your report without choosing a conclusion. Explore shows the newest observation first and keeps earlier snapshots available. Use **Cite in finding**, **Test another explanation**, or **Note a limitation** directly on an evidence card; all three are free.
 5. Open **Case File** and move through **Explanation → Evidence → Unknowns → Next step**. Your evidence-card choices carry over. Choose a finding/confidence, describe the alternative you tested, record relevant limits and select a next action. You can revisit any step and review at any time. Optional notes have an explicit save button and are also saved when reviewing.
 6. Select **Review finding**, then **Confirm and close case** when ready. The debrief explains your finding and separates it from the operational outcome. Use **What I knew then** to view only observations delivered by a selected step. Expand the optional quality breakdown for your score, specific feedback and links to the relevant observations.
 
@@ -20,6 +24,8 @@ Use **Compare observation · free** on acquired cards, or open **Compare acquire
 Reading, navigation and evidence citation are free. New acquisitions, verification requests and deliberately advancing the world consume simulation steps. There is no real-time countdown. An unresolved finding is valid when its limits and follow-up are explained.
 
 Use **Hide guidance** / **How to play** to change assistance at any time. The game remembers that preference; independent mode uses the same facts, costs and scoring.
+
+If you opened a later case or a free hunt and feel lost, choose **New here? Learn with The Midnight Login** in its introduction. The first case teaches the controls before the campaign adds more tools. Loaded investigations remain available when switching cases.
 
 ## Optional voice and sound
 
@@ -180,7 +186,7 @@ Each expansion Case File has four steps: **Explanation → Evidence → Unknowns
 
 Unfinished M04/M07 notes stay in their mounted Case File when navigating and block backup replacement until explicitly saved. The browser warns before leaving with unfinished notes. Run local browser engines sequentially; concurrent runners require separate artifact directories.
 
-The unit suite now contains **269 checks**, including three tooling snapshot regressions. Final local verification includes 32 targeted unit checks and 34 Chromium desktop/phone storage, recovery and offline checks; the initial full-run timeout and successful isolated reruns are recorded in the ledger. Transfer budgets pass. Performance acceptance remains open: the latest three cold-load samples were 11.43 / 4.65 / 4.98 seconds against the six-second target. Duplicate portable-reader initialisation is removed from the interface, but readiness remains inconsistent; reference-device profiling and deferred human reviews are still required. See [the completion worklist](docs/GDD_COMPLETION.md) and [verification ledger](docs/verification/RESULTS.md) for methods and failed/retried runs. Each publication also requires observed hosted CI, the existing Vercel deployment and matching live assets/routes.
+The unit suite now contains **273 checks**, including three tooling snapshot regressions and four first-case guidance regressions. Final local verification includes 32 targeted unit checks and 34 Chromium desktop/phone storage, recovery and offline checks; the initial full-run timeout and successful isolated reruns are recorded in the ledger. Transfer budgets pass. Performance acceptance remains open: the latest three cold-load samples were 11.43 / 4.65 / 4.98 seconds against the six-second target. Duplicate portable-reader initialisation is removed from the interface, but readiness remains inconsistent; reference-device profiling and deferred human reviews are still required. See [the completion worklist](docs/GDD_COMPLETION.md) and [verification ledger](docs/verification/RESULTS.md) for methods and failed/retried runs. Each publication also requires observed hosted CI, the existing Vercel deployment and matching live assets/routes.
 
 The emergency-recovery browser test injects a lazy-module failure on a direct case route, then verifies exact raw-row export without changing storage. This avoids racing the home navigation controls while deliberately replacing the whole interface.
 

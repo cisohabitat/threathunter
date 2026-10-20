@@ -10,7 +10,7 @@ test("complete a case, resume an immutable save, and continue offline", async ({
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
-    page.getByRole("heading", { name: "Start with a question." }),
+    page.getByRole("heading", { name: "The Midnight Login", level: 1 }),
   ).toBeVisible();
   await expect(
     page
@@ -52,7 +52,7 @@ test("complete a case, resume an immutable save, and continue offline", async ({
     .getByRole("button", { name: /Case File/ })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Build a defensible finding." }),
+    page.getByRole("heading", { name: "Which explanation fits?" }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Review finding →", exact: true })
@@ -79,7 +79,7 @@ test("reading, navigating and mentor guidance do not advance time", async ({
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
-    page.getByRole("heading", { name: "Start with a question." }),
+    page.getByRole("heading", { name: "The Midnight Login", level: 1 }),
   ).toBeVisible();
   await page
     .getByRole("navigation")
@@ -123,7 +123,7 @@ test("guided first investigation explains, compares, cites for free and offers a
   const guide = page.getByRole("region", { name: "Guided investigation" });
   await expect(
     guide.getByRole("heading", {
-      name: "You’re the investigator. Start with the unusual login.",
+      name: "Why did someone sign in at 02:13?",
     }),
   ).toBeVisible();
   await guide
@@ -145,7 +145,7 @@ test("guided first investigation explains, compares, cites for free and offers a
     .click();
   await expect(
     guide.getByRole("heading", {
-      name: "Read what you found. Decide what to check next.",
+      name: "Here is what your check found.",
     }),
   ).toBeVisible();
   await guide.getByRole("button", { name: "Build my finding →" }).click();

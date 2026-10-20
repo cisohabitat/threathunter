@@ -206,14 +206,23 @@ strong {
   font-size: 13px;
 }
 .file-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   border: 1px solid var(--stroke-subtle);
   border-radius: 4px;
 }
 .file-button input {
-  display: block;
-  max-width: 180px;
-  font-size: 12px;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.file-button:focus-within {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 .home {
   position: relative;
@@ -2053,5 +2062,177 @@ html {
   .expansion-shell fieldset {
     padding: 12px;
     min-width: 0;
+  }
+}
+
+/* Put the investigation ahead of reference tools and optional setup. */
+.home-play-loop {
+  color: var(--accent-cyan);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 22px;
+  max-width: 34rem;
+}
+.first-case-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  margin: 14px 0 24px;
+  color: var(--text-secondary);
+}
+.guide-route {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 22px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.guide-route li[aria-current="step"] {
+  color: var(--accent-cyan);
+  font-weight: 650;
+}
+.guide-route span {
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--stroke-subtle);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+}
+.investigation-guide {
+  scroll-margin-block-start: 20px;
+}
+.guide-result {
+  margin: 18px 0;
+  padding: 18px;
+  background: var(--bg-deep);
+  border-left: 3px solid var(--accent-cyan);
+}
+.guide-result p {
+  margin-bottom: 12px;
+}
+.guide-result small {
+  color: var(--text-secondary);
+}
+.guide-shortcut {
+  margin-top: 16px;
+}
+.investigation-reference {
+  margin-top: 28px;
+}
+.investigation-reference .field-guide:not([open]) {
+  padding: 8px 18px;
+}
+.play-primer {
+  border-left: 3px solid var(--accent-cyan);
+  padding: 12px 18px;
+  margin: 20px 0;
+  background: var(--bg-deep);
+}
+.play-primer p {
+  margin-bottom: 0;
+}
+.play-loop {
+  padding-left: 22px;
+  margin: 14px 0;
+  list-style: decimal;
+}
+.play-loop li {
+  padding-block: 3px;
+}
+@media (max-width: 740px) {
+  .m01-shell .topbar {
+    height: 68px;
+  }
+  .m01-shell .save-strip {
+    align-items: center;
+    padding: 4px 16px;
+    min-height: 52px;
+  }
+  .m01-shell .art-readiness {
+    display: none;
+  }
+  .m01-shell .workspace-heading {
+    margin-bottom: 16px;
+  }
+  .m01-shell .workspace-heading .eyebrow {
+    margin-bottom: 6px;
+  }
+  .m01-shell .workspace-tools {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .m01-shell .workspace-tools .step-badge {
+    text-align: right;
+    font-size: 14px;
+  }
+  .m01-shell .step-badge small {
+    max-width: none;
+  }
+  .m01-shell .workspace-main {
+    padding-top: 18px;
+  }
+  .m01-shell .sidebar {
+    padding-block: 8px;
+  }
+  .m01-shell .hero-copy {
+    padding-top: 24px;
+  }
+  .m01-shell .hero-copy h1 {
+    font-size: clamp(40px, 12vw, 64px);
+    margin-block: 18px;
+  }
+  .m01-shell .hero-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    max-width: 340px;
+  }
+  .m01-shell .home-play-loop {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .m01-shell .start-actions {
+    flex-direction: row;
+  }
+  .m01-shell .start-actions .text-link {
+    display: none;
+  }
+  .m01-shell .assistance-choice .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .m01-shell .assistance-choice button {
+    padding: 10px;
+    font-size: 12px;
+  }
+  .m01-shell .assistance-choice small {
+    font-size: 10px;
+  }
+  .m01-shell .guide-route {
+    gap: 8px 12px;
+    font-size: 11px;
+    margin-bottom: 14px;
+  }
+  .m01-shell .guide-route span {
+    width: 20px;
+    height: 20px;
+    margin-right: 2px;
+  }
+  .m01-shell .investigation-guide {
+    padding: 18px 16px;
+  }
+  .m01-shell .investigation-guide h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  .m01-shell .investigation-guide .eyebrow {
+    font-size: 10px;
+    margin-bottom: 10px;
   }
 }

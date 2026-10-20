@@ -18,7 +18,7 @@ async function startFixture(page: Page, world: "B" | "M") {
   });
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await expect(
-    page.getByRole("heading", { name: "Start with a question." }),
+    page.getByRole("heading", { name: "The Midnight Login", level: 1 }),
   ).toBeVisible();
 }
 async function collect(page: Page, label: string) {
@@ -72,7 +72,7 @@ test("direct evidence actions and four reporting steps produce the reference exp
     .getByRole("button", { name: "Cite in finding · free", exact: true })
     .click();
   await investigate(page, "Case File");
-  await page.getByRole("button", { name: /Credible explanation/ }).click();
+  await page.getByRole("button", { name: /Approved work explains it/ }).click();
   await page.getByLabel("Confidence about this finding").selectOption("medium");
   await stage(page, "Evidence");
   await page

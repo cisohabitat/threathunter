@@ -1,3 +1,4 @@
+import { PlayPrimer } from "../ui/PlayPrimer";
 import { BackupImport } from "../ui/BackupImport";
 import { useEffect, useRef, useState } from "react";
 import { packages } from "./content";
@@ -1003,6 +1004,10 @@ export default function Campaign({
           {!game.view ? (
             <section className="panel">
               <h2>Your starting question</h2>
+              <PlayPrimer />
+              <button onClick={() => onOpenMission("M01")}>
+                New here? Learn with The Midnight Login →
+              </button>
               <p>{pack.briefing}</p>
               <p>
                 This mission has its own local save. Switching cases keeps
@@ -1082,6 +1087,7 @@ export default function Campaign({
               <div hidden={screen !== "Brief"}>
                 <section className="panel">
                   <h2>The review brief</h2>
+                  <PlayPrimer />
                   <p>{pack.briefing}</p>
                   <h3>How to play</h3>
                   <p>

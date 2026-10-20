@@ -1,5 +1,15 @@
 # Implementation status — internal build 0.1
 
+## First-case comprehension follow-up — 20 October 2026
+
+The user reported that the game remained confusing and they did not know how to play. A fresh desktop/phone walk-through found the first phone action below glossary/comparison panels, competing setup controls ahead of Begin, and a guide that stopped short of saving the checked result. Home now states the question and three-part play loop, with Begin before optional setup. M01 shows a received-evidence-derived next move ahead of reference tools, keeps the delivered result beside an explicit citation action, and leads into four freely navigable report parts. Findings and response options use plain language. P1 and expansion/free introductions offer the same loop and an explicit M01 learning link.
+
+Only presentation and guidance changed. Engine rules, tick costs, record content, rubric, save compatibility and immutable audio/art assets retain their established versions. Guidance does not choose an answer or certify that sufficient evidence has been collected. Sparse-twin rendering, partial citations and pending checks have regression coverage; Review and weak closure remain available. Human comprehension/player acceptance remains unpassed.
+
+Initial local checks passed lint/types, 273 units and build/budgets. The first 38 selected Chromium checks passed 36; both 320px viewport checks found the Compare button extending eight pixels below the screen. The opening sentence was shortened before the final browser rerun. A report-focus check later found the first choice extending five pixels below the shorter phone viewport; redundant introductory text was removed. The retained 56 selected Chromium desktop/phone checks then passed. A final copy reduction and stronger corner-occlusion assertions passed all twelve onboarding checks, including whole-button visibility at 320×740 and 390×844. Keyboard/axe, save/recovery, comparison and reference-scored report checks remain covered by the selected suite.
+
+Final lint/types/build/budgets passed, with 273 unit checks in the current suite. The final entry is `/assets/index-D5TluGrx.js`, SHA-256 `e3344a42b80ddafd54e3487a4edf3755fabf2ceb8d631cfc49becd9b9968cad5`. The existing `main` → Vercel project remains the publication destination; hosted matrix and live asset/route observations belong to the resulting commit. Earlier local captures and historical reports retain their own build identities. No startup-performance or human-comprehension acceptance is inferred from these automated checks.
+
 ## Progress protection fixes — 20 October 2026
 
 M01 now warns before unloading accepted unsaved/temporary work and unfinished remembered Case File notes, including after leaving the editor. M04/M07 temporary replay requires a per-run export/discard acknowledgement before replacing the only in-memory finding; durable archival is unchanged. Expansion derives unfinished-note protection from the accepted finding and opens Review only after an accepted edit, with Review disabled while a command is pending. Engine rules, scoring, save schemas, workers and media remain unchanged.

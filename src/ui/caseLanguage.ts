@@ -15,14 +15,13 @@ export const caveatLabels = {
 };
 export const nextLabels = {
   close_explained: "Close this lead · routine monitoring",
-  handoff_revoke_session: "Recommend response-team revocation of S-01",
-  handoff_review_monitor:
-    "Hand over for review, collection restoration and owner verification",
+  handoff_revoke_session: "Ask the response team to end this login session",
+  handoff_review_monitor: "Ask for further investigation and missing records",
 };
 export const dispositionLabels = {
-  explained: "Credible explanation",
-  likely_misuse: "Likely session misuse",
-  unresolved: "Unresolved / provisional risk",
+  explained: "Approved work explains it",
+  likely_misuse: "It looks like unauthorised use",
+  unresolved: "I can’t tell yet · unresolved",
 };
 export const recordTitles: Record<string, string> = {
   "EV-01": "The unfamiliar login",

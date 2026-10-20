@@ -32,6 +32,12 @@ const packages = {
   },
 } as const;
 const stages = ["Explanation", "Evidence", "Unknowns", "Next step"];
+const questions = [
+  "Which explanation fits?",
+  "Which records support it?",
+  "What is still unknown?",
+  "What should happen next?",
+];
 export function CaseEditor({
   view,
   send,
@@ -46,6 +52,7 @@ export function CaseEditor({
   const remembered = useNavigation.getState().editor;
   const section = useRef<HTMLElement>(null);
   const wasReview = useRef(false);
+  const previousStage = useRef<number | null>(null);
   const [review, setReview] = useState(false),
     [stage, updateStage] = useState(
       remembered?.runId === view.runId ? remembered.stage : 0,
@@ -64,6 +71,15 @@ export function CaseEditor({
     useNavigation.getState().rememberEditor(view.runId, stage, next);
   };
   const d = view.draft;
+  useEffect(() => {
+    if (previousStage.current !== null && previousStage.current !== stage) {
+      const field =
+        section.current?.querySelector<HTMLFieldSetElement>("fieldset");
+      field?.scrollIntoView({ block: "start", behavior: "instant" });
+      field?.focus({ preventScroll: true });
+    }
+    previousStage.current = stage;
+  }, [stage]);
   const lastSavedNotes = useRef(d.optionalNotes);
   useEffect(() => {
     const previous = lastSavedNotes.current;
@@ -208,12 +224,10 @@ export function CaseEditor({
     );
   return (
     <section ref={section} className="panel case-editor">
-      <p className="eyebrow">Your case · S-01 only</p>
-      <h2>Build a defensible finding.</h2>
-      <p className="muted">
-        Four short steps. Everything here is free, and you can change your mind
-        before closing.
+      <p className="eyebrow">
+        Your report · part {stage + 1} of 4 · this login only
       </p>
+      <h2 tabIndex={-1}>{questions[stage]}</h2>
       <nav className="case-stages" aria-label="Case File steps">
         {stages.map((name, i) => (
           <button
@@ -232,11 +246,11 @@ export function CaseEditor({
         <span>{d.caveats.length} limitation(s)</span>
       </div>
       {stage === 0 ? (
-        <fieldset disabled={busy}>
+        <fieldset tabIndex={-1} disabled={busy}>
           <legend>01 · Working explanation</legend>
           <p>
-            Choose the finding you can currently defend. An unusual login is a
-            starting question, not a verdict.
+            Which explanation fits what you read? Choose one, then say how sure
+            you are. You can change your mind before closing the case.
           </p>
           <div className="finding-options">
             {Object.entries(dispositionLabels).map(([id, label]) => (
@@ -280,12 +294,13 @@ export function CaseEditor({
         </fieldset>
       ) : null}
       {stage === 1 ? (
-        <fieldset disabled={busy}>
+        <fieldset tabIndex={-1} disabled={busy}>
           <legend>02 · Supporting and opposing facts</legend>
           <p>
-            Cite the observations your finding relies on. Use a record to test
-            another explanation where appropriate. These are your reasoning
-            choices, not a correctness check.
+            “Cite in finding” means keep a record in your report. Mark the
+            records that support your explanation. Use “Test another
+            explanation” on a record you used to check a competing possibility,
+            then choose what that check showed.
           </p>
           <label>
             What happened to the other explanation?
@@ -318,12 +333,12 @@ export function CaseEditor({
         </fieldset>
       ) : null}
       {stage === 2 ? (
-        <fieldset disabled={busy}>
+        <fieldset tabIndex={-1} disabled={busy}>
           <legend>03 · What remains unknown</legend>
           <p>
-            Pick a limitation that matters to your finding, then link the
-            observation that explains it. You do not need to fill every
-            category.
+            What can you still not tell from the records? Pick an uncertainty
+            that matters and link the record that shows it. Leave unrelated
+            uncertainties empty.
           </p>
           {Object.entries(caveatLabels).map(([code, label]) => {
             const caveat = d.caveats.find((c) => c.code === code);
@@ -383,11 +398,12 @@ export function CaseEditor({
         </fieldset>
       ) : null}
       {stage === 3 ? (
-        <fieldset disabled={busy}>
+        <fieldset tabIndex={-1} disabled={busy}>
           <legend>04 · Next step</legend>
           <p>
-            Choose what should happen to this lead. A recommendation goes to the
-            response team; you cannot approve your own control.
+            What should happen next? Close an explained login, ask the response
+            team to end this session, or ask them to investigate the remaining
+            questions. You are making a recommendation; the team carries it out.
           </p>
           <label>
             Recommendation
@@ -450,7 +466,11 @@ export function CaseEditor({
             </button>
           ) : null}
           {stage < 3 ? (
-            <button disabled={busy} onClick={() => setStage(stage + 1)}>
+            <button
+              className="primary"
+              disabled={busy}
+              onClick={() => setStage(stage + 1)}
+            >
               Next: {stages[stage + 1]} →
             </button>
           ) : null}
