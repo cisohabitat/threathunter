@@ -1,0 +1,143 @@
+{
+  "critical": [
+    {
+      "path": "/index.html",
+      "bytes": 906,
+      "gzipBytes": 495
+    },
+    {
+      "path": "/assets/index-Os3cWnYZ.js",
+      "bytes": 544675,
+      "gzipBytes": 172529
+    },
+    {
+      "path": "/assets/schemas-D_1oD1ou.js",
+      "bytes": 92308,
+      "gzipBytes": 25841
+    },
+    {
+      "path": "/assets/validationWorker-Bqov0ZbC.js",
+      "bytes": 141001,
+      "gzipBytes": 38339
+    },
+    {
+      "path": "/assets/index-DJwf1lnu.css",
+      "bytes": 39150,
+      "gzipBytes": 8492
+    }
+  ],
+  "criticalTotalWithLargestArt": 312640,
+  "voiceBytes": 981008,
+  "soundBytes": 52748,
+  "activeCaseProfiles": [
+    {
+      "name": "M01",
+      "gzipJavaScriptBytes": 236709,
+      "files": [
+        "assets/index-Os3cWnYZ.js",
+        "assets/schemas-D_1oD1ou.js",
+        "assets/validationWorker-Bqov0ZbC.js"
+      ]
+    },
+    {
+      "name": "P1 M04/M07",
+      "gzipJavaScriptBytes": 308243,
+      "files": [
+        "assets/BackupImport-CUFyc-CJ.js",
+        "assets/Campaign-Conr-mLf.js",
+        "assets/index-Os3cWnYZ.js",
+        "assets/p1Worker-Dy-eUMu4.js",
+        "assets/schemas-D_1oD1ou.js",
+        "assets/storage-eh38Zhji.js",
+        "assets/validationWorker-Bqov0ZbC.js"
+      ]
+    },
+    {
+      "name": "Expansion/free hunts",
+      "gzipJavaScriptBytes": 340400,
+      "files": [
+        "assets/BackupImport-CUFyc-CJ.js",
+        "assets/Expansion-OIrpy-ph.js",
+        "assets/expansionWorker-DY_EKLuh.js",
+        "assets/index-Os3cWnYZ.js",
+        "assets/schemas-D_1oD1ou.js",
+        "assets/storage-Btx-_mS7.js",
+        "assets/validationWorker-Bqov0ZbC.js"
+      ]
+    }
+  ],
+  "allShippedJavaScriptGzipBytes": 430824,
+  "toolingOnlyReaders": [
+    {
+      "path": "/assets/format-D0U6tZSd.js",
+      "gzipBytes": 4166
+    },
+    {
+      "path": "/assets/format-BQPSWPhN.js",
+      "gzipBytes": 1360
+    },
+    {
+      "path": "/assets/format-icAKbXmY.js",
+      "gzipBytes": 1627
+    }
+  ],
+  "budgetMethod": "400 KiB applies to the cold active-case text graph plus loaded workers; all shipped JavaScript, including tooling-only dynamic readers, is reported separately. Initial modulepreloads are included. The core asset estimate also includes gzip HTML, CSS and the largest selected art variant.",
+  "p1Packs": [
+    {
+      "mission": "m04",
+      "voiceBytes": 883990,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m07",
+      "voiceBytes": 918942,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m02",
+      "voiceBytes": 1137900,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m03",
+      "voiceBytes": 1140878,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m05",
+      "voiceBytes": 1145110,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m06",
+      "voiceBytes": 1129437,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m08",
+      "voiceBytes": 1135863,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m09",
+      "voiceBytes": 1119875,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m10",
+      "voiceBytes": 1119562,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m11",
+      "voiceBytes": 1145580,
+      "soundBytes": 52748
+    },
+    {
+      "mission": "m12",
+      "voiceBytes": 1154357,
+      "soundBytes": 52748
+    }
+  ],
+  "physicalDevicePerformance": "not measured"
+}

@@ -862,6 +862,11 @@ export default function Campaign({
               work.
             </p>
             <div className="actions">
+              {!game.view ? (
+                <button disabled={game.busy} onClick={game.reloadSaved}>
+                  Retry saved-case inspection
+                </button>
+              ) : null}
               <button
                 disabled={
                   game.busy ||

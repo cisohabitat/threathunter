@@ -323,7 +323,7 @@ export default function Expansion({
               <button disabled={game.busy} onClick={game.playTemporarily}>
                 Continue as a temporary session
               </button>
-              {!v && game.storedAvailable ? (
+              {!v ? (
                 <button disabled={game.busy} onClick={game.reloadSaved}>
                   Retry saved-case inspection
                 </button>

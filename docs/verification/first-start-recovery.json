@@ -1,0 +1,163 @@
+{
+  "basedOnCommit": "d5775d7a20c83e01987ede40e3431e527f3654ce",
+  "candidate": {
+    "entry": "/assets/index-Os3cWnYZ.js",
+    "entrySha256": "1847e47fab57a2ae7c7e65cad48f49872e29a78d75866288073d4bed9a07c968",
+    "htmlSha256": "1a1ddd7260e528bcc40496d7199e540f5d2113e52c0085b9ca4920d8577e06b1",
+    "gddSha256": "92ca492d34ad0eaa0063a1067a10366c93f51977b734fd0535244994a0033e3e"
+  },
+  "historicalProduction": {
+    "commit": "d5775d7a20c83e01987ede40e3431e527f3654ce",
+    "productionDeployment": "dpl_ENUikyFCVmuxAAz1XAcTMZttx8Te",
+    "productionState": "READY",
+    "html": {
+      "origin": "https://threathunter-rosy.vercel.app",
+      "htmlExact": true,
+      "htmlSha256": "ef3903d3c2ed7c0c4c41edf02728a131a96669f436fb6ef69f7bcfaefeeb32db",
+      "expectedCodeCommit": "30d2d38760c4f5cb489bc19099de640dfa8b867e"
+    },
+    "assetSummary": {
+      "url": "https://threathunter-rosy.vercel.app",
+      "entry": "/assets/index-BcLx1aSl.js",
+      "entrySha256": "81a56501b8fe22bd020a36c73a6ae2b6dc227727bd36370de0dbd9d1356fe12c",
+      "matchedAssetCount": 124,
+      "directSpaRoutes": [
+        "/case/m01",
+        "/case/m02",
+        "/case/m03",
+        "/case/m04",
+        "/case/m05",
+        "/case/m06",
+        "/case/m07",
+        "/case/m08",
+        "/case/m09",
+        "/case/m10",
+        "/case/m11",
+        "/case/m12",
+        "/hunt/free"
+      ]
+    },
+    "liveAttempts": [
+      {
+        "attempt": 1,
+        "result": "failed",
+        "stage": "M02 Begin after M01 and P1 saved acquisitions/reloads",
+        "observation": "Begin remained disabled for 30000 ms",
+        "cause": "Not established; no page/lock diagnostic captured in the initial run"
+      },
+      {
+        "attempt": 2,
+        "result": "passed",
+        "changes": "Fresh temporary profile, added diagnostic logging; no application or timeout changes",
+        "details": {
+          "commit": "d5775d7a20c83e01987ede40e3431e527f3654ce",
+          "liveM01ReloadPortableEquality": true,
+          "liveP1ReloadPortableEquality": true,
+          "pageErrorCount": 0,
+          "origin": "https://threathunter-rosy.vercel.app",
+          "browser": "Firefox",
+          "trust": "Managed proxy CA in this temporary profile only; normal TLS verification",
+          "persistentTrustChanged": false,
+          "routes": [
+            "M01",
+            "M02",
+            "M03",
+            "M04",
+            "M05",
+            "M06",
+            "M07",
+            "M08",
+            "M09",
+            "M10",
+            "M11",
+            "M12"
+          ],
+          "liveM02AcquisitionTick": 1,
+          "liveReloadPortableEquality": true,
+          "liveFreeHuntMode": "free",
+          "generatorVersion": "causal-templates-xorshift32-1"
+        }
+      }
+    ],
+    "acceptance": "Overall startup/input/device/player/creative/listening gates remain open; the first live-startup failure is not claimed fixed.",
+    "ci": {
+      "url": "https://github.com/cisohabitat/threathunter/actions/runs/39445335185",
+      "commit": "d5775d7a20c83e01987ede40e3431e527f3654ce",
+      "conclusion": "success",
+      "unitChecks": 269,
+      "chromiumDesktopPhoneChecks": 130,
+      "firefoxWebkitChecks": 130
+    }
+  },
+  "additionalUnchangedBaselineLiveRepeat": {
+    "commit": "d5775d7a20c83e01987ede40e3431e527f3654ce",
+    "liveM01ReloadPortableEquality": true,
+    "liveP1ReloadPortableEquality": true,
+    "pageErrorCount": 0,
+    "origin": "https://threathunter-rosy.vercel.app",
+    "browser": "Firefox",
+    "trust": "Managed proxy CA in this temporary profile only; normal TLS verification",
+    "persistentTrustChanged": false,
+    "routes": [
+      "M01",
+      "M02",
+      "M03",
+      "M04",
+      "M05",
+      "M06",
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+      "M11",
+      "M12"
+    ],
+    "liveM02AcquisitionTick": 1,
+    "liveReloadPortableEquality": true,
+    "liveFreeHuntMode": "free",
+    "generatorVersion": "causal-templates-xorshift32-1"
+  },
+  "localRegression": {
+    "red": {
+      "failed": 1,
+      "notRun": 2,
+      "reason": "M02 retry button absent; test reached unchanged 60000 ms test deadline"
+    },
+    "green": {
+      "passed": 8,
+      "browsers": [
+        "Chromium desktop",
+        "Chromium phone emulation"
+      ],
+      "workers": 1,
+      "durationMinutes": 1.4,
+      "newFlows": [
+        "M02",
+        "M04",
+        "free"
+      ],
+      "retainedFlow": "unavailable expansion validation/raw-row export/inspection retry"
+    },
+    "assertions": [
+      "Failed worker disables Begin",
+      "Empty slot stays empty through retry",
+      "Begin writes only revision zero in the correct slot",
+      "Portable export equals stored envelope",
+      "Later failed startup preserves exact row",
+      "Restored worker retries existing row without writes"
+    ]
+  },
+  "otherLocalChecks": [
+    "lint passed",
+    "typecheck passed",
+    "production build passed",
+    "payload and tooling-import boundary budgets passed",
+    "git diff --check passed"
+  ],
+  "limits": [
+    "Intermittent live M02 disabled Begin cause remains unestablished",
+    "Recovery UI fix does not establish startup performance acceptance",
+    "No reference-device, player, assistive, creative or listening review claimed",
+    "Current exact-commit CI and Vercel publication are observed separately after push"
+  ]
+}
