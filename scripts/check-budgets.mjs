@@ -13,7 +13,7 @@ assert(workers.length === 1, "Expected the preloaded save-validation worker");
 const preloads = [
   ...html.matchAll(/<link[^>]+rel="modulepreload"[^>]+href="([^"]+)"/g),
 ].map((m) => m[1]);
-const core = [...new Set([entry, ...preloads, ...workers, ...css])].map(
+const core = [...new Set(["/index.html", entry, ...preloads, ...workers, ...css])].map(
   (path) => ({
     path,
     bytes: statSync("dist" + path).size,
@@ -32,9 +32,19 @@ function graph(key, seen = new Set()) {
   return seen;
 }
 const initialFiles = graph(roots[0]);
+const toolingReaders = [
+  "src/persistence/format.ts", "src/campaign/format.ts", "src/expansion/format.ts",
+].map((key) => {
+  const reader = manifest[key];
+  assert(reader?.isDynamicEntry, `Expected the isolated tooling save reader: ${key}`);
+  assert(!initialFiles.has(reader.file), `${key} leaked into the initial interface graph`);
+  return reader;
+});
 function profile(name, module, workerPattern) {
   const paths = new Set(initialFiles);
   if (module) for (const p of graph(module)) paths.add(p);
+  for (const reader of toolingReaders)
+    assert(!paths.has(reader.file), `${name} statically loads a tooling-only save reader`);
   for (const name of readdirSync("dist/assets"))
     if (workerPattern.test(name)) paths.add("assets/" + name);
   const bytes = [...paths]
@@ -137,8 +147,12 @@ console.log(
       soundBytes,
       activeCaseProfiles: profiles,
       allShippedJavaScriptGzipBytes: allShippedJavaScript,
+      toolingOnlyReaders: toolingReaders.map((reader) => ({
+        path: "/" + reader.file,
+        gzipBytes: gzipSync(readFileSync("dist/" + reader.file)).length,
+      })),
       budgetMethod:
-        "400 KiB applies to the cold active-case text graph plus loaded workers; all shipped JavaScript is reported separately. Initial modulepreloads are included.",
+        "400 KiB applies to the cold active-case text graph plus loaded workers; all shipped JavaScript, including tooling-only dynamic readers, is reported separately. Initial modulepreloads are included. The core asset estimate also includes gzip HTML, CSS and the largest selected art variant.",
       p1Packs,
       physicalDevicePerformance: "not measured",
     },

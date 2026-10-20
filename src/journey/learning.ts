@@ -1,5 +1,5 @@
 import { archiveMatches } from "../persistence/archive";
-import { database as m01DB } from "../persistence/saves";
+import { database as m01DB } from "../persistence/browserStore";
 import {
   validateSave,
   ValidationUnavailableError,

@@ -1,5 +1,5 @@
 import { acknowledge, type State } from "./engine";
-import { exportSave, importSave, type Envelope } from "./format";
+import type { Envelope } from "./format";
 
 type Result = { state?: State; envelope?: Envelope; text?: string };
 let worker: Worker | null = null,
@@ -35,10 +35,15 @@ export async function request(
   if (typeof Worker === "undefined") {
     if (typeof window !== "undefined") throw new ValidatorUnavailable();
     if (op === "ready") return {};
-    if (op === "import") return { state: importSave(input as string) };
+    const captured = op === "import" ? input as string
+      : op === "export" ? structuredClone(input as State)
+      : acknowledge(input as State, (input as State).view.revision);
+    // Tooling-only fallback: browser Worker failures reject above.
+    const { exportSave, importSave } = await import("./format");
+    if (op === "import") return { state: importSave(captured as string) };
     if (op === "export")
-      return { text: JSON.stringify(exportSave(input as State)) };
-    const state = acknowledge(input as State, (input as State).view.revision),
+      return { text: JSON.stringify(exportSave(captured as State)) };
+    const state = captured as State,
       envelope = exportSave(state);
     importSave(JSON.stringify(envelope));
     return { state, envelope };

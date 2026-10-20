@@ -1,3 +1,5 @@
+import { acknowledge } from "./acknowledgement";
+export { markCommitted } from "./acknowledgement";
 import { z } from "zod";
 import { importSave as readOldSnapshot } from "./legacyFormat";
 import fixture from "../content/m01.json";
@@ -79,25 +81,6 @@ export function gameplayHash(state: EngineState) {
   const { persistence: _storage, ...gameplay } = copy;
   void _storage;
   return checksum(gameplay);
-}
-function acknowledge(
-  state: EngineState,
-  committedRevision: number | null,
-): EngineState {
-  const copy = structuredClone(state);
-  copy.persistence = { committedRevision };
-  for (const entry of Object.values(copy.receipts)) {
-    entry.receipt.durability =
-      committedRevision !== null &&
-      entry.receipt.resultingRevision <= committedRevision
-        ? "committed"
-        : "memory_only";
-  }
-  return copy;
-}
-// A prepared acknowledgement is private to the transaction until commit resolves.
-export function markCommitted(state: EngineState) {
-  return acknowledge(state, state.view.revision);
 }
 export function exportLegacySave(state: EngineState): LegacySaveEnvelope {
   const data = {

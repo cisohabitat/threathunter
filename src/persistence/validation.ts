@@ -1,11 +1,6 @@
-import {
-  importSave,
-  exportSave,
-  markCommitted,
-  serializeSave,
-  type SaveEnvelope,
-} from "./format";
+import type { SaveEnvelope } from "./format";
 import type { EngineState } from "../engine/engine";
+import { markCommitted } from "./acknowledgement";
 
 export class ValidationUnavailableError extends Error {
   constructor() {
@@ -16,12 +11,6 @@ export class ValidationUnavailableError extends Error {
   }
 }
 type Result = { state?: EngineState; envelope?: SaveEnvelope; text?: string };
-function prepare(state: EngineState): Result {
-  const acknowledged = markCommitted(state);
-  const envelope = exportSave(acknowledged);
-  importSave(JSON.stringify(envelope));
-  return { state: acknowledged, envelope };
-}
 let worker: Worker | null = null;
 let sequence = 0;
 const pending = new Map<
@@ -49,14 +38,20 @@ function request(
   // Non-browser unit/authoring callers retain the same pure synchronous reader.
   if (typeof Worker === "undefined" && typeof window !== "undefined")
     return Promise.reject(new ValidationUnavailableError());
-  if (typeof Worker === "undefined")
-    return Promise.resolve().then(() =>
-      state
-        ? exportOnly
-          ? { text: serializeSave(state) }
-          : prepare(state)
-        : { state: text === undefined ? undefined : importSave(text) },
-    );
+  if (typeof Worker === "undefined") {
+    // Detach before awaiting module loading, as postMessage does in a browser.
+    const captured = state
+      ? exportOnly ? structuredClone(state) : markCommitted(state)
+      : undefined;
+    return import("./format").then((format) => {
+      if (!captured)
+        return { state: text === undefined ? undefined : format.importSave(text) };
+      if (exportOnly) return { text: format.serializeSave(captured) };
+      const envelope = format.exportSave(captured);
+      format.importSave(JSON.stringify(envelope));
+      return { state: captured, envelope };
+    });
+  }
   return new Promise((resolve, reject) => {
     try {
       if (!worker) {

@@ -1,0 +1,922 @@
+{
+  "baselineCommit": "43d9302341dc667531a6d9e2604f85fd87031b9d",
+  "method": "Source-mapped diagnostic production build, Chromium CPU sampling plus timeline tracing; 390x844, 4 Mbps / 100ms RTT / 4x CPU. Instrumentation overhead; not an acceptance timing. Event durations may nest and must not be summed across types.",
+  "mappingTool": "@jridgewell/trace-mapping 0.3.31 (existing locked development dependency)",
+  "profiles": [
+    {
+      "label": "before",
+      "diagnosticEntry": "/assets/index-XejjUdLV.js",
+      "diagnosticEntrySha256": "440417491a8684bf964140877a3d09188be2059874494ae44a7fb0b6f38b2728",
+      "sampledWallMs": 7551.632,
+      "retainedZodSelfMs": 2232.49,
+      "bySource": [
+        [
+          "(program)",
+          2215.8169999999996
+        ],
+        [
+          "node_modules/react-dom/cjs/react-dom-client.production.js",
+          624.6149999999998
+        ],
+        [
+          "node_modules/zod/v4/core/schemas.js",
+          612.087
+        ],
+        [
+          "node_modules/zod/v4/core/core.js",
+          496.6039999999999
+        ],
+        [
+          "http://127.0.0.1:4175/assets/index-XejjUdLV.js",
+          493.0370000000001
+        ],
+        [
+          "(idle)",
+          484.811
+        ],
+        [
+          "node_modules/dexie/dist/dexie.min.js",
+          401.1679999999999
+        ],
+        [
+          "node_modules/zod/v4/core/util.js",
+          386.106
+        ],
+        [
+          "node_modules/zod/v4/classic/schemas.js",
+          249.038
+        ],
+        [
+          "(garbage collector)",
+          233.58799999999994
+        ],
+        [
+          "node_modules/zod/v4/core/doc.js",
+          208.41599999999997
+        ],
+        [
+          "node_modules/zod/v4/core/memoizer.js",
+          139.47799999999998
+        ],
+        [
+          "node_modules/zod/v4/core/checks.js",
+          89.015
+        ],
+        [
+          "node_modules/motion-dom/dist/es/frameloop/batcher.mjs",
+          88.91199999999999
+        ],
+        [
+          "http://127.0.0.1:4175/assets/schemas-Dzim_TYw.js",
+          69.51200000000001
+        ],
+        [
+          "",
+          60.829
+        ],
+        [
+          "node_modules/motion-dom/dist/es/animation/waapi/easing/cubic-bezier.mjs",
+          56.509
+        ],
+        [
+          "src/journey/Journey.tsx",
+          55.257000000000005
+        ],
+        [
+          "src/app/App.tsx",
+          37.728
+        ],
+        [
+          "node_modules/motion-dom/dist/es/frameloop/render-step.mjs",
+          33.12
+        ],
+        [
+          "src/content/validate.ts",
+          32.565
+        ],
+        [
+          "node_modules/motion-dom/dist/es/render/dom/utils/camel-to-dash.mjs",
+          30.151
+        ],
+        [
+          "node_modules/scheduler/cjs/scheduler.production.js",
+          28.391
+        ],
+        [
+          "node_modules/zod/v4/core/api.js",
+          27.751999999999995
+        ],
+        [
+          "node_modules/motion-dom/dist/es/render/VisualElement.mjs",
+          25.12
+        ],
+        [
+          "InjectedScript",
+          24.657
+        ],
+        [
+          "src/app/controller.ts",
+          23.463
+        ],
+        [
+          "src/persistence/format.ts",
+          21.228
+        ],
+        [
+          "createElement",
+          17.778
+        ],
+        [
+          "src/persistence/legacyEngine.ts",
+          16.784
+        ],
+        [
+          "node_modules/react/cjs/react.production.js",
+          14.644
+        ],
+        [
+          "src/persistence/legacyFormat.ts",
+          14.374000000000002
+        ],
+        [
+          "node_modules/zod/v4/core/parse.js",
+          14.187000000000001
+        ],
+        [
+          "src/persistence/saves.ts",
+          13.912000000000003
+        ],
+        [
+          "node_modules/motion-dom/dist/es/render/utils/animation-state.mjs",
+          13.238
+        ],
+        [
+          "requestAnimationFrame",
+          11.773
+        ],
+        [
+          "node_modules/framer-motion/dist/es/motion/utils/use-visual-element.mjs",
+          11.028
+        ],
+        [
+          "node_modules/zod/v4/locales/en.js",
+          9.807
+        ],
+        [
+          "node_modules/motion-dom/dist/es/utils/supports/memo.mjs",
+          9.585
+        ],
+        [
+          "UtilityScript",
+          9.163
+        ]
+      ],
+      "traceEventSummaries": [
+        [
+          "v8.evaluateModule",
+          {
+            "count": 2,
+            "totalMs": 3739.822,
+            "maxMs": 3608.426
+          }
+        ],
+        [
+          "V8.CompileCode",
+          {
+            "count": 1241,
+            "totalMs": 2284.365999999997,
+            "maxMs": 160.278
+          }
+        ],
+        [
+          "v8.callFunction",
+          {
+            "count": 75,
+            "totalMs": 1410.956,
+            "maxMs": 525.95
+          }
+        ],
+        [
+          "v8.parseOnBackgroundParsing",
+          {
+            "count": 72,
+            "totalMs": 1266.2759999999998,
+            "maxMs": 539.143
+          }
+        ],
+        [
+          "FunctionCall",
+          {
+            "count": 74,
+            "totalMs": 1143.5139999999997,
+            "maxMs": 519.815
+          }
+        ],
+        [
+          "BackgroundJSStreamManager::RunScriptStreamingTask",
+          {
+            "count": 2,
+            "totalMs": 760.383,
+            "maxMs": 543.369
+          }
+        ],
+        [
+          "v8.parseOnBackground",
+          {
+            "count": 2,
+            "totalMs": 755.356,
+            "maxMs": 539.184
+          }
+        ],
+        [
+          "V8.ParseFunction",
+          {
+            "count": 1195,
+            "totalMs": 735.4479999999986,
+            "maxMs": 35.006
+          }
+        ],
+        [
+          "Layout",
+          {
+            "count": 5,
+            "totalMs": 650.036,
+            "maxMs": 569.627
+          }
+        ],
+        [
+          "V8.CompileIgnition",
+          {
+            "count": 1296,
+            "totalMs": 358.1849999999986,
+            "maxMs": 20.552
+          }
+        ],
+        [
+          "V8.PreParse",
+          {
+            "count": 2542,
+            "totalMs": 353.2079999999962,
+            "maxMs": 36.82
+          }
+        ],
+        [
+          "UpdateLayoutTree",
+          {
+            "count": 5,
+            "totalMs": 304.72900000000004,
+            "maxMs": 106.664
+          }
+        ],
+        [
+          "V8.ParseProgram",
+          {
+            "count": 46,
+            "totalMs": 294.22499999999997,
+            "maxMs": 150.357
+          }
+        ],
+        [
+          "BackgroundCompileTask::Run",
+          {
+            "count": 2,
+            "totalMs": 279.686,
+            "maxMs": 214.987
+          }
+        ],
+        [
+          "MinorGC",
+          {
+            "count": 7,
+            "totalMs": 247.15200000000002,
+            "maxMs": 101.617
+          }
+        ],
+        [
+          "v8.parseOnBackgroundWaiting",
+          {
+            "count": 70,
+            "totalMs": 225.33199999999997,
+            "maxMs": 15.126
+          }
+        ],
+        [
+          "V8.GCScavenger",
+          {
+            "count": 7,
+            "totalMs": 207.29699999999997,
+            "maxMs": 69.445
+          }
+        ],
+        [
+          "V8.GC_SCAVENGER",
+          {
+            "count": 7,
+            "totalMs": 190.70500000000004,
+            "maxMs": 66.843
+          }
+        ],
+        [
+          "V8.GC_SCAVENGER_SCAVENGE",
+          {
+            "count": 7,
+            "totalMs": 185.36800000000002,
+            "maxMs": 66.788
+          }
+        ],
+        [
+          "V8.MaglevTask",
+          {
+            "count": 51,
+            "totalMs": 183.928,
+            "maxMs": 29.619
+          }
+        ],
+        [
+          "V8.MaglevBackground",
+          {
+            "count": 39,
+            "totalMs": 149.03199999999995,
+            "maxMs": 28.722
+          }
+        ],
+        [
+          "V8.CompileIgnitionFinalization",
+          {
+            "count": 1266,
+            "totalMs": 141.81500000000182,
+            "maxMs": 24.607
+          }
+        ],
+        [
+          "LocalWindowProxy::Initialize",
+          {
+            "count": 2,
+            "totalMs": 118.388,
+            "maxMs": 76.437
+          }
+        ],
+        [
+          "FlushInstructionCache",
+          {
+            "count": 1967,
+            "totalMs": 116.55700000000476,
+            "maxMs": 15.303
+          }
+        ],
+        [
+          "V8.FinalizeBaselineConcurrentCompilation",
+          {
+            "count": 81,
+            "totalMs": 101.824,
+            "maxMs": 19.514
+          }
+        ],
+        [
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          {
+            "count": 7,
+            "totalMs": 96.738,
+            "maxMs": 48.455
+          }
+        ],
+        [
+          "V8.Maglev.GraphBuilding",
+          {
+            "count": 39,
+            "totalMs": 91.32400000000001,
+            "maxMs": 28.044
+          }
+        ],
+        [
+          "V8.FinalizeMaglevConcurrentCompilation",
+          {
+            "count": 27,
+            "totalMs": 73.91000000000001,
+            "maxMs": 24.614
+          }
+        ],
+        [
+          "Paint",
+          {
+            "count": 5,
+            "totalMs": 69.96300000000001,
+            "maxMs": 42.698
+          }
+        ],
+        [
+          "v8.compileModule",
+          {
+            "count": 3,
+            "totalMs": 61.778000000000006,
+            "maxMs": 45.853
+          }
+        ],
+        [
+          "HTMLDocumentParser::MaybeFetchQueuedPreloads",
+          {
+            "count": 1,
+            "totalMs": 61.743,
+            "maxMs": 61.743
+          }
+        ],
+        [
+          "LocalWindowProxy::CreateContext",
+          {
+            "count": 2,
+            "totalMs": 59.489000000000004,
+            "maxMs": 39.485
+          }
+        ],
+        [
+          "V8.DeserializeContext",
+          {
+            "count": 3,
+            "totalMs": 57.429,
+            "maxMs": 37.425
+          }
+        ],
+        [
+          "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          {
+            "count": 4,
+            "totalMs": 55.064,
+            "maxMs": 42.093
+          }
+        ],
+        [
+          "V8.TurbofanTask",
+          {
+            "count": 3,
+            "totalMs": 54.262,
+            "maxMs": 24.502
+          }
+        ]
+      ]
+    },
+    {
+      "label": "after",
+      "diagnosticEntry": "/assets/index-CMOh-_2_.js",
+      "diagnosticEntrySha256": "d3dafa1e3de7ec1d4b1025e73c85ec56c986587fac13f1be7f6847677a485b99",
+      "sampledWallMs": 10848.598,
+      "retainedZodSelfMs": 502.194,
+      "bySource": [
+        [
+          "(program)",
+          6558.239
+        ],
+        [
+          "node_modules/react-dom/cjs/react-dom-client.production.js",
+          1384.0099999999989
+        ],
+        [
+          "createElement",
+          573.3489999999999
+        ],
+        [
+          "(idle)",
+          478.4330000000001
+        ],
+        [
+          "node_modules/dexie/dist/dexie.min.js",
+          471.8250000000001
+        ],
+        [
+          "src/app/main.tsx",
+          324.99300000000005
+        ],
+        [
+          "node_modules/zod/v4/core/doc.js",
+          172.37199999999999
+        ],
+        [
+          "node_modules/zod/v4/core/schemas.js",
+          119.73000000000002
+        ],
+        [
+          "http://127.0.0.1:4175/assets/index-CMOh-_2_.js",
+          108.72399999999998
+        ],
+        [
+          "node_modules/zod/v4/core/util.js",
+          80.452
+        ],
+        [
+          "node_modules/zod/v4/core/core.js",
+          67.032
+        ],
+        [
+          "node_modules/react/cjs/react.production.js",
+          57.212
+        ],
+        [
+          "(garbage collector)",
+          54.02100000000001
+        ],
+        [
+          "addEventListener",
+          37.696
+        ],
+        [
+          "",
+          31.186999999999998
+        ],
+        [
+          "src/app/App.tsx",
+          29.922
+        ],
+        [
+          "node_modules/zod/v4/classic/schemas.js",
+          29.492
+        ],
+        [
+          "node_modules/zod/v4/core/memoizer.js",
+          26.866
+        ],
+        [
+          "appendChild",
+          22.977000000000004
+        ],
+        [
+          "node_modules/scheduler/cjs/scheduler.production.js",
+          17.142
+        ],
+        [
+          "node_modules/motion-dom/dist/es/value/utils/is-motion-value.mjs",
+          14.378
+        ],
+        [
+          "node_modules/motion-dom/dist/es/render/VisualElement.mjs",
+          14.303
+        ],
+        [
+          "src/content/validate.ts",
+          12.504
+        ],
+        [
+          "get Temporal",
+          9.659
+        ],
+        [
+          "matchMedia",
+          7.566
+        ],
+        [
+          "node_modules/react/cjs/react-jsx-runtime.production.js",
+          7.184999999999999
+        ],
+        [
+          "InjectedScript",
+          6.861000000000001
+        ],
+        [
+          "querySelector",
+          6.445
+        ],
+        [
+          "node_modules/zod/v4/core/checks.js",
+          6.25
+        ],
+        [
+          "predicate",
+          5.965
+        ],
+        [
+          "querySelectorAll",
+          4.79
+        ],
+        [
+          "getElementById",
+          4.72
+        ],
+        [
+          "src/app/controller.ts",
+          4.617
+        ],
+        [
+          "node_modules/motion-dom/dist/es/frameloop/render-step.mjs",
+          4.611
+        ],
+        [
+          "node_modules/framer-motion/dist/es/motion/index.mjs",
+          4.453
+        ],
+        [
+          "node_modules/motion-dom/dist/es/render/utils/is-controlling-variants.mjs",
+          4.442
+        ],
+        [
+          "node_modules/motion-dom/dist/es/value/types/numbers/units.mjs",
+          4.427
+        ],
+        [
+          "requestAnimationFrame",
+          4.27
+        ],
+        [
+          "node_modules/motion-dom/dist/es/animation/waapi/easing/cubic-bezier.mjs",
+          4.227
+        ],
+        [
+          "node_modules/framer-motion/dist/es/motion/features/definitions.mjs",
+          4.186
+        ]
+      ],
+      "traceEventSummaries": [
+        [
+          "v8.callFunction",
+          {
+            "count": 71,
+            "totalMs": 2888.7929999999997,
+            "maxMs": 2278.943
+          }
+        ],
+        [
+          "FunctionCall",
+          {
+            "count": 70,
+            "totalMs": 2613.1769999999988,
+            "maxMs": 2260.392
+          }
+        ],
+        [
+          "v8.parseOnBackgroundParsing",
+          {
+            "count": 7,
+            "totalMs": 2454.48,
+            "maxMs": 1814.676
+          }
+        ],
+        [
+          "BackgroundJSStreamManager::RunScriptStreamingTask",
+          {
+            "count": 2,
+            "totalMs": 2384.761,
+            "maxMs": 1815.528
+          }
+        ],
+        [
+          "v8.parseOnBackground",
+          {
+            "count": 2,
+            "totalMs": 2383.901,
+            "maxMs": 1814.689
+          }
+        ],
+        [
+          "BackgroundCompileTask::Run",
+          {
+            "count": 2,
+            "totalMs": 1825.526,
+            "maxMs": 1814.209
+          }
+        ],
+        [
+          "V8.CompileCode",
+          {
+            "count": 1231,
+            "totalMs": 1655.9409999999953,
+            "maxMs": 306.123
+          }
+        ],
+        [
+          "LocalWindowProxy::Initialize",
+          {
+            "count": 2,
+            "totalMs": 1312.81,
+            "maxMs": 1186.234
+          }
+        ],
+        [
+          "v8.evaluateModule",
+          {
+            "count": 2,
+            "totalMs": 1107.455,
+            "maxMs": 1000.455
+          }
+        ],
+        [
+          "v8.parseOnBackgroundWaiting",
+          {
+            "count": 5,
+            "totalMs": 1005.308,
+            "maxMs": 493.816
+          }
+        ],
+        [
+          "V8.PreParse",
+          {
+            "count": 2521,
+            "totalMs": 1003.3449999999777,
+            "maxMs": 765.124
+          }
+        ],
+        [
+          "InstallConditionalFeatures",
+          {
+            "count": 2,
+            "totalMs": 977.676,
+            "maxMs": 964.47
+          }
+        ],
+        [
+          "Layout",
+          {
+            "count": 5,
+            "totalMs": 655.402,
+            "maxMs": 636.284
+          }
+        ],
+        [
+          "Paint",
+          {
+            "count": 5,
+            "totalMs": 596.7969999999999,
+            "maxMs": 426.46
+          }
+        ],
+        [
+          "UpdateLayoutTree",
+          {
+            "count": 5,
+            "totalMs": 490.83599999999996,
+            "maxMs": 347.484
+          }
+        ],
+        [
+          "V8.ParseFunction",
+          {
+            "count": 1185,
+            "totalMs": 429.8179999999989,
+            "maxMs": 97.069
+          }
+        ],
+        [
+          "ParseHTML",
+          {
+            "count": 4,
+            "totalMs": 311.244,
+            "maxMs": 309.833
+          }
+        ],
+        [
+          "V8.MaglevTask",
+          {
+            "count": 32,
+            "totalMs": 297.82,
+            "maxMs": 97.913
+          }
+        ],
+        [
+          "V8.CompileIgnition",
+          {
+            "count": 1287,
+            "totalMs": 283.3779999999991,
+            "maxMs": 51.203
+          }
+        ],
+        [
+          "V8.MaglevBackground",
+          {
+            "count": 37,
+            "totalMs": 275.65900000000005,
+            "maxMs": 34.534
+          }
+        ],
+        [
+          "V8.ParseProgram",
+          {
+            "count": 46,
+            "totalMs": 233.72399999999996,
+            "maxMs": 133.476
+          }
+        ],
+        [
+          "PrePaint",
+          {
+            "count": 28,
+            "totalMs": 223.89399999999995,
+            "maxMs": 211.66
+          }
+        ],
+        [
+          "V8.Maglev.GraphBuilding",
+          {
+            "count": 37,
+            "totalMs": 168.88500000000002,
+            "maxMs": 25.084
+          }
+        ],
+        [
+          "LocalWindowProxy::CreateContext",
+          {
+            "count": 2,
+            "totalMs": 115.986,
+            "maxMs": 98.622
+          }
+        ],
+        [
+          "V8.DeserializeContext",
+          {
+            "count": 3,
+            "totalMs": 77.124,
+            "maxMs": 58.569
+          }
+        ],
+        [
+          "V8.CompileIgnitionFinalization",
+          {
+            "count": 1227,
+            "totalMs": 76.03500000000078,
+            "maxMs": 25.808
+          }
+        ],
+        [
+          "V8.FinalizeBaselineConcurrentCompilation",
+          {
+            "count": 75,
+            "totalMs": 75.50200000000001,
+            "maxMs": 19.005
+          }
+        ],
+        [
+          "V8.TurbofanTask",
+          {
+            "count": 1,
+            "totalMs": 75.367,
+            "maxMs": 75.367
+          }
+        ],
+        [
+          "V8.OptimizeBackground",
+          {
+            "count": 1,
+            "totalMs": 75.343,
+            "maxMs": 75.343
+          }
+        ],
+        [
+          "ParseAuthorStyleSheet",
+          {
+            "count": 1,
+            "totalMs": 75.318,
+            "maxMs": 75.318
+          }
+        ],
+        [
+          "FlushInstructionCache",
+          {
+            "count": 1915,
+            "totalMs": 71.00499999999914,
+            "maxMs": 24.194
+          }
+        ],
+        [
+          "v8.compileModule",
+          {
+            "count": 3,
+            "totalMs": 70.156,
+            "maxMs": 34.311
+          }
+        ],
+        [
+          "EventDispatch",
+          {
+            "count": 28,
+            "totalMs": 65.856,
+            "maxMs": 29.674
+          }
+        ],
+        [
+          "MinorGC",
+          {
+            "count": 5,
+            "totalMs": 63.028,
+            "maxMs": 23.165
+          }
+        ],
+        [
+          "V8.GCScavenger",
+          {
+            "count": 5,
+            "totalMs": 62.232,
+            "maxMs": 23.046
+          }
+        ]
+      ]
+    }
+  ],
+  "parity": {
+    "cases": 20,
+    "sha256": "56687c867650800f9d79044bd56f1a78d393d678e61dc208f06e7defe4aaf38f",
+    "exactParity": true
+  },
+  "limits": "One instrumented run per revision on a shared host. Self weights are wall-time CPU samples, not calibrated CPU time. Zod totals sum the retained top-source rows, not every possible small source. Trace events overlap/nest and cannot be added across types. Diagnostic source-map builds have extra footer bytes and are not production artifacts. Lower schema/module work does not establish faster overall startup: sampled wall time rose in the second run with much more unattributed program time. No GDD/device acceptance inferred.",
+  "reproduction": {
+    "diagnosticBuild": "npx vite build --sourcemap --outDir /tmp/threat-hunter-cpu-dist",
+    "preview": "npx vite preview --host 127.0.0.1 --port 4175 --strictPort --outDir /tmp/threat-hunter-cpu-dist",
+    "capture": "CDP Profiler.enable/start before cold navigation; stop after enabled Begin and decoded art. Concurrent Tracing categories devtools.timeline,v8,disabled-by-default-v8.compile. Fresh browser process per diagnostic. Cache disabled, 4x CPU, 4 Mbps down / 1 Mbps up / 100 ms RTT.",
+    "mapping": "OriginalPositionFor maps generated call-frame line+1 and column through Vite source maps. Self weights sum timeDeltas/1000 by sampled node; group by mapped original source. Event durations are raw duration summaries across the recorded trace, including overlapping threads/tasks."
+  },
+  "scope": "Before/after M01-only reader separation. The later analogous P1/expansion adapter splits are not represented by these diagnostic artifacts; final cold-load/budget reports use their own exact final bundle hashes."
+}

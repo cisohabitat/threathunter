@@ -21,7 +21,7 @@ import {
   clearSave,
   downloadSave,
   validateSave,
-} from "../persistence/saves";
+} from "../persistence/browserStore";
 import { ValidationUnavailableError } from "../persistence/validation";
 export function useGame() {
   const replayWorld = useRef<EngineState["world"] | null>(null);
