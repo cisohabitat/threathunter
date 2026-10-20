@@ -7,6 +7,7 @@ import { AudioPanel } from "../ui/AudioPanel";
 import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { audioPacks, cueMaps, findingCue } from "./audio";
 import { CampaignDebrief } from "./Debrief";
+import { CampaignGuide, CampaignFieldGuide } from "./Guide";
 
 import {
   claimLabels,
@@ -104,6 +105,7 @@ function Scope({ view, game }: { view: View; game: Game }) {
       <label>
         Investigation scope
         <select
+          id={`${view.missionId}-help-scope`}
           value={view.scope}
           disabled={game.blocked}
           onChange={(e) =>
@@ -156,7 +158,12 @@ function Investigation({ view, game }: { view: View; game: Game }) {
                 (a) => a.queryId === q.id && a.targetId === view.scope,
               );
             return (
-              <article className="question" key={q.id}>
+              <article
+                className="question"
+                key={q.id}
+                id={`${view.missionId}-help-${q.id}`}
+                tabIndex={-1}
+              >
                 <h3>{q.label}</h3>
                 <p>{q.can}</p>
                 <p className="muted">Limit: {q.cannot}</p>
@@ -184,7 +191,11 @@ function Investigation({ view, game }: { view: View; game: Game }) {
           })}
         </div>
       </section>
-      <section className="panel">
+      <section
+        className="panel"
+        id={`${view.missionId}-help-collection`}
+        tabIndex={-1}
+      >
         <h2>Future-only collection</h2>
         <p>
           Activation takes two steps. The stated window starts at completion; it
@@ -316,7 +327,11 @@ function CaseFile({ view, game }: { view: View; game: Game }) {
     void update({ ...finding, handoff, owner, followup });
   }
   return (
-    <section className="panel">
+    <section
+      className="panel"
+      id={`${view.missionId}-help-finding`}
+      tabIndex={-1}
+    >
       <p className="eyebrow">A finding is more than a verdict</p>
       <h2>Your Case File</h2>
       <p>
@@ -617,7 +632,9 @@ function Timeline({ view, game }: { view: View; game: Game }) {
         opportunities, not minutes.
       </p>
       <HistoryTimeline items={view.history} />
-      <h3>Pending verification</h3>
+      <h3 id={`${view.missionId}-help-pending`} tabIndex={-1}>
+        Pending verification
+      </h3>
       {view.pending.length ? (
         view.pending.map((c) => (
           <p key={c.id}>
@@ -681,6 +698,17 @@ export default function Campaign({
     requestAnimationFrame(() => {
       window.scrollTo({ top: scroll.current[next] ?? 0, behavior: "instant" });
       heading.current?.focus({ preventScroll: true });
+    });
+  }
+  function showHelp(
+    screen: "Investigate" | "Case File" | "Timeline",
+    target: string,
+  ) {
+    navigate(screen);
+    requestAnimationFrame(() => {
+      const element = document.getElementById(`${missionId}-help-${target}`);
+      element?.focus({ preventScroll: true });
+      element?.scrollIntoView({ block: "center", behavior: "instant" });
     });
   }
   return (
@@ -896,6 +924,17 @@ export default function Campaign({
             <p>{pack.question}</p>
           </div>
         </div>
+        {game.view ? (
+          <>
+            <CampaignGuide
+              key={game.view.runId}
+              view={game.view}
+              audio={audio}
+              show={showHelp}
+            />
+            <CampaignFieldGuide view={game.view} />
+          </>
+        ) : null}
         {!game.view ? (
           <section className="panel">
             <h2>Your starting question</h2>

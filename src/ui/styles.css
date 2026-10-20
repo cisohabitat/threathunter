@@ -1581,6 +1581,11 @@ summary {
   }
 }
 
+.campaign-shell [id*="-help-"]:focus {
+  outline: 3px solid var(--color-accent, #64dce2);
+  outline-offset: 5px;
+  scroll-margin-block: 6rem;
+}
 .field-guide dt {
   font-weight: 650;
   margin-top: 1rem;

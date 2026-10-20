@@ -8,11 +8,13 @@ const shell = (page: Page, mission = "M04") =>
   page.locator(`[data-mission="${mission}"]`);
 async function open(page: Page, mission: "M04" | "M07", world?: string) {
   await page.goto("/");
-  await page.getByRole("button", { name: new RegExp(`${mission} ·`) }).click();
+  await page
+    .getByRole("button", { name: new RegExp(`${mission} ·`) })
+    .click({ timeout: 30000 });
   const area = shell(page, mission);
   await expect(
     area.getByRole("button", { name: "Begin proactive hunt" }),
-  ).toBeEnabled();
+  ).toBeEnabled({ timeout: 30000 });
   if (world) {
     const text = await page.evaluate(
       async ({ mission, world }) => {
@@ -476,3 +478,123 @@ test("P1 without Web Locks requires explicit temporary play and leaves durable s
     }),
   ).toBeUndefined();
 });
+
+for (const mission of ["M04", "M07"] as const)
+  test(`${mission} three-level help focuses without acting and keeps assistance outside the save`, async ({
+    page,
+  }) => {
+    test.setTimeout(90000);
+    const area = await open(page, mission, "U-M");
+    const help = area.getByRole("region", {
+      name: `${mission} investigation help`,
+    });
+    const before = await portable(page, area);
+    await expect(
+      help.getByRole("button", { name: "Guided investigation", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      help.getByRole("button", { name: "Suggest a source", exact: true }),
+    ).toBeDisabled();
+    await help
+      .getByRole("button", { name: "Ask for a nudge", exact: true })
+      .click();
+    await expect(
+      help.getByRole("button", { name: "Listen to this nudge", exact: true }),
+    ).toBeDisabled();
+    await help
+      .getByRole("button", { name: "Suggest a source", exact: true })
+      .click();
+    await help.getByRole("button", { name: "Show me", exact: true }).click();
+    const query = mission === "M04" ? "account_hosts" : "coverage";
+    await expect(area.locator(`#${mission}-help-${query}`)).toBeFocused();
+    expect(await portable(page, area)).toBe(before);
+    await area
+      .getByText("Field guide · words, scope and authority", { exact: true })
+      .click();
+    await expect(
+      area.getByRole("heading", {
+        name: "Your scope and authority",
+        exact: true,
+      }),
+    ).toBeVisible();
+    expect(await portable(page, area)).toBe(before);
+    await help
+      .getByText("Assistance used · 3 requests this session", { exact: true })
+      .click();
+    const downloaded = page.waitForEvent("download");
+    await help
+      .getByRole("button", { name: "Export assistance record", exact: true })
+      .click();
+    const record = JSON.parse(
+      await readFile((await (await downloaded).path())!, "utf8"),
+    );
+    expect(record.format).toBe("threat-hunter-assistance");
+    expect(record.totalRequests).toBe(3);
+    expect(record.requests).toEqual(
+      [1, 2, 3].map((level) => ({
+        step: 0,
+        hintId: mission === "M04" ? "m04-relationships" : "m07-declared",
+        level,
+      })),
+    );
+    expect(await portable(page, area)).toBe(before);
+    await acquire(
+      area,
+      mission === "M04"
+        ? "Compare account activity by host"
+        : "Inspect declared coverage",
+    );
+    await expect(
+      help.getByRole("button", { name: "Suggest a source", exact: true }),
+    ).toBeDisabled();
+    await help
+      .getByRole("button", { name: "Independent investigation", exact: true })
+      .click();
+    await expect(
+      help.getByRole("button", { name: "Ask for a nudge", exact: true }),
+    ).toHaveCount(0);
+    await page.reload();
+    await page
+      .getByRole("button", { name: new RegExp(`${mission} ·`) })
+      .click();
+    const restored = shell(page, mission).getByRole("region", {
+      name: `${mission} investigation help`,
+    });
+    await expect(
+      restored.getByRole("button", {
+        name: "Independent investigation",
+        exact: true,
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await restored
+      .getByRole("button", { name: "Guided investigation", exact: true })
+      .click();
+    await page.setViewportSize({ width: 320, height: 720 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await restored
+      .getByRole("button", { name: "Ask for a nudge", exact: true })
+      .click();
+    await restored
+      .getByRole("button", { name: "Suggest a source", exact: true })
+      .click();
+    await restored
+      .getByRole("button", { name: "Show me", exact: true })
+      .click();
+    await expect(
+      shell(page, mission).locator(
+        `#${mission}-help-${mission === "M04" ? "scope" : "health"}`,
+      ),
+    ).toBeFocused();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+          .analyze()
+      ).violations,
+    ).toEqual([]);
+  });

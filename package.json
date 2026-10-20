@@ -18,7 +18,8 @@
     "test:e2e:cross": "playwright test --config playwright.cross.config.ts",
     "verify:crash": "node scripts/verify-crash.mjs",
     "verify:history": "node scripts/verify-save-history.mjs",
-    "verify:campaign": "node scripts/verify-campaign.mjs"
+    "verify:campaign": "node scripts/verify-campaign.mjs",
+    "verify:guidance": "node scripts/verify-guidance.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.3.3",

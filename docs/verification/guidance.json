@@ -1,0 +1,34 @@
+{
+  "buildBundle": "/assets/index-BwJRKkli.js",
+  "bundleSha256": "18306b9f81206cf1ff2611aa0644e79f0b454f5a3441904416572aec6d4f24e1",
+  "browser": "156.0.8078.4",
+  "method": "Linux Chromium production preview, phone/tablet viewports, reduced motion. Real help/focus, separate export, field-guide reading and opted-in offline nudge; complete portable bytes identical before/after. No physical-device or human review claim.",
+  "missions": [
+    {
+      "mission": "M04",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "focusedAnchor": "M04-help-account_hosts",
+      "saveUnchanged": true,
+      "offlineNudge": true,
+      "transcript": "Morgan: Start with the account and its usual application host. Query its recorded connections before choosing where to narrow your hunt.",
+      "assistanceRequests": 3
+    },
+    {
+      "mission": "M07",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "focusedAnchor": "M07-help-coverage",
+      "saveUnchanged": true,
+      "offlineNudge": true,
+      "transcript": "Morgan: Compare what the collection map promises with what the delivery ledger actually received. A setting marked active is not delivery evidence.",
+      "assistanceRequests": 3
+    }
+  ]
+}
