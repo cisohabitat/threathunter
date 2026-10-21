@@ -26,7 +26,7 @@ export function AudioPanel({
         <button aria-expanded={open} onClick={() => setOpen(!open)}>
           Voice & sound
         </button>
-        <span aria-live="polite">
+        <span className="audio-status" aria-live="polite">
           {audio.phase === "loading"
             ? "Loading voice pack…"
             : audio.phase === "ready"

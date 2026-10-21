@@ -9,6 +9,7 @@ import {
 } from "../domain/contracts";
 import type { Screen } from "../stores/view";
 import { GuidedReport } from "./GuidedReport";
+import { SourceIcon } from "./SourceIcon";
 import { Observation } from "./Observation";
 import { investigationFlow, toggleReference } from "./investigationFlow";
 
@@ -18,6 +19,7 @@ const enquiries = [
     record: "EV-04",
     question: "Was overnight work approved?",
     source: "Work register",
+    sourceId: "change_record",
     purpose:
       "Look for permission matching this account, computer, time and task.",
     limit: "Permission alone does not identify who used the account.",
@@ -27,6 +29,7 @@ const enquiries = [
     record: "EV-03",
     question: "Is this a known work computer?",
     source: "Device registry",
+    sourceId: "registry",
     purpose:
       "Check whether this client maps to a registered organisation device.",
     limit: "Registration alone does not identify the person using it.",
@@ -36,6 +39,7 @@ const enquiries = [
     record: "EV-05",
     question: "What did the account do afterward?",
     source: "Application audit",
+    sourceId: "application_audit",
     purpose:
       "Follow this session’s recorded activity through the current step.",
     limit:
@@ -268,7 +272,10 @@ export function GuidedInvestigation({
                       (q.id !== "Q-F" || acquired.snapshotCutoff === view.tick);
                     return (
                       <article key={q.id}>
-                        <h2>{q.question}</h2>
+                        <h2>
+                          <SourceIcon source={q.sourceId} />
+                          {q.question}
+                        </h2>
                         <p>{q.purpose}</p>
                         <small>
                           {q.source} · account U-01 / session S-01 ·{" "}

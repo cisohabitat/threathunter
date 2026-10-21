@@ -125,8 +125,19 @@ test("direct evidence actions and four reporting steps produce the reference exp
         "You cited both the unfamiliar session and the account’s normal sign-in pattern.",
       ),
   ).toBeVisible();
+  await page
+    .locator(".score-breakdown")
+    .getByRole("link", { name: /^The unfamiliar login ·/ })
+    .first()
+    .click();
+  await expect(page.locator(".evidence-reconstruction")).toHaveAttribute(
+    "open",
+    "",
+  );
+  await expect(page.locator("#known-record-0")).toBeInViewport();
   await page.reload();
   await page.getByRole("button", { name: "Resume investigation" }).click();
+  await page.getByText("Your reasoning and lessons", { exact: true }).click();
   await expect(
     page.getByText("The finding applies to this session only."),
   ).toBeVisible();
@@ -168,6 +179,11 @@ test("activity refresh retains the earlier snapshot and debrief hides later obse
     .last()
     .click();
   await page.getByRole("button", { name: "Confirm and close case" }).click();
+  await page
+    .getByText("Evidence reconstruction · records and timeline", {
+      exact: true,
+    })
+    .click();
   const known = page
     .getByRole("heading", { name: "Known at your decision", exact: true })
     .locator("..");

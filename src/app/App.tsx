@@ -155,71 +155,73 @@ export default function App({
           Skip to main content
         </a>
         <div className={`app-shell m01-shell${guided ? " guided-play" : ""}`}>
-          <header className="topbar">
-            <button
-              className="wordmark"
-              onClick={() => setHome(true)}
-              aria-label="Threat Hunter Silent Intrusion home"
-            >
-              <span className="logo-mark" aria-hidden="true">
-                ⌖
-              </span>
-              <span>
-                THREAT HUNTER <small>SILENT INTRUSION</small>
-              </span>
-            </button>
-            <div className="header-meta">
-              <span className="build-badge">INTERNAL BUILD · 0.1</span>
-              {v ? (
-                <span>
-                  STEP <strong>{v.tick.toString().padStart(2, "0")}</strong> ·{" "}
-                  {v.pendingChecks.length} pending
+          <div className="utility-header">
+            <header className="topbar">
+              <button
+                className="wordmark"
+                onClick={() => setHome(true)}
+                aria-label="Threat Hunter Silent Intrusion home"
+              >
+                <span className="logo-mark" aria-hidden="true">
+                  ⌖
                 </span>
-              ) : (
-                <span>NORTHSTAR SERVICES</span>
-              )}
+                <span>
+                  THREAT HUNTER <small>SILENT INTRUSION</small>
+                </span>
+              </button>
+              <div className="header-meta">
+                <span className="build-badge">INTERNAL BUILD · 0.1</span>
+                {v ? (
+                  <span>
+                    STEP <strong>{v.tick.toString().padStart(2, "0")}</strong> ·{" "}
+                    {v.pendingChecks.length} pending
+                  </span>
+                ) : (
+                  <span>NORTHSTAR SERVICES</span>
+                )}
+              </div>
+            </header>
+            <div
+              className="save-strip"
+              role="region"
+              aria-label="Save and readiness"
+            >
+              <span role="status">{game.busy ? "Working…" : game.status}</span>
+              <div>
+                {v ? (
+                  <button onClick={game.export}>Export save</button>
+                ) : (
+                  <label className="file-button">
+                    Import save
+                    <input
+                      type="file"
+                      accept="application/json"
+                      disabled={
+                        (!game.writerAvailable && !game.temporary) ||
+                        game.busy ||
+                        game.readOnly ||
+                        Boolean(game.recovery && !game.temporary)
+                      }
+                      onChange={(e) => importFile(e.target.files?.[0])}
+                    />
+                  </label>
+                )}
+                {game.recovery || game.archived ? (
+                  <button onClick={game.exportOriginal}>
+                    Export recovery original
+                  </button>
+                ) : null}
+                <span className="art-readiness">
+                  {artReady
+                    ? "Case ready · optional sound below"
+                    : artUnavailable
+                      ? "Text ready · artwork unavailable"
+                      : "Text ready · preparing artwork"}
+                </span>
+              </div>
             </div>
-          </header>
-          <div
-            className="save-strip"
-            role="region"
-            aria-label="Save and readiness"
-          >
-            <span role="status">{game.busy ? "Working…" : game.status}</span>
-            <div>
-              {v ? (
-                <button onClick={game.export}>Export save</button>
-              ) : (
-                <label className="file-button">
-                  Import save
-                  <input
-                    type="file"
-                    accept="application/json"
-                    disabled={
-                      (!game.writerAvailable && !game.temporary) ||
-                      game.busy ||
-                      game.readOnly ||
-                      Boolean(game.recovery && !game.temporary)
-                    }
-                    onChange={(e) => importFile(e.target.files?.[0])}
-                  />
-                </label>
-              )}
-              {game.recovery || game.archived ? (
-                <button onClick={game.exportOriginal}>
-                  Export recovery original
-                </button>
-              ) : null}
-              <span className="art-readiness">
-                {artReady
-                  ? "Case ready · optional sound below"
-                  : artUnavailable
-                    ? "Text ready · artwork unavailable"
-                    : "Text ready · preparing artwork"}
-              </span>
-            </div>
+            <AudioPanel audio={audio} debrief={game.debrief} />
           </div>
-          <AudioPanel audio={audio} debrief={game.debrief} />
           {game.readOnly && !game.busy ? (
             <div className="notice">
               Read-only: another tab owns the active save. Close that tab and

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Observation } from "./Observation";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
   CompareButton,
@@ -43,6 +44,7 @@ export function Debrief({
   busy: boolean;
 }) {
   const [through, setThrough] = useState(data.closeTick);
+  const [evidenceOpen, setEvidenceOpen] = useState(false);
   const supported =
     data.quality.reasons.find((r) => r.ruleId === "evidence.support")!.points >
     0;
@@ -122,8 +124,29 @@ export function Debrief({
           hidden actor and later operational outcome do not change it.
         </p>
       </section>
+      <div className="debrief-next">
+        <p className="eyebrow">Take into your next case</p>
+        <p>
+          {(takeaways[0] ?? strengths[0])?.feedback ??
+            "Keep your next finding tied to the records you can actually observe."}
+        </p>
+        <button
+          className="quiet-edit"
+          onClick={() => {
+            setEvidenceOpen(true);
+            requestAnimationFrame(() =>
+              document
+                .getElementById("decision-evidence")
+                ?.scrollIntoView({ block: "start" }),
+            );
+          }}
+        >
+          Review the evidence ↓
+        </button>
+      </div>
       <div className="debrief-grid">
-        <section className="panel">
+        <details className="panel reasoning-details">
+          <summary>Your reasoning and lessons</summary>
           <p className="eyebrow">Your reasoning</p>
           <h2>What you considered</h2>
           <p>{alternativeLabels[data.finding.alternativeStatus]}</p>
@@ -149,7 +172,7 @@ export function Debrief({
           {(takeaways.length ? takeaways : strengths).map((r) => (
             <p key={r.ruleId}>{r.feedback}</p>
           ))}
-        </section>
+        </details>
         <section className="panel">
           <p className="eyebrow">Operational outcome · separate from quality</p>
           <h2>After your handoff</h2>
@@ -229,7 +252,13 @@ export function Debrief({
           </p>
         ))}
       </details>
-      <section className="panel">
+      <details
+        className="panel evidence-reconstruction"
+        id="decision-evidence"
+        open={evidenceOpen}
+        onToggle={(event) => setEvidenceOpen(event.currentTarget.open)}
+      >
+        <summary>Evidence reconstruction · records and timeline</summary>
         <p className="eyebrow">Evidence reconstruction</p>
         <h2>Known at your decision</h2>
         <p>
@@ -289,16 +318,12 @@ export function Debrief({
               >
                 <div className="record-top">
                   <span>
-                    {recordTitles[r.ref.recordId]} ·{" "}
-                    {sourceLabels[r.sourceId] ?? r.sourceId}
-                  </span>
-                  <span>
                     {cited.has(refKey(r.ref))
                       ? "Cited in your finding"
                       : "Not cited in your finding"}
                   </span>
                 </div>
-                <p>{r.observation}</p>
+                <Observation record={r} />
                 <CompareButton reference={r.ref} />
                 <small>
                   Collected through step {r.snapshotCutoff} · delivered at step{" "}
@@ -314,58 +339,61 @@ export function Debrief({
           <summary>Your investigation timeline</summary>
           <HistoryTimeline items={history} />
         </details>
-      </section>
-      <div className="debrief-grid">
-        <section className="panel">
-          <p className="eyebrow">Could have been checked</p>
-          <h2>Other available questions</h2>
-          {notChecked.length ? (
-            notChecked.map(([, label, why]) => (
-              <p key={label}>
-                <strong>{label}.</strong> {why}
+      </details>
+      <details className="panel investigation-limits">
+        <summary>Other questions and visibility limits</summary>
+        <div className="debrief-grid">
+          <section className="panel">
+            <p className="eyebrow">Could have been checked</p>
+            <h2>Other available questions</h2>
+            {notChecked.length ? (
+              notChecked.map(([, label, why]) => (
+                <p key={label}>
+                  <strong>{label}.</strong> {why}
+                </p>
+              ))
+            ) : (
+              <p>
+                You checked each of the four available source questions. More
+                checks are not automatically better; whether their results
+                support your reasoning matters.
               </p>
-            ))
-          ) : (
+            )}
+            {!data.decisionRecords.some((r) => r.ref.recordId === "EV-06") &&
+            !data.pendingChecks.length ? (
+              <p>
+                A verified-directory owner check was also available. Its result
+                would have taken three steps from request; a result is not
+                assumed before it arrives.
+              </p>
+            ) : null}
+            <p className="muted">
+              These were available enquiries, not a claim about what their
+              hidden results would have been. No optimal order or counterfactual
+              outcome is implied.
+            </p>
+          </section>
+          <section className="panel">
+            <p className="eyebrow">Not observable then</p>
+            <h2>Limits on what you could know</h2>
+            {unavailable.map((r) => (
+              <p key={refKey(r.ref)}>{r.observation}</p>
+            ))}
+            {data.pendingChecks.map((p) => (
+              <p key={p.requestId}>
+                Your owner check was due at step {p.dueTick}, after your
+                decision at step {data.closeTick}. No response can be treated as
+                known earlier.
+              </p>
+            ))}
             <p>
-              You checked each of the four available source questions. More
-              checks are not automatically better; whether their results support
-              your reasoning matters.
+              Each activity snapshot covers only its stated cutoff. Later
+              activity and uncollected sources are not part of your
+              decision-time knowledge.
             </p>
-          )}
-          {!data.decisionRecords.some((r) => r.ref.recordId === "EV-06") &&
-          !data.pendingChecks.length ? (
-            <p>
-              A verified-directory owner check was also available. Its result
-              would have taken three steps from request; a result is not assumed
-              before it arrives.
-            </p>
-          ) : null}
-          <p className="muted">
-            These were available enquiries, not a claim about what their hidden
-            results would have been. No optimal order or counterfactual outcome
-            is implied.
-          </p>
-        </section>
-        <section className="panel">
-          <p className="eyebrow">Not observable then</p>
-          <h2>Limits on what you could know</h2>
-          {unavailable.map((r) => (
-            <p key={refKey(r.ref)}>{r.observation}</p>
-          ))}
-          {data.pendingChecks.map((p) => (
-            <p key={p.requestId}>
-              Your owner check was due at step {p.dueTick}, after your decision
-              at step {data.closeTick}. No response can be treated as known
-              earlier.
-            </p>
-          ))}
-          <p>
-            Each activity snapshot covers only its stated cutoff. Later activity
-            and uncollected sources are not part of your decision-time
-            knowledge.
-          </p>
-        </section>
-      </div>
+          </section>
+        </div>
+      </details>
       <details className="panel score-breakdown">
         <summary>
           Investigation quality · show score and evidence-linked feedback
@@ -405,7 +433,16 @@ export function Debrief({
                   <a
                     key={refKey(ref)}
                     href={`#${anchor(refKey(ref))}`}
-                    onClick={() => setThrough(data.closeTick)}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setEvidenceOpen(true);
+                      setThrough(data.closeTick);
+                      requestAnimationFrame(() =>
+                        document
+                          .getElementById(anchor(refKey(ref)))
+                          ?.scrollIntoView({ block: "center" }),
+                      );
+                    }}
                   >
                     {recordTitles[ref.recordId]} ·{" "}
                     {

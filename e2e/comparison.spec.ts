@@ -78,6 +78,12 @@ async function seed(page: Page, mission: string, closed: boolean) {
       .getByRole("button", { name: new RegExp(`${mission} ·`) })
       .click();
   }
+  if (mission === "M01" && closed)
+    await page
+      .getByText("Evidence reconstruction · records and timeline", {
+        exact: true,
+      })
+      .click();
   await expect(
     page.getByRole("region", {
       name: "Compare acquired observations",

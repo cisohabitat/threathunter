@@ -3,7 +3,9 @@ import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 
 test.beforeEach(async ({ context }) => {
-  await context.addInitScript(() => localStorage.setItem("threat-hunter-guidance-v1", "independent"));
+  await context.addInitScript(() =>
+    localStorage.setItem("threat-hunter-guidance-v1", "independent"),
+  );
 });
 
 test("large legacy case upgrades, exports, paginates and closes without dropping history", async ({
@@ -114,6 +116,11 @@ test("large legacy case upgrades, exports, paginates and closes without dropping
       };
     }),
   ).toEqual({ phase: "closed", revision: 5002 });
+  await page
+    .getByText("Evidence reconstruction · records and timeline", {
+      exact: true,
+    })
+    .click();
   await page.getByText("Your investigation timeline", { exact: true }).click();
   await expect(page.locator(".debrief-details ol.timeline > li")).toHaveCount(
     50,

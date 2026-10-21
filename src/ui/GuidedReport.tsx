@@ -320,18 +320,33 @@ export function GuidedReport({
       ) : null}
       {step === 4 ? (
         <div className="flow-summary">
-          <button disabled={busy} onClick={() => editSection(0)}>
-            Edit explanation and confidence
-          </button>
-          <h2>{dispositionLabels[d.disposition]}</h2>
+          <div className="report-section-heading report-verdict">
+            <h2>{dispositionLabels[d.disposition]}</h2>
+            <button
+              className="quiet-edit"
+              aria-label="Edit explanation and confidence"
+              disabled={busy}
+              onClick={() => editSection(0)}
+            >
+              Edit
+            </button>
+          </div>
           <p>
             {d.confidence} confidence · account U-01, session S-01 only ·
             evidence through step {view.tick}
           </p>
-          <h3>Facts I rely on ({cited.length})</h3>
-          <button disabled={busy} onClick={() => editSection(1)}>
-            Edit supporting facts
-          </button>
+          <div className="report-section-heading">
+            {" "}
+            <h3>Facts I rely on ({cited.length})</h3>
+            <button
+              className="quiet-edit"
+              aria-label="Edit supporting facts"
+              disabled={busy}
+              onClick={() => editSection(1)}
+            >
+              Edit
+            </button>{" "}
+          </div>
           {cited.length ? (
             cited.map((r) => <Observation key={refKey(r.ref)} record={r} />)
           ) : (
@@ -340,10 +355,18 @@ export function GuidedReport({
               the debrief.
             </p>
           )}
-          <h3>The other explanation I tested</h3>
-          <button disabled={busy} onClick={() => editSection(1, true)}>
-            Edit overall explanation and its records
-          </button>
+          <div className="report-section-heading">
+            {" "}
+            <h3>The other explanation I tested</h3>
+            <button
+              className="quiet-edit"
+              aria-label="Edit overall explanation and its records"
+              disabled={busy}
+              onClick={() => editSection(1, true)}
+            >
+              Edit
+            </button>{" "}
+          </div>
           <p>{alternativeLabels[d.alternativeStatus]}</p>
           {alternative.map((r) => (
             <Observation key={refKey(r.ref)} record={r} />
@@ -351,10 +374,18 @@ export function GuidedReport({
           {!alternative.length ? (
             <p>No records selected for an alternative check.</p>
           ) : null}
-          <h3>What I still can’t tell</h3>
-          <button disabled={busy} onClick={() => editSection(2)}>
-            Edit unknowns
-          </button>
+          <div className="report-section-heading">
+            {" "}
+            <h3>What I still can’t tell</h3>
+            <button
+              className="quiet-edit"
+              aria-label="Edit unknowns"
+              disabled={busy}
+              onClick={() => editSection(2)}
+            >
+              Edit
+            </button>{" "}
+          </div>
           {d.caveats.length ? (
             d.caveats.map((c) => (
               <div key={c.code}>
@@ -371,10 +402,18 @@ export function GuidedReport({
           ) : (
             <p>No uncertainty recorded.</p>
           )}
-          <h3>What I recommend</h3>
-          <button disabled={busy} onClick={() => editSection(3)}>
-            Edit recommendation
-          </button>
+          <div className="report-section-heading">
+            {" "}
+            <h3>What I recommend</h3>
+            <button
+              className="quiet-edit"
+              aria-label="Edit recommendation"
+              disabled={busy}
+              onClick={() => editSection(3)}
+            >
+              Edit
+            </button>{" "}
+          </div>
           <p>{nextLabels[d.nextStep]}</p>
           <p>
             Follow-up owner:{" "}
