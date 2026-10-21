@@ -31,6 +31,36 @@ const prompts = [
   "Ready to send your report?",
 ];
 
+const uncertaintyHelp = {
+  anomaly_not_proof: {
+    question: "Does an unusual login prove someone broke in?",
+    help: "The unfamiliar login shows unusual timing and a different client. That alone does not establish unauthorised use. Link the original login if this limit matters to your call.",
+  },
+  registration_not_authorship: {
+    question: "Does knowing the computer tell us who used it?",
+    help: "Device registration can connect a client to a work computer, or report no match or a missing mapping. It cannot identify the person at the keyboard. Read your device-registration result before including this limit.",
+  },
+  approval_not_authorship: {
+    question: "Does a work approval prove who logged in?",
+    help: "The work register checks permission for a task. A matching approval, no approval or an unavailable archive does not by itself identify who acted. Link the work-register result if this matters to your call.",
+  },
+  collection_gap: {
+    question: "Are records missing for the activity we need to check?",
+    help: "Read Session activity and coverage. Include this only if it reports missing collection for the interval. An empty result through an earlier cutoff is different: it does not cover later activity.",
+  },
+  owner_unavailable: {
+    question: "Did an attempted owner check end without a reply?",
+    help: "Include this only when a delivered Verified-owner check says the owner did not respond. A check you have not requested, or one still pending, is not a completed attempt without a reply.",
+  },
+  needs_identity_verification: {
+    question: "Do we still need to verify who used the account?",
+    help: "Session activity can show what the account did without proving who operated it. If the activity leaves identity in question, link that result and explain this limit in your report.",
+  },
+} satisfies Record<
+  keyof typeof caveatLabels,
+  { question: string; help: string }
+>;
+
 export function GuidedReport({
   view,
   busy,
@@ -47,6 +77,13 @@ export function GuidedReport({
   fullReport: () => void;
 }) {
   const [step, setStep] = useState(initialReview ? 4 : 0);
+  const [editingReview, setEditingReview] = useState(false);
+  const [showAlternative, setShowAlternative] = useState(false);
+  const editSection = (target: number, alternative = false) => {
+    setShowAlternative(alternative);
+    setEditingReview(true);
+    setStep(target);
+  };
   const heading = useRef<HTMLHeadingElement>(null);
   const d = view.draft;
   const patch = (changes: Partial<CaseDraft>) =>
@@ -136,7 +173,10 @@ export function GuidedReport({
               </span>
             </label>
           ))}
-          <details>
+          <details
+            open={showAlternative}
+            onToggle={(event) => setShowAlternative(event.currentTarget.open)}
+          >
             <summary>Review the other explanation you tested</summary>
             <label>
               What did your checks show?
@@ -189,14 +229,20 @@ export function GuidedReport({
         <fieldset disabled={busy}>
           <legend>Keep your claim within the evidence</legend>
           <p>
-            Choose a relevant uncertainty and the observation that shows it. You
-            can leave these empty.
+            Open a question, read the guidance and decide whether it applies to
+            the records you collected. Nothing is selected for you. Link a
+            record only when it supports the limit you want to report; you can
+            leave these empty.
           </p>
           {Object.entries(caveatLabels).map(([code, label]) => {
             const caveat = d.caveats.find((c) => c.code === code);
+            const guidance =
+              uncertaintyHelp[code as keyof typeof uncertaintyHelp];
             return (
               <details key={code} open={Boolean(caveat)}>
-                <summary>{label}</summary>
+                <summary>{guidance.question}</summary>
+                <p>{guidance.help}</p>
+                <p>Report limit: {label}</p>
                 <label>
                   Observation for: {label}
                   <select
@@ -274,12 +320,18 @@ export function GuidedReport({
       ) : null}
       {step === 4 ? (
         <div className="flow-summary">
+          <button disabled={busy} onClick={() => editSection(0)}>
+            Edit explanation and confidence
+          </button>
           <h2>{dispositionLabels[d.disposition]}</h2>
           <p>
             {d.confidence} confidence · account U-01, session S-01 only ·
             evidence through step {view.tick}
           </p>
           <h3>Facts I rely on ({cited.length})</h3>
+          <button disabled={busy} onClick={() => editSection(1)}>
+            Edit supporting facts
+          </button>
           {cited.length ? (
             cited.map((r) => <Observation key={refKey(r.ref)} record={r} />)
           ) : (
@@ -289,6 +341,9 @@ export function GuidedReport({
             </p>
           )}
           <h3>The other explanation I tested</h3>
+          <button disabled={busy} onClick={() => editSection(1, true)}>
+            Edit overall explanation and its records
+          </button>
           <p>{alternativeLabels[d.alternativeStatus]}</p>
           {alternative.map((r) => (
             <Observation key={refKey(r.ref)} record={r} />
@@ -297,6 +352,9 @@ export function GuidedReport({
             <p>No records selected for an alternative check.</p>
           ) : null}
           <h3>What I still can’t tell</h3>
+          <button disabled={busy} onClick={() => editSection(2)}>
+            Edit unknowns
+          </button>
           {d.caveats.length ? (
             d.caveats.map((c) => (
               <div key={c.code}>
@@ -314,6 +372,9 @@ export function GuidedReport({
             <p>No uncertainty recorded.</p>
           )}
           <h3>What I recommend</h3>
+          <button disabled={busy} onClick={() => editSection(3)}>
+            Edit recommendation
+          </button>
           <p>{nextLabels[d.nextStep]}</p>
           <p>
             Follow-up owner:{" "}
@@ -369,7 +430,7 @@ export function GuidedReport({
         {step > 0 ? (
           <button
             disabled={busy}
-            onClick={() => setStep(step === 4 ? 0 : step - 1)}
+            onClick={() => (step === 4 ? editSection(0) : setStep(step - 1))}
           >
             {step === 4 ? "Edit my report" : "← Back"}
           </button>
@@ -378,9 +439,16 @@ export function GuidedReport({
           <button
             className="primary"
             disabled={busy}
-            onClick={() => setStep(step + 1)}
+            onClick={() => {
+              setStep(editingReview ? 4 : step + 1);
+              setEditingReview(false);
+            }}
           >
-            {step === 3 ? "Review finding →" : "Continue →"}
+            {editingReview
+              ? "Return to review →"
+              : step === 3
+                ? "Review finding →"
+                : "Continue →"}
           </button>
         ) : null}
         {step < 3 ? (

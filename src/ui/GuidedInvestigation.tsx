@@ -10,7 +10,6 @@ import {
 import type { Screen } from "../stores/view";
 import { GuidedReport } from "./GuidedReport";
 import { Observation } from "./Observation";
-import { recordTitles } from "./caseLanguage";
 import { investigationFlow, toggleReference } from "./investigationFlow";
 
 const enquiries = [
@@ -44,8 +43,8 @@ const enquiries = [
   },
 ] as const;
 const interpretations = [
-  ["misuse_weakened", "This weakens unauthorised use"],
-  ["approved_work_weakened", "This weakens approved work"],
+  ["misuse_weakened", "Unauthorised use looks less likely"],
+  ["approved_work_weakened", "Approved work looks less likely"],
   ["approved_work_unresolved", "Approved work is still unverified"],
 ] as const;
 
@@ -186,67 +185,50 @@ export function GuidedInvestigation({
                   </p>
                 ) : (
                   <details className="flow-interpretation" open>
-                    <summary>Test an explanation · free</summary>
+                    <summary>
+                      Your current overall explanation · free to edit
+                    </summary>
                     <p>
-                      Could this have been approved work? Choose what{" "}
-                      {recordTitles[result.ref.recordId]} tells you. This
-                      records your reasoning without choosing your final call.
+                      Taking all your checks together, how does approved work
+                      look? This is one overall judgment, shown beside every
+                      record. Changing it replaces your earlier judgment.
                     </p>
+                    <label className="flow-fact">
+                      <input
+                        type="checkbox"
+                        disabled={busy}
+                        checked={view.draft.alternativeEvidence.some(
+                          (r) => refKey(r) === refKey(result.ref),
+                        )}
+                        onChange={() =>
+                          patch({
+                            alternativeEvidence: toggleReference(
+                              view.draft.alternativeEvidence,
+                              result.ref,
+                            ),
+                          })
+                        }
+                      />
+                      <span>
+                        Use this record to test my overall explanation
+                      </span>
+                    </label>
                     <div className="flow-choices">
                       {interpretations.map(([id, label]) => (
                         <button
                           key={id}
                           disabled={busy}
-                          aria-pressed={
-                            view.draft.alternativeStatus === id &&
-                            view.draft.alternativeEvidence.some(
-                              (r) => refKey(r) === refKey(result.ref),
-                            )
-                          }
-                          onClick={() =>
-                            patch({
-                              alternativeStatus: id,
-                              alternativeEvidence:
-                                view.draft.alternativeEvidence.some(
-                                  (r) => refKey(r) === refKey(result.ref),
-                                )
-                                  ? view.draft.alternativeEvidence
-                                  : [
-                                      ...view.draft.alternativeEvidence,
-                                      result.ref,
-                                    ],
-                            })
-                          }
+                          aria-pressed={view.draft.alternativeStatus === id}
+                          onClick={() => patch({ alternativeStatus: id })}
                         >
                           {label}
                         </button>
                       ))}
                     </div>
-                    {view.draft.alternativeEvidence.some(
-                      (r) => refKey(r) === refKey(result.ref),
-                    ) ? (
-                      <button
-                        disabled={busy}
-                        onClick={() => {
-                          const refs = toggleReference(
-                            view.draft.alternativeEvidence,
-                            result.ref,
-                          );
-                          patch({
-                            alternativeEvidence: refs,
-                            ...(refs.length
-                              ? {}
-                              : { alternativeStatus: "untested" }),
-                          });
-                        }}
-                      >
-                        Remove this interpretation
-                      </button>
-                    ) : (
-                      <p className="flow-tip">
-                        You can leave this undecided and keep investigating.
-                      </p>
-                    )}
+                    <p className="flow-tip">
+                      Choose which records you used separately. Your final call
+                      and supporting facts stay in your report.
+                    </p>
                   </details>
                 )}
                 <div className="flow-actions">

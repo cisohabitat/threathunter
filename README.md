@@ -206,3 +206,5 @@ Before **Try another approach** replaces a temporary M04/M07 finding, acknowledg
 Expansion **Review finding** waits for the current command to finish and opens only after pending notes are accepted. A rejected edit or text typed during an earlier save keeps the unsaved-note warning and blocks backup replacement. Run `npx playwright test e2e/progress-protection.spec.ts --workers=1` for these browser regressions.
 
 This follow-up passed local lint, types, 269 unit checks, build/budgets and the full 148 Chromium desktop/phone checks. Hosted CI and production verification are separate results for the published commit; these checks do not promote deferred device or human acceptance.
+
+The first-case interpretation is one explicitly labelled overall judgment. Select the records used to test it separately; changing the judgment never silently adds a record. Report unknowns use plain questions with source guidance, and each review section has a direct Edit action followed by Return to review. Reading and navigation remain free.

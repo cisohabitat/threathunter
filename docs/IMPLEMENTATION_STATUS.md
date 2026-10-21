@@ -1,5 +1,13 @@
 # Implementation status — internal build 0.1
 
+## Interpretation and report clarity — 21 October 2026
+
+The first-case overall interpretation is now visibly separate from selecting a record used to test it. Unknowns use concrete questions and source-capability guidance, including the distinction between an unrequested/pending owner check and a completed unanswered check. Review offers direct editing for each section and a return straight to review. Engine rules, scoring, source records, schemas and media are unchanged. Human comprehension remains untested.
+
+Local lint/types, 273 units, build and transfer budgets passed. The first 28-check browser run passed 24: four maximum-credit flows still relied on the removed automatic alternative citation (93/100); explicitly selecting the record restored those flows. The next 60-check desktop/phone run passed 58; the new direct-edit test exposed a still-collapsed alternative section. Its link now opens those controls, and all 28 focused checks passed after the fix, including all three 100-point reference findings, independent record selection, revisiting an earlier record, unchanged portable exports during report navigation, editing, offline/resume, axe and 320px enlarged-text reflow. The other 32 targeted game/audio/reporting/progress checks passed in the preceding run.
+
+The final production-preview walkthrough passed at 320px, 390px and 1440px: separate interpretation/record choices, unknowns guidance, direct edits, saved closure, export and reload/resume, without application errors. Two temporary walkthrough attempts used stale Resume/debrief locators; correcting those locators did not change application behavior. Final entry `/assets/index-CzmSYHG1.js`, SHA-256 `40899306e1efe8cd7412911a605c0850ba9241db79166a1f43754e4792f9caef`. Exact-commit hosted CI and Vercel/live checks are observed separately after publication; human/device/creative/listening and overall performance acceptance remain open.
+
 ## Production-check label maintenance — 21 October 2026
 
 The redesigned application at `99eb7fe` reached Vercel READY (`dpl_2oDhxw8Vfuvi1cm9vJ79CU7Ctj8S`), matched all 125 delivered files and 14 routes, and completed the live 320px/390px/desktop saved-export walkthroughs without application errors. Its application entry remains `/assets/index-C605FDnI.js` with SHA-256 `3885762b97e2397c82a37eba69a61b4708b796b5f026446019026d285fef4b34`.

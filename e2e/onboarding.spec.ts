@@ -188,8 +188,18 @@ test("a beginner can build, edit, review, save and resume the complete explained
     })
     .click();
   await page
-    .getByRole("button", { name: "This weakens unauthorised use", exact: true })
+    .getByRole("button", {
+      name: "Unauthorised use looks less likely",
+      exact: true,
+    })
     .click();
+  await saved(page);
+  await page
+    .getByRole("checkbox", {
+      name: "Use this record to test my overall explanation",
+      exact: true,
+    })
+    .check();
   await saved(page);
   await nextCheck(page);
   await page
@@ -242,7 +252,7 @@ test("a beginner can build, edit, review, save and resume the complete explained
   }
   await page.getByRole("button", { name: "Continue →", exact: true }).click();
   await page
-    .getByText("Unusual timing alone is not proof", { exact: true })
+    .getByText("Does an unusual login prove someone broke in?", { exact: true })
     .click();
   const anomaly = page.getByRole("combobox", {
     name: "Observation for: Unusual timing alone is not proof",
@@ -486,11 +496,18 @@ for (const world of ["M", "U-M"] as const) {
       .getByRole("button", {
         name:
           world === "M"
-            ? "This weakens approved work"
+            ? "Approved work looks less likely"
             : "Approved work is still unverified",
         exact: true,
       })
       .click();
+    await saved(page);
+    await page
+      .getByRole("checkbox", {
+        name: "Use this record to test my overall explanation",
+        exact: true,
+      })
+      .check();
     await saved(page);
     await nextCheck(page);
     await page
@@ -526,7 +543,14 @@ for (const world of ["M", "U-M"] as const) {
       world === "M"
         ? "Identity still needs verification"
         : "Collection is missing";
-    await page.getByText(limit, { exact: true }).click();
+    await page
+      .getByText(
+        world === "M"
+          ? "Do we still need to verify who used the account?"
+          : "Are records missing for the activity we need to check?",
+        { exact: true },
+      )
+      .click();
     await page
       .getByRole("combobox", { name: `Observation for: ${limit}`, exact: true })
       .selectOption({
@@ -587,3 +611,142 @@ for (const path of ["/case/m04", "/case/m02", "/hunt/free"]) {
     ).toBeEnabled({ timeout: 30000 });
   });
 }
+
+test("overall interpretation is separate from record selection and report sections edit directly", async ({
+  page,
+}) => {
+  await fixture(page, "B");
+  await compare(page);
+  await nextCheck(page);
+  await page
+    .getByRole("button", {
+      name: "Was overnight work approved? · 1 step",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Unauthorised use looks less likely",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  const recordChoice = page.getByRole("checkbox", {
+    name: "Use this record to test my overall explanation",
+    exact: true,
+  });
+  await expect(recordChoice).not.toBeChecked();
+  await recordChoice.check();
+  await saved(page);
+  await nextCheck(page);
+  await page
+    .getByRole("button", {
+      name: "Is this a known work computer? · 1 step",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Unauthorised use looks less likely",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(recordChoice).not.toBeChecked();
+  await page
+    .getByRole("button", {
+      name: "Approved work looks less likely",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  await page.getByText(/^Your notebook ·/).click();
+  const earlier = page.getByRole("article", {
+    name: "Approved work · through step 1",
+    exact: true,
+  });
+  await earlier
+    .locator("..")
+    .getByRole("button", {
+      name: "Think about this record · free",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Approved work looks less likely",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(recordChoice).toBeChecked();
+  await expect(page.getByText(/This is one overall judgment/)).toBeVisible();
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
+  const before = await portable(page);
+  for (const [label, heading] of [
+    ["explanation and confidence", "What do you think happened?"],
+    ["supporting facts", "Which facts support your call?"],
+    ["overall explanation and its records", "Which facts support your call?"],
+    ["unknowns", "What can’t you tell yet?"],
+    ["recommendation", "What should the team do next?"],
+  ]) {
+    await page
+      .getByRole("button", { name: `Edit ${label}`, exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: heading, exact: true }),
+    ).toBeFocused();
+    if (label === "overall explanation and its records") {
+      await expect(
+        page.getByRole("combobox", {
+          name: "What did your checks show?",
+          exact: true,
+        }),
+      ).toBeVisible();
+    }
+    if (label === "unknowns") {
+      await page
+        .getByText("Did an attempted owner check end without a reply?", {
+          exact: true,
+        })
+        .click();
+      await expect(
+        page.getByText(/A check you have not requested/),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("combobox", {
+          name: "Observation for: The owner could not be reached",
+          exact: true,
+        }),
+      ).toHaveValue("");
+    }
+    await page
+      .getByRole("button", { name: "Return to review →", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", {
+        name: "Ready to send your report?",
+        exact: true,
+      }),
+    ).toBeFocused();
+  }
+  expect(await portable(page)).toEqual(before);
+  await page
+    .getByRole("button", { name: "Edit recommendation", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Close this lead · routine monitoring",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  await page
+    .getByRole("button", { name: "Return to review →", exact: true })
+    .click();
+  await expect(page.locator(".flow-summary")).toContainText(
+    "Close this lead · routine monitoring",
+  );
+  const after = await portable(page);
+  expect(after).not.toEqual(before);
+});
