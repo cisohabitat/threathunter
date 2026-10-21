@@ -55,7 +55,7 @@ test("M01 warns for failed writes and clears the warning after retry saves the e
   });
   await page
     .getByRole("button", {
-      name: "Does this account normally sign in this late? · 1 step →",
+      name: "Compare usual sign-ins · 1 step →",
       exact: true,
     })
     .click();

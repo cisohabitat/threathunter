@@ -16,7 +16,7 @@ const nextCheck = (page: Page) =>
 const compare = (page: Page) =>
   page
     .getByRole("button", {
-      name: "Does this account normally sign in this late? · 1 step →",
+      name: "Compare usual sign-ins · 1 step →",
       exact: true,
     })
     .click();
@@ -78,7 +78,7 @@ for (const [width, height] of [
     await saved(page);
     await onScreen(
       page.getByRole("button", {
-        name: "Does this account normally sign in this late? · 1 step →",
+        name: "Compare usual sign-ins · 1 step →",
         exact: true,
       }),
       height,
@@ -90,6 +90,27 @@ for (const [width, height] of [
     ).toBe(true);
   });
 }
+test("the 320px opening stays uncovered with wider fallback fonts", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto("/");
+  await page.addStyleTag({
+    content:
+      'html, body { font-family: "DejaVu Sans", sans-serif; } .guided-case h1 { font-family: "DejaVu Serif", serif; }',
+  });
+  const begin = page.getByRole("button", { name: /^Begin investigation/ });
+  await onScreen(begin, 740);
+  await begin.click();
+  await saved(page);
+  await onScreen(
+    page.getByRole("button", {
+      name: "Compare usual sign-ins · 1 step →",
+      exact: true,
+    }),
+    740,
+  );
+});
 test("notebook reading, cached results and incomplete review do not cite facts or advance time", async ({
   page,
 }) => {

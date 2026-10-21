@@ -126,12 +126,12 @@ test("the guided case offers a focused question and optional tools", async ({
   });
   await expect(
     guide.getByRole("heading", {
-      name: "Someone signed in at 02:13. Should we worry?",
+      name: "A login at 02:13. Should we worry?",
     }),
   ).toBeVisible();
   await guide
     .getByRole("button", {
-      name: "Does this account normally sign in this late? · 1 step →",
+      name: "Compare usual sign-ins · 1 step →",
     })
     .click();
   await expect(

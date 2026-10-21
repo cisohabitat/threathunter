@@ -131,19 +131,18 @@ export function GuidedInvestigation({
               <>
                 <p className="eyebrow">THE MYSTERY</p>
                 <h1 ref={heading} tabIndex={-1}>
-                  Someone signed in at 02:13. Should we worry?
+                  A login at 02:13. Should we worry?
                 </h1>
                 <p>
-                  A finance account was used late at night from an unfamiliar
-                  computer. Your job is to find out whether there’s an ordinary
-                  explanation.
+                  A finance account was used from an unfamiliar computer. Was
+                  this approved work?
                 </p>
                 <button
                   className="primary"
                   disabled={busy}
                   onClick={() => ask("Q-H")}
                 >
-                  Does this account normally sign in this late? · 1 step →
+                  Compare usual sign-ins · 1 step →
                 </button>
                 <p className="flow-tip">
                   Identity records · this account and session · through step{" "}

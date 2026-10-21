@@ -98,7 +98,7 @@ test("failed audio loading leaves text investigation and saving available", asyn
     .click();
   await page
     .getByRole("button", {
-      name: "Does this account normally sign in this late? · 1 step →",
+      name: "Compare usual sign-ins · 1 step →",
     })
     .click();
   await expect(

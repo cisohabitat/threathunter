@@ -10,7 +10,7 @@ A single-player cybersecurity investigation game for newcomers and cybersecurity
 
 **Your job:** explain one unusual login. Decide whether it looks like approved work, unauthorised use, or something you cannot yet explain. You finish by submitting your finding; you can include uncertainty.
 
-The first case defaults to a focused **question → result → decision** flow. Select **Begin investigation**, then **Does this account normally sign in this late?** Read the comparison and choose what to learn next: whether overnight work was approved, whether the computer is registered, or what the account did afterward. Each new check costs one simulation step; reading never advances a live countdown.
+The first case defaults to a focused **question → result → decision** flow. Select **Begin investigation**, then **Compare usual sign-ins** Read the comparison and choose what to learn next: whether overnight work was approved, whether the computer is registered, or what the account did afterward. Each new check costs one simulation step; reading never advances a live countdown.
 
 Every delivered record stays in **Your notebook** automatically. This does not cite it in your report. Beside a result, you can explicitly record what it means for the competing explanation, or leave it undecided. Static results reopen for free; session activity can be refreshed through a later step without overwriting an earlier snapshot. An owner-verification request uses the verified directory callback, costs one step and completes three steps after the request; keep checking other sources or deliberately wait while it is pending.
 
@@ -22,7 +22,7 @@ Use **Compare observation · free** in the full workspace to compare two immutab
 
 If you opened a later case or a free hunt and feel lost, choose **New here? Learn with The Midnight Login** in its introduction. The first case teaches the controls before the campaign adds more tools. Loaded investigations remain available when switching cases.
 
-The focused redesign passes 273 local unit checks and build budgets. Its full local Chromium run passed 170/172 checks; correcting two stale audio-fallback heading assertions passed the two affected reruns. All new first-case journeys passed, including complete evidence-backed findings, enlarged text, offline resume and note retention. The exact published commit still needs its own hosted/live observations. Automated completion is separate from uncoached novice playtesting, which remains pending. See [implementation status](docs/IMPLEMENTATION_STATUS.md) for build identity, initial failures and methods.
+The focused redesign has 273 unit checks and complete browser journeys for evidence-backed findings, enlarged text, offline resume and note retention. Hosted verification caught a 320px font-wrapping issue where the fixed mute control covered the first action; the shorter opening now retains the same coverage assertions and adds a wider-fallback-font check. All 48 affected local browser checks pass. Exact-commit hosted/live results remain separate from uncoached novice playtesting, which is pending. See [implementation status](docs/IMPLEMENTATION_STATUS.md) for build identity and retained initial failures.
 
 ## Optional voice and sound
 
