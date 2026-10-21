@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+test.beforeEach(async ({ context }) => {
+  await context.addInitScript(() => localStorage.setItem("threat-hunter-guidance-v1", "independent"));
+});
+
 test("damaged current save recovers pending checks from the previous commit exactly once", async ({
   page,
 }) => {
@@ -135,6 +139,7 @@ test("quota failure retains actions and retry saves them without applying them t
     };
   });
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
@@ -195,6 +200,7 @@ test("waiting tab refreshes the committed case when writer ownership transfers",
   context,
 }) => {
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
@@ -358,6 +364,7 @@ test("waiting reader receives committed observations and notes before taking own
 }) => {
   test.setTimeout(60000);
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(

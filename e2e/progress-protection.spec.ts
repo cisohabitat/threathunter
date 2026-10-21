@@ -54,7 +54,10 @@ test("M01 warns for failed writes and clears the warning after retry saves the e
     return row;
   });
   await page
-    .getByRole("button", { name: "Compare sign-ins · 1 step →", exact: true })
+    .getByRole("button", {
+      name: "Does this account normally sign in this late? · 1 step →",
+      exact: true,
+    })
     .click();
   await expect(status).toHaveText("Not saved");
   expect(await unloadBlocked(page)).toBe(true);
@@ -89,6 +92,8 @@ test("M01 warns for unfinished notes after leaving Case File and clears only aft
   page,
 }) => {
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
+  await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: /^Begin investigation/ }).click();
   const status = page
     .getByRole("region", { name: "Save and readiness", exact: true })

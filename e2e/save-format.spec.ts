@@ -5,6 +5,7 @@ test("legacy save upgrades only on successful commit and retains its original ba
 }) => {
   test.setTimeout(60_000);
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   const original = await page.evaluate(async () => {
     // @ts-expect-error Vite browser module.
@@ -104,6 +105,7 @@ test("failed upgrade keeps legacy data and memory-only receipts until retry comm
     };
   });
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.evaluate(async () => {
     // @ts-expect-error Vite browser module.

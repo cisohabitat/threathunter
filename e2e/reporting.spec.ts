@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 async function startFixture(page: Page, world: "B" | "M") {
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   const input = page.locator("input[type=file]");
   await expect(input).toBeEnabled();

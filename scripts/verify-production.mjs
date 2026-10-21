@@ -47,6 +47,7 @@ try {
     path: "docs/verification/screens/01-home-phone.png",
     fullPage: true,
   });
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await page
@@ -85,9 +86,7 @@ try {
   const acknowledgeMs = await page.evaluate(async () => {
     const values = [];
     for (let i = 0; i < 100; i++) {
-      const button = Array.from(document.querySelectorAll("button")).find((b) =>
-        ["Hide guidance", "How to play"].includes(b.textContent.trim()),
-      );
+      const button = document.querySelectorAll(".case-stages button")[i % 2];
       const start = performance.now();
       button.click();
       await new Promise((resolve) =>

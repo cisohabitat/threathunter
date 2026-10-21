@@ -9,6 +9,39 @@ const saved = (page: Page) =>
       .getByRole("region", { name: "Save and readiness", exact: true })
       .getByRole("status"),
   ).toHaveText("Saved on this device", { timeout: 30000 });
+const nextCheck = (page: Page) =>
+  page
+    .getByRole("button", { name: "Choose what to check next →", exact: true })
+    .click();
+const compare = (page: Page) =>
+  page
+    .getByRole("button", {
+      name: "Does this account normally sign in this late? · 1 step →",
+      exact: true,
+    })
+    .click();
+async function portable(page: Page) {
+  await saved(page);
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export save", exact: true }).click();
+  return JSON.parse(await readFile(await (await download).path(), "utf8"));
+}
+async function fixture(page: Page, world: "B" | "M" | "U-B" | "U-M") {
+  await page.goto("/");
+  const save = await page.evaluate(async (world) => {
+    const { createRun } = await import("/src/engine/engine.ts");
+    const { exportSave } = await import("/src/persistence/saves.ts");
+    return JSON.stringify(exportSave(createRun("guided-reference", world)));
+  }, world);
+  await expect(page.locator("input[type=file]")).toBeEnabled();
+  await page.locator("input[type=file]").setInputFiles({
+    name: "case.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(save),
+  });
+  await page.getByRole("button", { name: "Resume investigation" }).click();
+  await saved(page);
+}
 async function onScreen(button: Locator, height: number) {
   await expect(button).toBeEnabled({ timeout: 30000 });
   const box = await button.boundingBox();
@@ -17,10 +50,10 @@ async function onScreen(button: Locator, height: number) {
   expect(box!.y + box!.height).toBeLessThanOrEqual(height);
   expect(
     await button.evaluate((element) => {
-      const rect = element.getBoundingClientRect();
+      const r = element.getBoundingClientRect();
       return [
-        [rect.left + 4, rect.top + 4],
-        [rect.right - 4, rect.bottom - 4],
+        [r.left + 4, r.top + 4],
+        [r.right - 4, r.bottom - 4],
       ].every(([x, y]) => element.contains(document.elementFromPoint(x, y)));
     }),
   ).toBe(true);
@@ -29,7 +62,7 @@ for (const [width, height] of [
   [320, 740],
   [390, 844],
 ]) {
-  test(`first useful actions are visible without scrolling at ${width}px`, async ({
+  test(`first useful actions are visible and uncovered without scrolling at ${width}px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height });
@@ -43,13 +76,9 @@ for (const [width, height] of [
     ).toBeVisible();
     await begin.click();
     await saved(page);
-    const guide = page.getByRole("region", {
-      name: "Guided investigation",
-      exact: true,
-    });
     await onScreen(
-      guide.getByRole("button", {
-        name: "Compare sign-ins · 1 step →",
+      page.getByRole("button", {
+        name: "Does this account normally sign in this late? · 1 step →",
         exact: true,
       }),
       height,
@@ -61,129 +90,462 @@ for (const [width, height] of [
     ).toBe(true);
   });
 }
-test("a new player follows the visible next moves through a saved finding without the glossary", async ({
+test("notebook reading, cached results and incomplete review do not cite facts or advance time", async ({
   page,
 }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
-  await page.getByRole("button", { name: /^Begin investigation/ }).click();
-  await saved(page);
-  const guide = page.getByRole("region", {
-    name: "Guided investigation",
-    exact: true,
-  });
-  await guide
-    .getByRole("button", { name: "Compare sign-ins · 1 step →", exact: true })
-    .click();
-  await guide
+  await fixture(page, "B");
+  await compare(page);
+  await nextCheck(page);
+  await page
     .getByRole("button", {
-      name: "Add these observations to Case File · free",
+      name: "Was overnight work approved? · 1 step",
       exact: true,
     })
     .click();
   await saved(page);
-  await expect(page.locator(".step-badge")).toContainText("STEP 1");
-  await guide
-    .getByRole("button", { name: "Check approved work · 1 step", exact: true })
-    .click();
-  await expect(
-    guide.getByRole("heading", {
-      name: "Here is what your check found.",
-      exact: true,
-    }),
-  ).toBeFocused();
-  await guide
-    .getByRole("button", {
-      name: "Add this observation to Case File · free",
-      exact: true,
+  const before = await portable(page);
+  expect(
+    before.commands.filter((c: { kind: string }) => c.kind === "ACQUIRE"),
+  ).toHaveLength(2);
+  expect(
+    before.commands.some((c: { kind: string }) => c.kind === "EDIT_CASE"),
+  ).toBe(false);
+  await nextCheck(page);
+  await page
+    .getByRole("article")
+    .filter({
+      has: page.getByRole("heading", {
+        name: "Was overnight work approved?",
+        exact: true,
+      }),
     })
+    .getByRole("button", { name: "Read this result · free", exact: true })
     .click();
-  await saved(page);
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
   await expect(
-    guide.getByRole("heading", {
-      name: "What do you think happened?",
+    page.getByText(
+      "No supporting facts selected. You can still submit and learn from the debrief.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Keep investigating", exact: true })
+    .click();
+  await page.getByText(/^Your notebook ·/).click();
+  await expect(
+    page.getByRole("article", {
+      name: "The unfamiliar login · through step 0",
       exact: true,
     }),
   ).toBeVisible();
-  await expect(page.locator(".step-badge")).toContainText("STEP 2");
-  await guide
-    .getByRole("button", { name: "Build my finding →", exact: true })
-    .click();
-  await expect(page.locator(".case-editor > h2")).toBeFocused();
-  await onScreen(
-    page.getByRole("button", { name: /Approved work explains it/ }),
-    page.viewportSize()!.height,
-  );
-  await page.getByRole("button", { name: /I can’t tell yet/ }).click();
-  await saved(page);
+  const after = await portable(page);
+  expect(after).toEqual(before);
   await page
-    .getByRole("combobox", {
-      name: "Confidence about this finding",
-      exact: true,
-    })
-    .selectOption("low");
-  await saved(page);
-  await page
-    .getByRole("button", { name: "Next: Evidence →", exact: true })
-    .click();
-  await page
-    .getByRole("combobox", {
-      name: "What happened to the other explanation?",
-      exact: true,
-    })
-    .selectOption("approved_work_unresolved");
-  await saved(page);
-  await page
-    .getByRole("article", { name: /^Approved work · through step/ })
-    .getByRole("button", {
-      name: "Test another explanation · free",
-      exact: true,
-    })
-    .click();
-  await saved(page);
-  await page
-    .getByRole("button", { name: "Next: Unknowns →", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Next: Next step →", exact: true })
-    .click();
-  await page
-    .getByRole("combobox", { name: "Recommendation", exact: true })
-    .selectOption("handoff_review_monitor");
-  await saved(page);
-  await page
-    .locator(".case-step-actions")
     .getByRole("button", { name: "Review finding →", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
   await saved(page);
+  expect((await portable(page)).commands.at(-1).draft.evidence).toEqual([]);
+});
+test("a beginner can build, edit, review, save and resume the complete explained finding", async ({
+  page,
+  context,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await fixture(page, "B");
+  await compare(page);
+  await nextCheck(page);
+  await page
+    .getByRole("button", {
+      name: "Is this a known work computer? · 1 step",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "This weakens unauthorised use", exact: true })
+    .click();
+  await saved(page);
+  await nextCheck(page);
+  await page
+    .getByRole("button", {
+      name: "Was overnight work approved? · 1 step",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Make my call →", exact: true })
+    .click();
   await expect(
-    page.getByRole("region", { name: "Case debrief", exact: true }),
+    page.getByRole("heading", {
+      name: "What do you think happened?",
+      exact: true,
+    }),
+  ).toBeFocused();
+  const headingBox = await page
+    .getByRole("heading", { name: "What do you think happened?", exact: true })
+    .boundingBox();
+  expect(headingBox!.y).toBeGreaterThanOrEqual(0);
+  expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(
+    page.viewportSize()!.height,
+  );
+
+  await page
+    .getByRole("button", { name: "Approved work explains it", exact: true })
+    .click();
+  await saved(page);
+  await page
+    .getByRole("combobox", { name: "How sure are you?", exact: true })
+    .selectOption("medium");
+  await saved(page);
+  await context.setOffline(true);
+  await page.getByRole("button", { name: "Continue →", exact: true }).click();
+  const facts = page.getByRole("group", {
+    name: "Choose the facts your report relies on",
+    exact: true,
+  });
+  for (const title of [
+    "The unfamiliar login",
+    "The usual sign-in pattern",
+    "Device registration",
+    "Approved work",
+  ]) {
+    await facts
+      .getByRole("checkbox", { name: new RegExp(`^${title} ·`) })
+      .check();
+    await saved(page);
+  }
+  await page.getByRole("button", { name: "Continue →", exact: true }).click();
+  await page
+    .getByText("Unusual timing alone is not proof", { exact: true })
+    .click();
+  const anomaly = page.getByRole("combobox", {
+    name: "Observation for: Unusual timing alone is not proof",
+    exact: true,
+  });
+  const opening = await anomaly.locator("option").nth(1).getAttribute("value");
+  await anomaly.selectOption(opening!);
+  await saved(page);
+  await page.getByRole("button", { name: "Continue →", exact: true }).click();
+  await page
+    .getByRole("button", {
+      name: "Close this lead · routine monitoring",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Facts I rely on (4)", exact: true }),
   ).toBeVisible();
-  const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export save", exact: true }).click();
-  const portable = JSON.parse(
-    await readFile(await (await download).path(), "utf8"),
+  await page
+    .getByRole("button", { name: "Edit my report", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Approved work explains it",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
+  const axe = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(axe.violations).toEqual([]);
+  await page
+    .getByRole("button", { name: "Confirm and close case", exact: true })
+    .click();
+  await saved(page);
+  await page
+    .getByText(
+      "Investigation quality · show score and evidence-linked feedback",
+      { exact: true },
+    )
+    .click();
+  await expect(page.locator(".score")).toContainText("100/100");
+  const exported = await portable(page);
+  expect(
+    exported.commands.filter((c: { kind: string }) => c.kind === "ACQUIRE"),
+  ).toHaveLength(3);
+  expect(exported.commands.at(-1).draft.evidence).toHaveLength(4);
+  expect(exported.commands.at(-1).draft.alternativeEvidence).toHaveLength(1);
+  expect(errors).toEqual([]);
+  await context.setOffline(false);
+  await page.reload();
+  await page.getByRole("button", { name: "Resume investigation" }).click();
+  expect(await portable(page)).toEqual(exported);
+});
+test("pending owner verification stays pending and activity refresh keeps its original snapshot", async ({
+  page,
+}) => {
+  await fixture(page, "M");
+  await compare(page);
+  await nextCheck(page);
+  await page
+    .getByRole("button", {
+      name: "What did the account do afterward? · 1 step",
+      exact: true,
+    })
+    .click();
+  await nextCheck(page);
+  await page
+    .getByText("Ask the account holder or wait for a reply", { exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Request owner verification · 1 step",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  await expect(
+    page.getByText(
+      "Reply due at step 5. Current step: 3. Waiting advances the simulation; it can also allow other activity to happen.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page
+    .getByRole("button", {
+      name: "What did the account do afterward? · 1 step",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByText(/Policy asks for handoff by step 6/),
+  ).toBeVisible();
+  await page.getByText(/^Your notebook ·/).click();
+  await expect(
+    page.getByRole("article", {
+      name: "Session activity and coverage · through step 1",
+      exact: true,
+    }),
+  ).toBeVisible();
+  const snapshot = await portable(page);
+  expect(
+    snapshot.commands.filter((c: { kind: string }) => c.kind === "ACQUIRE"),
+  ).toHaveLength(3);
+  expect(
+    snapshot.commands.filter(
+      (c: { kind: string }) => c.kind === "REQUEST_CHECK",
+    ),
+  ).toHaveLength(1);
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
+  await expect(
+    page.getByText(
+      "Owner verification is pending, due at step 5. You may close before it arrives.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+});
+test("full-tool notes survive returning to the guided report and explicit closure", async ({
+  page,
+}) => {
+  await fixture(page, "B");
+  await page
+    .getByText("Investigate further · all tools and settings", { exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Full Case File and notes", exact: true })
+    .click();
+  await page
+    .getByRole("navigation", { name: "Case File steps", exact: true })
+    .getByRole("button", { name: /Next step/ })
+    .click();
+  await page
+    .getByLabel("Optional notes · not graded", { exact: true })
+    .fill("Keep this reasoning when I return to the guided case.");
+  await page
+    .getByRole("button", { name: "Back to guided investigation", exact: true })
+    .click();
+  expect(
+    await page.evaluate(() => {
+      const event = new Event("beforeunload", { cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    }),
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "Review finding →", exact: true })
+    .click();
+  await expect(
+    page.getByText("Keep this reasoning when I return to the guided case.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Confirm and close case", exact: true })
+    .click();
+  await saved(page);
+  const save = await portable(page);
+  expect(save.commands).toHaveLength(1);
+  expect(save.commands[0].kind).toBe("CLOSE_CASE");
+  expect(save.commands[0].draft.optionalNotes).toBe(
+    "Keep this reasoning when I return to the guided case.",
   );
   expect(
-    portable.commands.filter(
-      (command: { kind: string }) => command.kind === "ACQUIRE",
+    await page.evaluate(() => {
+      const event = new Event("beforeunload", { cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    }),
+  ).toBe(false);
+});
+test("guided questions and report reflow with doubled text at 320px", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await fixture(page, "B");
+  await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
+  await compare(page);
+  await nextCheck(page);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
     ),
-  ).toHaveLength(2);
-  const close = portable.commands.at(-1);
-  expect(close.kind).toBe("CLOSE_CASE");
-  expect(close.draft.evidence).toHaveLength(3);
-  expect(close.draft.disposition).toBe("unresolved");
-  expect(close.draft.alternativeEvidence).toHaveLength(1);
-  expect(errors).toEqual([]);
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "I’m ready to make my call →", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Continue →", exact: true }).click();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
   const axe = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(axe.violations).toEqual([]);
 });
+for (const world of ["M", "U-M"] as const) {
+  test(`${world} supports a complete evidence-backed call without revealing a hidden answer`, async ({
+    page,
+  }) => {
+    await fixture(page, world);
+    await compare(page);
+    await nextCheck(page);
+    if (world === "U-M") {
+      await page
+        .getByText("Ask the account holder or wait for a reply", {
+          exact: true,
+        })
+        .click();
+      await page
+        .getByRole("button", {
+          name: "Request owner verification · 1 step",
+          exact: true,
+        })
+        .click();
+      await saved(page);
+    }
+    await page
+      .getByRole("button", {
+        name: "Is this a known work computer? · 1 step",
+        exact: true,
+      })
+      .click();
+    await nextCheck(page);
+    await page
+      .getByRole("button", {
+        name: "Was overnight work approved? · 1 step",
+        exact: true,
+      })
+      .click();
+    await page
+      .getByRole("button", {
+        name:
+          world === "M"
+            ? "This weakens approved work"
+            : "Approved work is still unverified",
+        exact: true,
+      })
+      .click();
+    await saved(page);
+    await nextCheck(page);
+    await page
+      .getByRole("button", {
+        name: "What did the account do afterward? · 1 step",
+        exact: true,
+      })
+      .click();
+    await page
+      .getByRole("button", { name: "Make my call →", exact: true })
+      .click();
+    await page
+      .getByRole("button", {
+        name:
+          world === "M"
+            ? "It looks like unauthorised use"
+            : "I can’t tell yet · unresolved",
+        exact: true,
+      })
+      .click();
+    await saved(page);
+    await page
+      .getByRole("combobox", { name: "How sure are you?", exact: true })
+      .selectOption(world === "M" ? "medium" : "low");
+    await saved(page);
+    await page.getByRole("button", { name: "Continue →", exact: true }).click();
+    for (const checkbox of await page.getByRole("checkbox").all()) {
+      await checkbox.check();
+      await saved(page);
+    }
+    await page.getByRole("button", { name: "Continue →", exact: true }).click();
+    const limit =
+      world === "M"
+        ? "Identity still needs verification"
+        : "Collection is missing";
+    await page.getByText(limit, { exact: true }).click();
+    await page
+      .getByRole("combobox", { name: `Observation for: ${limit}`, exact: true })
+      .selectOption({
+        label: (await page
+          .getByRole("combobox", {
+            name: `Observation for: ${limit}`,
+            exact: true,
+          })
+          .locator("option")
+          .filter({ hasText: /^Session activity and coverage/ })
+          .textContent()) as string,
+      });
+    await saved(page);
+    await page.getByRole("button", { name: "Continue →", exact: true }).click();
+    await page
+      .getByRole("button", {
+        name:
+          world === "M"
+            ? "Ask the response team to end this login session"
+            : "Ask for further investigation and missing records",
+        exact: true,
+      })
+      .click();
+    await saved(page);
+    await page
+      .getByRole("button", { name: "Review finding →", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Confirm and close case", exact: true })
+      .click();
+    await saved(page);
+    await page
+      .getByText(
+        "Investigation quality · show score and evidence-linked feedback",
+        { exact: true },
+      )
+      .click();
+    await expect(page.locator(".score")).toContainText("100/100");
+  });
+}
 for (const path of ["/case/m04", "/case/m02", "/hunt/free"]) {
   test(`${path} offers a first-case learning path before starting`, async ({
     page,

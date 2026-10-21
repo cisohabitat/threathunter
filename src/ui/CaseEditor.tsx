@@ -14,23 +14,7 @@ import {
   dispositionLabels,
   recordTitles,
 } from "./caseLanguage";
-const packages = {
-  close_explained: {
-    nextOwnerRole: "none",
-    reviewWithinTicks: null,
-    followupTrigger: "routine_monitoring",
-  },
-  handoff_revoke_session: {
-    nextOwnerRole: "response_team",
-    reviewWithinTicks: 2,
-    followupTrigger: "confirm_revocation_and_assess_scope",
-  },
-  handoff_review_monitor: {
-    nextOwnerRole: "response_team",
-    reviewWithinTicks: 4,
-    followupTrigger: "new_suspicious_activity_or_verification_result",
-  },
-} as const;
+import { nextStepPackages as packages } from "./investigationFlow";
 const stages = ["Explanation", "Evidence", "Unknowns", "Next step"];
 const questions = [
   "Which explanation fits?",

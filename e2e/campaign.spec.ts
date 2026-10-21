@@ -271,6 +271,7 @@ for (const mission of ["M04", "M07"] as const)
   }) => {
     test.setTimeout(90000);
     await page.goto("/");
+    await page.getByText(/^Play settings ·/).click();
     await page
       .getByRole("button", { name: /Independent investigation/ })
       .click();

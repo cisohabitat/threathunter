@@ -32,6 +32,7 @@ test("keyboard investigation, source limits, retained notes, world reconstructio
     page.getByRole("button", { name: "Begin investigation" }),
   ).toBeEnabled();
   await audit();
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).focus();
   await page.keyboard.press("Enter");
   await page.getByRole("button", { name: "Begin investigation" }).focus();
@@ -120,6 +121,7 @@ test("200% text, reduced motion, rotation and slow/failed art preserve the full 
     "src",
     "/art/northstar-night.svg",
   );
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await page.evaluate(() => {
@@ -216,6 +218,7 @@ test("a browser without Web Locks plays only explicitly in memory and never writ
   await page
     .getByRole("button", { name: "Continue explicitly without saving" })
     .click();
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await page

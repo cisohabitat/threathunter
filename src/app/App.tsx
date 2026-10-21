@@ -5,7 +5,7 @@ import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { useGame } from "./controller";
 import { useNavigation, type Screen } from "../stores/view";
-import { InvestigationGuide } from "../ui/InvestigationGuide";
+import { GuidedInvestigation } from "../ui/GuidedInvestigation";
 import { CaseEditor } from "../ui/CaseEditor";
 import { Workbench } from "../ui/Workbench";
 import { Debrief } from "../ui/Debrief";
@@ -421,8 +421,8 @@ export default function App({
                     doesn’t <em>fit.</em>
                   </h1>
                   <p className="hero-description">
-                    A finance account was used at 02:13. Was it approved work,
-                    unauthorised use, or still unexplained?
+                    Someone used a finance account at 02:13. Find out whether
+                    the security team should worry.
                   </p>
                   <p className="home-play-loop">
                     Read a record → Check an explanation → Make your call
@@ -451,25 +451,33 @@ export default function App({
                   <p className="first-case-label">
                     START HERE · THE MIDNIGHT LOGIN · 10–15 MINUTES
                   </p>
-                  <fieldset className="assistance-choice">
-                    <legend>How would you like to play?</legend>
-                    <div className="actions">
-                      <button
-                        aria-pressed={guided}
-                        onClick={() => chooseGuidance(true)}
-                      >
-                        Guided investigation{" "}
-                        <small>Recommended · Morgan explains each step</small>
-                      </button>
-                      <button
-                        aria-pressed={!guided}
-                        onClick={() => chooseGuidance(false)}
-                      >
-                        Independent investigation{" "}
-                        <small>Explore at your own pace</small>
-                      </button>
-                    </div>
-                  </fieldset>
+                  <details className="play-settings">
+                    <summary>
+                      Play settings ·{" "}
+                      {guided
+                        ? "guided investigation"
+                        : "independent investigation"}
+                    </summary>
+                    <fieldset className="assistance-choice">
+                      <legend>How would you like to play?</legend>
+                      <div className="actions">
+                        <button
+                          aria-pressed={guided}
+                          onClick={() => chooseGuidance(true)}
+                        >
+                          Guided investigation{" "}
+                          <small>Recommended · one question at a time</small>
+                        </button>
+                        <button
+                          aria-pressed={!guided}
+                          onClick={() => chooseGuidance(false)}
+                        >
+                          Independent investigation{" "}
+                          <small>Explore at your own pace</small>
+                        </button>
+                      </div>
+                    </fieldset>
+                  </details>
                   <p className="hero-foot">
                     TWELVE CASES. YOUR JUDGEMENT. NO COUNTDOWN.
                   </p>
@@ -583,6 +591,15 @@ export default function App({
                   />
                 ) : null}
               </>
+            ) : guided && screen === "Leads" ? (
+              <GuidedInvestigation
+                key={v.runId}
+                view={v}
+                busy={blocked}
+                send={game.send}
+                navigate={setScreen}
+                independent={() => chooseGuidance(false)}
+              />
             ) : (
               <div className="workspace">
                 <aside className="sidebar">
@@ -649,9 +666,14 @@ export default function App({
                     <div className="workspace-tools">
                       <button
                         aria-pressed={guided}
-                        onClick={() => chooseGuidance(!guided)}
+                        onClick={() => {
+                          chooseGuidance(true);
+                          setScreen("Leads");
+                        }}
                       >
-                        {guided ? "Hide guidance" : "How to play"}
+                        {guided
+                          ? "Back to guided investigation"
+                          : "How to play"}
                       </button>
                       <span className="step-badge">
                         STEP {v.tick}
@@ -659,15 +681,6 @@ export default function App({
                       </span>
                     </div>
                   </div>
-                  {guided ? (
-                    <InvestigationGuide
-                      view={v}
-                      screen={screen}
-                      busy={blocked}
-                      send={game.send}
-                      navigate={setScreen}
-                    />
-                  ) : null}
                   {v.responseWindowOpenedAt !== null ? (
                     <div className="notice">
                       Out-of-role activity was delivered at step{" "}

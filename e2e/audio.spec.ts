@@ -97,10 +97,12 @@ test("failed audio loading leaves text investigation and saving available", asyn
     .getByRole("button", { name: "Voice & sound", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Compare sign-ins · 1 step →" })
+    .getByRole("button", {
+      name: "Does this account normally sign in this late? · 1 step →",
+    })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Now compare unusual with usual." }),
+    page.getByRole("heading", { name: "How does this compare?" }),
   ).toBeVisible();
   await expect(
     page
@@ -114,6 +116,8 @@ test("foreground replacement, orientation and backgrounding never replay stale s
 }) => {
   test.setTimeout(60_000);
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
+  await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await page
     .getByRole("button", { name: "Voice & sound", exact: true })

@@ -7,6 +7,7 @@ test("complete a case, resume an immutable save, and continue offline", async ({
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Something/ })).toBeVisible();
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
@@ -76,6 +77,7 @@ test("reading, navigating and mentor guidance do not advance time", async ({
   page,
 }) => {
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
@@ -97,6 +99,7 @@ test("320px has no horizontal overflow and all destinations remain operable", as
 }) => {
   await page.setViewportSize({ width: 320, height: 740 });
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   for (const name of ["Explore", "Case File", "Timeline", "Leads"]) {
@@ -112,65 +115,43 @@ test("320px has no horizontal overflow and all destinations remain operable", as
   }
 });
 
-test("guided first investigation explains, compares, cites for free and offers a choice", async ({
+test("the guided case offers a focused question and optional tools", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(
-    page.getByRole("button", { name: /Guided investigation/ }),
-  ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  const guide = page.getByRole("region", { name: "Guided investigation" });
-  await expect(
-    guide.getByRole("heading", {
-      name: "Why did someone sign in at 02:13?",
-    }),
-  ).toBeVisible();
-  await guide
-    .getByRole("button", { name: "Compare sign-ins · 1 step →" })
-    .click();
-  await expect(
-    guide.getByRole("heading", { name: "Now compare unusual with usual." }),
-  ).toBeVisible();
-  await expect(page.locator(".step-badge")).toContainText("STEP 1");
-  await guide
-    .getByRole("button", { name: "Add these observations to Case File · free" })
-    .click();
-  await expect(
-    guide.getByRole("heading", { name: "What could explain this login?" }),
-  ).toBeVisible();
-  await expect(page.locator(".step-badge")).toContainText("STEP 1");
-  await guide
-    .getByRole("button", { name: "Check approved work · 1 step" })
-    .click();
-  await expect(
-    guide.getByRole("heading", {
-      name: "Here is what your check found.",
-    }),
-  ).toBeVisible();
-  await guide.getByRole("button", { name: "Build my finding →" }).click();
-  await expect(
-    guide.getByRole("heading", { name: "Tell the story in four parts." }),
-  ).toBeVisible();
-  await page
-    .getByRole("navigation", { name: "Case File steps" })
-    .getByRole("button", { name: /Evidence/ })
-    .click();
-  const evidence = page.getByRole("group", {
-    name: "02 · Supporting and opposing facts",
+  const guide = page.getByRole("region", {
+    name: "Guided investigation",
+    exact: true,
   });
   await expect(
-    evidence.getByRole("button", { name: "✓ Cited in finding" }).nth(0),
-  ).toHaveAttribute("aria-pressed", "true");
+    guide.getByRole("heading", {
+      name: "Someone signed in at 02:13. Should we worry?",
+    }),
+  ).toBeVisible();
+  await guide
+    .getByRole("button", {
+      name: "Does this account normally sign in this late? · 1 step →",
+    })
+    .click();
   await expect(
-    evidence.getByRole("button", { name: "✓ Cited in finding" }).nth(1),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".step-badge")).toContainText("STEP 2");
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
+    guide.getByRole("heading", { name: "How does this compare?" }),
+  ).toBeFocused();
+  await expect(page.locator(".step-badge")).toContainText("STEP 1");
+  await guide
+    .getByRole("button", { name: "Choose what to check next →" })
+    .click();
+  await expect(
+    guide.getByRole("button", {
+      name: "Was overnight work approved? · 1 step",
+    }),
+  ).toBeVisible();
+  await expect(
+    guide.getByRole("button", {
+      name: "Is this a known work computer? · 1 step",
+    }),
+  ).toBeVisible();
+  await expect(page.locator(".step-badge")).toContainText("STEP 1");
 });
 
 test("guidance can be hidden, restored and remembered without advancing time", async ({
@@ -178,19 +159,25 @@ test("guidance can be hidden, restored and remembered without advancing time", a
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Begin investigation" }).click();
-  await page.getByRole("button", { name: "Hide guidance" }).click();
+  await page
+    .getByText("Investigate further · all tools and settings", { exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Switch to independent investigation" })
+    .click();
   await expect(
-    page.getByRole("region", { name: "Guided investigation" }),
+    page.getByRole("region", { name: "Guided investigation", exact: true }),
   ).toHaveCount(0);
   await expect(page.locator(".step-badge")).toContainText("STEP 0");
   await page.reload();
+  await page.getByText(/^Play settings ·/).click();
   await expect(
     page.getByRole("button", { name: /Independent investigation/ }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   await expect(
-    page.getByRole("region", { name: "Guided investigation" }),
+    page.getByRole("region", { name: "Guided investigation", exact: true }),
   ).toBeVisible();
   await expect(page.locator(".step-badge")).toContainText("STEP 0");
 });

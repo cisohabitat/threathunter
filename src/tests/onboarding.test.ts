@@ -7,10 +7,14 @@ import {
   project,
   type EngineState,
 } from "../engine/engine";
-import type { Action } from "../domain/contracts";
-import { nextMove } from "../ui/onboarding";
-import { InvestigationGuide } from "../ui/InvestigationGuide";
-
+import { refKey, type Action } from "../domain/contracts";
+import {
+  investigationFlow,
+  nextStepPackages,
+  toggleReference,
+} from "../ui/investigationFlow";
+import { GuidedInvestigation } from "../ui/GuidedInvestigation";
+import fixture from "../content/m01.json";
 function act(state: EngineState, action: Action) {
   const result = processCommand(state, {
     ...action,
@@ -21,88 +25,76 @@ function act(state: EngineState, action: Action) {
   expect(result.receipt.status).toBe("accepted");
   return result.state;
 }
-function comparison(state: EngineState) {
-  const view = project(state);
-  return act(state, {
-    kind: "EDIT_CASE",
-    draft: { ...view.draft, evidence: view.records.map((r) => r.ref) },
-  });
-}
-it("guides received results through citation and a decision without advancing time for citations", () => {
+it("progresses on delivered observations without requiring citations or choosing a finding", () => {
   for (const world of ["B", "M", "U-B", "U-M"] as const) {
     let state = createRun("onboarding", world);
-    expect(nextMove(project(state)).stage).toBe("compare");
+    expect(investigationFlow(project(state), null).stage).toBe("opening");
     state = act(state, { kind: "ACQUIRE", queryId: "Q-H", cutoffTick: 0 });
-    expect(nextMove(project(state)).stage).toBe("save-comparison");
-    state = comparison(state);
-    expect(state.view.tick).toBe(1);
-    expect(nextMove(project(state)).stage).toBe("check");
+    expect(investigationFlow(project(state), null).stage).toBe("result");
+    const dismissed = refKey(state.view.records.at(-1)!.ref);
+    expect(investigationFlow(project(state), dismissed).stage).toBe(
+      "questions",
+    );
     state = act(state, { kind: "ACQUIRE", queryId: "Q-C", cutoffTick: 1 });
-    expect(nextMove(project(state)).stage).toBe("save-check");
-    const result = nextMove(project(state)).context!;
-    expect(result.ref.recordId).toBe("EV-04");
-    state = comparison(state);
-    expect(state.view.tick).toBe(2);
-    expect(nextMove(project(state)).stage).toBe("decide");
+    expect(investigationFlow(project(state), dismissed).stage).toBe("result");
+    expect(state.view.draft.evidence).toEqual([]);
+    expect(state.view.draft.alternativeEvidence).toEqual([]);
     expect(state.view.draft.disposition).toBe("unresolved");
-    expect(state.view.draft.alternativeStatus).toBe("untested");
+    expect(state.view.tick).toBe(2);
   }
 });
-it("does not claim the comparison is saved if only the baseline was cited", () => {
-  let state = act(createRun("partial", "B"), {
+it("does not present a pending check as a new observation, then shows the delivered result", () => {
+  let state = act(createRun("pending", "B"), {
     kind: "ACQUIRE",
     queryId: "Q-H",
     cutoffTick: 0,
   });
-  const view = project(state);
-  state = act(state, {
-    kind: "EDIT_CASE",
-    draft: {
-      ...view.draft,
-      evidence: [view.records.find((r) => r.ref.recordId === "EV-02")!.ref],
-    },
-  });
-  expect(nextMove(project(state)).stage).toBe("save-comparison");
-});
-it("pending owner checks are not presented as a received result", () => {
-  let state = comparison(
-    act(createRun("pending", "B"), {
-      kind: "ACQUIRE",
-      queryId: "Q-H",
-      cutoffTick: 0,
-    }),
-  );
+  const dismissed = refKey(state.view.records.at(-1)!.ref);
   state = act(state, {
     kind: "REQUEST_CHECK",
     check: "directory_callback",
     subjectId: "U-01",
   });
-  expect(nextMove(project(state)).stage).toBe("check");
-  expect(nextMove(project(state)).context).toBeUndefined();
+  expect(investigationFlow(project(state), dismissed).stage).toBe("questions");
+  expect(state.view.records.some((r) => r.ref.recordId === "EV-06")).toBe(
+    false,
+  );
+  state = act(state, { kind: "ADVANCE", durationTicks: 2 });
+  expect(investigationFlow(project(state), dismissed).stage).toBe("result");
+  expect(investigationFlow(project(state), dismissed).latest.ref.recordId).toBe(
+    "EV-06",
+  );
 });
-it("renders identical guidance for sparse twins and never acts while reading", () => {
+it("keeps reference selection immutable and snapshot-specific", () => {
+  const first = { acquisitionId: "a1", recordId: "EV-05" },
+    second = { acquisitionId: "a2", recordId: "EV-05" };
+  const original = [first];
+  expect(toggleReference(original, second)).toEqual([first, second]);
+  expect(toggleReference(original, first)).toEqual([]);
+  expect(original).toEqual([first]);
+  expect(nextStepPackages).toEqual(fixture.nextStepPackages);
+});
+it("renders identical sparse-twin guidance without dispatching commands or mutating state", () => {
   const outputs = [];
   for (const world of ["U-B", "U-M"] as const) {
-    let state = comparison(
-      act(createRun("same-public-run", world), {
-        kind: "ACQUIRE",
-        queryId: "Q-H",
-        cutoffTick: 0,
-      }),
-    );
+    let state = act(createRun("same-public-run", world), {
+      kind: "ACQUIRE",
+      queryId: "Q-H",
+      cutoffTick: 0,
+    });
     state = act(state, { kind: "ACQUIRE", queryId: "Q-C", cutoffTick: 1 });
     const before = structuredClone(state);
     let commands = 0;
     outputs.push(
       renderToStaticMarkup(
-        createElement(InvestigationGuide, {
+        createElement(GuidedInvestigation, {
           view: project(state),
-          screen: "Leads",
           busy: false,
           send: async () => {
             commands++;
           },
           navigate: () => {},
+          independent: () => {},
         }),
       ),
     );

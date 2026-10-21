@@ -5,6 +5,7 @@ async function seed(page: Page, mission: string, closed: boolean) {
   await page.evaluate(
     async ({ mission, closed }) => {
       if (mission === "M01") {
+        localStorage.setItem("threat-hunter-guidance-v1", "independent");
         // @ts-expect-error Vite fixture module.
         const e = await import("/src/engine/engine.ts");
         // @ts-expect-error Vite fixture module.

@@ -37,6 +37,7 @@ if (process.argv[2] === "--child") {
   });
   const page = await context.newPage();
   await page.goto(origin);
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await page

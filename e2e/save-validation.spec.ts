@@ -2,6 +2,10 @@ import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 
+test.beforeEach(async ({ context }) => {
+  await context.addInitScript(() => localStorage.setItem("threat-hunter-guidance-v1", "independent"));
+});
+
 test("large legacy case upgrades, exports, paginates and closes without dropping history", async ({
   page,
 }) => {
@@ -203,6 +207,7 @@ test("worker failure retains the durable row and retry commits the action only o
     };
   });
   await page.goto("/");
+  await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
