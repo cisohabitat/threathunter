@@ -2450,6 +2450,7 @@ html {
   background: var(--bg-deep);
   border-bottom: 1px solid var(--stroke-subtle);
 }
+.utility-header[data-oversized="true"],
 .utility-header:has(.audio-settings, .voice-caption, .voice-transcript) {
   position: relative;
 }

@@ -1,3 +1,4 @@
+import { UtilityHeader } from "../ui/UtilityHeader";
 import { useState, useEffect } from "react";
 import { FieldGuide } from "../ui/FieldGuide";
 import { AudioPanel } from "../ui/AudioPanel";
@@ -155,7 +156,7 @@ export default function App({
           Skip to main content
         </a>
         <div className={`app-shell m01-shell${guided ? " guided-play" : ""}`}>
-          <div className="utility-header">
+          <UtilityHeader>
             <header className="topbar">
               <button
                 className="wordmark"
@@ -221,7 +222,7 @@ export default function App({
               </div>
             </div>
             <AudioPanel audio={audio} debrief={game.debrief} />
-          </div>
+          </UtilityHeader>
           {game.readOnly && !game.busy ? (
             <div className="notice">
               Read-only: another tab owns the active save. Close that tab and

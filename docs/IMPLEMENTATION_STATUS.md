@@ -1,5 +1,12 @@
 # Implementation status — internal build 0.1
 
+## Enlarged utility-header clearance follow-up — 21 October 2026
+
+The visual publication `63c7c0a` reached Vercel READY, matched 125 delivered files and fourteen routes, and completed live 320/390/1440px saved/export/resume flows. Its hosted run [39693987365](https://github.com/cisohabitat/threathunter/actions/runs/39693987365) passed 180/182 Chromium checks: the existing 200% text/rotation/art-failure checks timed out because the tall sticky utility header intercepted the independent navigation. Firefox/WebKit were skipped. Keep this hosted failure separate from the passing local guided-text checks.
+
+`UtilityHeader` now observes its actual height and releases sticky positioning above 160px or one quarter of viewport height, including after font or orientation changes. Expanded audio/captions and short viewports retain their existing normal-flow fallback. The original 60-second acceptance test, text enlargement, viewport sequence and click/overflow assertions are unchanged. Follow-up local lint/types, all 273 units, build/budgets and all 40 acceptance/onboarding/visual desktop/phone checks passed. This includes both unchanged enlarged-text/rotation/art-failure checks, keyboard/axe, the three reference findings, normal header/action clearance, and unchanged portable exports during disclosure. Final production-preview walks at 320/390/1440px again saved, exported and resumed without application errors or page overflow. Final entry `/assets/index-BHrD3DSf.js`, SHA-256 `283eda185d8a9dc4ad15cf63844ba6dcba5da074c5278f552bdad1b71cede123`. Exact-commit hosted/live observations remain separate; human/device acceptance stays deferred.
+
+
 ## Visual hierarchy and safe controls — 21 October 2026
 
 All five visual review findings are addressed: mute occupies reserved toolbar space; the M01 utility header is compact; the existing responsive art provides a restrained workspace backdrop; public source icons and record typography separate observations from coverage/provenance; report Edit actions sit quietly beside headings; debrief reasoning, reconstruction and deeper limits expand beneath the finding and takeaway. The normal phone header is about 128px instead of 204px. Expanded audio remains in normal flow, short viewports release sticky positioning, and 44px targets/focus clearance are retained. Engines, grading, saves, source/media bytes and speech remain unchanged.
