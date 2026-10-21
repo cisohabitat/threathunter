@@ -88,6 +88,8 @@ User override, 20 October 2026: “defer review. continue gdd” authorizes M04/
 - The field guide and source capability descriptions are public constants. Case File stage and unfinished note buffers live in presentation state; accepted facts/draft references still come only from engine commands. Navigation restores per-run scroll/focus without charging time.
 - Browsers without Web Locks may read/export saved state and explicitly play temporarily; durable writes/recovery/restart are disabled. Do not silently fall back to multiple writers.
 
+Production verification uses the current finding labels for the ten-command timing probe. Its 100 free-interaction samples alternate Case File tabs and end on Explanation before clicking finding controls; keep that probe distinct from historical guidance-toggle measurements. Use `--no-screens --output=/tmp/...json` to validate the workflow without replacing retained screenshots or earlier lab reports. Completion of the script does not pass reference-device performance gates.
+
 ## Presentation and release evidence
 
 - Versioned landscape/portrait WebP artwork uses the art manifest; preserve the generated PNG and lossless FLAC archives in `production/`, outside browser delivery. Keep master/delivery hashes, exact source rights records and honest pending-review statuses. Never replace an immutable `/art/` or `/audio/` path in place.

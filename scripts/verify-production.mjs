@@ -86,7 +86,7 @@ try {
   const acknowledgeMs = await page.evaluate(async () => {
     const values = [];
     for (let i = 0; i < 100; i++) {
-      const button = document.querySelectorAll(".case-stages button")[i % 2];
+      const button = document.querySelectorAll(".case-stages button")[(i + 1) % 2];
       const start = performance.now();
       button.click();
       await new Promise((resolve) =>
@@ -105,7 +105,7 @@ try {
     let started = null, saving = false;
     document.addEventListener("click", (event) => {
       const text = event.target.closest?.("button")?.textContent.trim();
-      if (!/^(Credible explanation|Likely session misuse)/.test(text ?? "")) return;
+      if (!/^(Approved work explains it|It looks like unauthorised use)/.test(text ?? "")) return;
       started = performance.now();
       saving = false;
     }, true);
@@ -123,7 +123,7 @@ try {
     const t = performance.now();
     await page
       .getByRole("button", {
-        name: i % 2 === 0 ? /^Credible explanation/ : /^Likely session misuse/,
+        name: i % 2 === 0 ? /^Approved work explains it/ : /^It looks like unauthorised use/,
       })
       .click();
     await page
@@ -200,7 +200,7 @@ try {
         interactions: {
           samples: 100,
           method:
-            "Synthetic click to two animation frames, healthy local browser after load; includes frame wait",
+            "Case File tab click to two animation frames, healthy local browser after load; includes frame wait; final tab is Explanation",
           p95Ms: p95(acknowledgeMs),
         },
         durableCommands: {

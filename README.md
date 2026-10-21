@@ -109,7 +109,7 @@ Long save histories are validated in an isolated browser worker, including impor
 
 With a production preview running (`npm exec vite preview -- --host 127.0.0.1 --port 4173`), run `npm run verify:history` to reproduce the save-history lab. `npm run verify:production` and `npm run verify:crash` reproduce the load/interaction and abrupt-process recovery checks.
 
-For performance-only reruns, `npm run verify:production -- --no-screens` keeps the existing visual reference frames; the default command still captures them.
+For performance-only reruns, `npm run verify:production -- --no-screens` keeps the existing visual reference frames; the default command still captures them. The current free-interaction probe alternates Case File tabs and returns to Explanation; its ten accepted finding edits use the current labels. Keep new output separate from historical measurements when using `--output=/tmp/report.json`.
 
 `npm run profile:startup` records three sequential cold loads with cache disabled, compressed resource sizes/encodings and main-thread long tasks at 4 Mbps / 100 ms / 4× CPU. It requires the production preview and retains every sample in `docs/verification/startup-profile.json`; use `-- --output=/tmp/profile.json` for an exploratory run. Responsive artwork is preloaded from HTML. An early-validator experiment was slower and was removed; inspection/recovery behavior is unchanged. `verify:production` also reports in-browser click→Working→Saved latency alongside its original automation-inclusive measurement; `--output=...` preserves historical reports. These lab tools do not establish physical-device acceptance.
 

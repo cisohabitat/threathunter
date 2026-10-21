@@ -1,5 +1,11 @@
 # Implementation status — internal build 0.1
 
+## Production-check label maintenance — 21 October 2026
+
+The redesigned application at `99eb7fe` reached Vercel READY (`dpl_2oDhxw8Vfuvi1cm9vJ79CU7Ctj8S`), matched all 125 delivered files and 14 routes, and completed the live 320px/390px/desktop saved-export walkthroughs without application errors. Its application entry remains `/assets/index-C605FDnI.js` with SHA-256 `3885762b97e2397c82a37eba69a61b4708b796b5f026446019026d285fef4b34`.
+
+Final review found that the production verification script still matched historical finding labels, and its replacement free-interaction probe ended on Evidence before trying to click Explanation controls. Update the capture regex/locators to the current labels and alternate tabs so the final sample returns to Explanation. The JSON method now identifies tab clicks, keeping them distinct from historical guidance-toggle samples. `npm run verify:production -- --no-screens --output=/tmp/threathunter-focused-production-check.json` completed against the final production preview: 100 free interactions and all ten automated/in-page durable-command samples were recorded, followed by review, close and optional full-pack audio. Existing screenshots and lab JSON were retained. This maintenance changes scripts/documentation only; application and worker bytes, source records, saves and scoring are unchanged. Hosted exact-commit checks remain separate; reference-device performance and human comprehension remain unpassed.
+
 ## Small-screen opening follow-up — 21 October 2026
 
 The focused redesign commit `eb13a5a` reached Vercel READY as `dpl_DtZiDiMotbpzR1rK1w9YDeNjNG3R`, and the live origin matched all 125 delivered files and 14 routes. Live 320px, 390px and desktop walkthroughs completed, saved and exported with no application errors. Its hosted run [39585369884](https://github.com/cisohabitat/threathunter/actions/runs/39585369884) nevertheless passed **170/172 Chromium checks**: both 320px first-action corner-occlusion checks failed, so Firefox/WebKit did not run. The downloaded trace shows the action label wrapping onto three lines, with its lower-right corner behind the fixed mute control. Preserve this hosted failure separately from earlier local passes.
