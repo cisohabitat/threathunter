@@ -181,3 +181,31 @@ test("guidance can be hidden, restored and remembered without advancing time", a
   ).toBeVisible();
   await expect(page.locator(".step-badge")).toContainText("STEP 0");
 });
+
+test("play settings stay open when the saved case finishes loading", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Begin investigation" }).click();
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByRole("status"),
+  ).toHaveText("Saved on this device", { timeout: 30000 });
+  // Hold the validator so the settings open before the saved case loads.
+  await page.route(/validationWorker/, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await route.continue();
+  });
+  await page.reload();
+  await page.getByText(/^Play settings ·/).click();
+  const settings = page.locator(".play-settings");
+  await expect(settings).toHaveAttribute("open", "");
+  await expect(
+    page.getByRole("button", { name: /^Resume investigation/ }),
+  ).toBeVisible({ timeout: 30000 });
+  await expect(settings).toHaveAttribute("open", "");
+  await expect(
+    page.getByRole("button", { name: /Independent investigation/ }),
+  ).toBeVisible();
+});

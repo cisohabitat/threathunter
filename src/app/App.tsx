@@ -51,7 +51,9 @@ export default function App({
     [confirmRecovery, setConfirmRecovery] = useState(false),
     [artFailed, setArtFailed] = useState(false),
     [artReady, setArtReady] = useState(false),
-    [artUnavailable, setArtUnavailable] = useState(false);
+    [artUnavailable, setArtUnavailable] = useState(false),
+    // Held here: the run-keyed provider below remounts once inspection loads.
+    [settingsOpen, setSettingsOpen] = useState(false);
   const [guided, setGuided] = useState(readGuidancePreference);
   const [handledCaseRequest, setHandledCaseRequest] = useState(0);
   useEffect(() => {
@@ -458,7 +460,13 @@ export default function App({
                   <p className="first-case-label">
                     START HERE · THE MIDNIGHT LOGIN · 10–15 MINUTES
                   </p>
-                  <details className="play-settings">
+                  <details
+                    className="play-settings"
+                    open={settingsOpen}
+                    onToggle={(event) =>
+                      setSettingsOpen(event.currentTarget.open)
+                    }
+                  >
                     <summary>
                       Play settings ·{" "}
                       {guided
