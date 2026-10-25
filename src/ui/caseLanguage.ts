@@ -31,11 +31,16 @@ export const recordTitles: Record<string, string> = {
   "EV-05": "Session activity and coverage",
   "EV-06": "Verified-owner check",
 };
-export const sourceLabels: Record<string, string> = {
+const knownSourceLabels = {
   identity: "Identity records",
   registry: "Device registry",
   change_record: "Work register",
   application_audit: "Application audit",
   collection_status: "Collection status",
   directory_callback: "Verified directory callback",
-};
+} as const;
+export type KnownSourceId = keyof typeof knownSourceLabels;
+export const sourceLabels: Record<string, string> = knownSourceLabels;
+/** Public source label, falling back to the delivered source ID. */
+export const sourceLabel = (sourceId: string) =>
+  sourceLabels[sourceId] ?? sourceId;

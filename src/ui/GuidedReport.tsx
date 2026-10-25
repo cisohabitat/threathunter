@@ -23,6 +23,33 @@ const followupLabels: Record<string, string> = {
   new_suspicious_activity_or_verification_result:
     "new suspicious activity or an owner-verification result",
 };
+/** Review heading with a quiet Edit action that returns to its prompt. */
+function SectionHeading({
+  title,
+  label,
+  disabled,
+  onEdit,
+}: {
+  title: string;
+  label: string;
+  disabled: boolean;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="report-section-heading">
+      <h3>{title}</h3>
+      <button
+        className="quiet-edit"
+        aria-label={label}
+        disabled={disabled}
+        onClick={onEdit}
+      >
+        Edit
+      </button>
+    </div>
+  );
+}
+
 const prompts = [
   "What do you think happened?",
   "Which facts support your call?",
@@ -335,18 +362,12 @@ export function GuidedReport({
             {d.confidence} confidence · account U-01, session S-01 only ·
             evidence through step {view.tick}
           </p>
-          <div className="report-section-heading">
-            {" "}
-            <h3>Facts I rely on ({cited.length})</h3>
-            <button
-              className="quiet-edit"
-              aria-label="Edit supporting facts"
-              disabled={busy}
-              onClick={() => editSection(1)}
-            >
-              Edit
-            </button>{" "}
-          </div>
+          <SectionHeading
+            title={`Facts I rely on (${cited.length})`}
+            label="Edit supporting facts"
+            disabled={busy}
+            onEdit={() => editSection(1)}
+          />
           {cited.length ? (
             cited.map((r) => <Observation key={refKey(r.ref)} record={r} />)
           ) : (
@@ -355,18 +376,12 @@ export function GuidedReport({
               the debrief.
             </p>
           )}
-          <div className="report-section-heading">
-            {" "}
-            <h3>The other explanation I tested</h3>
-            <button
-              className="quiet-edit"
-              aria-label="Edit overall explanation and its records"
-              disabled={busy}
-              onClick={() => editSection(1, true)}
-            >
-              Edit
-            </button>{" "}
-          </div>
+          <SectionHeading
+            title="The other explanation I tested"
+            label="Edit overall explanation and its records"
+            disabled={busy}
+            onEdit={() => editSection(1, true)}
+          />
           <p>{alternativeLabels[d.alternativeStatus]}</p>
           {alternative.map((r) => (
             <Observation key={refKey(r.ref)} record={r} />
@@ -374,18 +389,12 @@ export function GuidedReport({
           {!alternative.length ? (
             <p>No records selected for an alternative check.</p>
           ) : null}
-          <div className="report-section-heading">
-            {" "}
-            <h3>What I still can’t tell</h3>
-            <button
-              className="quiet-edit"
-              aria-label="Edit unknowns"
-              disabled={busy}
-              onClick={() => editSection(2)}
-            >
-              Edit
-            </button>{" "}
-          </div>
+          <SectionHeading
+            title="What I still can’t tell"
+            label="Edit unknowns"
+            disabled={busy}
+            onEdit={() => editSection(2)}
+          />
           {d.caveats.length ? (
             d.caveats.map((c) => (
               <div key={c.code}>
@@ -402,18 +411,12 @@ export function GuidedReport({
           ) : (
             <p>No uncertainty recorded.</p>
           )}
-          <div className="report-section-heading">
-            {" "}
-            <h3>What I recommend</h3>
-            <button
-              className="quiet-edit"
-              aria-label="Edit recommendation"
-              disabled={busy}
-              onClick={() => editSection(3)}
-            >
-              Edit
-            </button>{" "}
-          </div>
+          <SectionHeading
+            title="What I recommend"
+            label="Edit recommendation"
+            disabled={busy}
+            onEdit={() => editSection(3)}
+          />
           <p>{nextLabels[d.nextStep]}</p>
           <p>
             Follow-up owner:{" "}

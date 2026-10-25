@@ -2117,9 +2117,6 @@ body {
     padding: 4px 16px;
     min-height: 52px;
   }
-  .m01-shell .art-readiness {
-    display: none;
-  }
   .m01-shell .workspace-heading {
     margin-bottom: 16px;
   }
@@ -2440,6 +2437,8 @@ body {
 }
 html {
   scroll-padding-bottom: 1rem;
+  /* Measured by UtilityHeader; zero whenever the header is not sticky. */
+  scroll-padding-top: var(--utility-header-sticky, 0px);
 }
 .utility-header {
   display: grid;
@@ -2476,8 +2475,16 @@ html {
   min-height: 48px;
   gap: 8px;
 }
-.utility-header .art-readiness {
-  display: none;
+/* Readiness stays in the labelled save region for assistive technology. */
+.m01-shell .utility-header .art-readiness {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .utility-header
   .audio-controls:has(.audio-settings, .voice-caption, .voice-transcript) {
@@ -2497,14 +2504,19 @@ html {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 114px 0 auto;
+  inset: var(--utility-header-height, 114px) 0 auto;
   height: 800px;
   pointer-events: none;
-  background:
-    linear-gradient(90deg, #0b1422ed 15%, #0b142288 70%),
-    url("/art/northstar-investigation-landscape-v1.webp") center top / cover;
+  background: linear-gradient(90deg, #0b1422ed 15%, #0b142288 70%) center top /
+    cover;
   opacity: 0.32;
   mask-image: linear-gradient(#000 35%, transparent);
+}
+/* Reuse only artwork the home picture already loaded; never a second fetch. */
+.m01-shell.art-ready::before {
+  background-image:
+    linear-gradient(90deg, #0b1422ed 15%, #0b142288 70%),
+    url("/art/northstar-investigation-landscape-v1.webp");
 }
 .flow-topline {
   border-bottom: 1px solid var(--stroke-subtle);
@@ -2514,9 +2526,6 @@ html {
 .guided-report {
   box-shadow: 0 16px 48px #0003;
   border-top: 2px solid #58758a;
-}
-.guided-case h1 {
-  scroll-margin-top: 145px;
 }
 .source-icon {
   width: 24px;
@@ -2652,7 +2661,7 @@ html {
   background: transparent;
 }
 .debrief .evidence-reconstruction {
-  scroll-margin-top: 145px;
+  scroll-margin-top: 1rem;
 }
 .debrief .finding-verdict {
   border-top: 3px solid var(--accent-cyan);
@@ -2724,9 +2733,6 @@ html {
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .guided-case h1 {
-    scroll-margin-top: 145px;
-  }
   .flow-observation {
     padding: 14px;
   }
@@ -2763,13 +2769,9 @@ html {
   .utility-header {
     position: relative;
   }
-  .guided-case h1,
-  .debrief .evidence-reconstruction {
-    scroll-margin-top: 1rem;
-  }
 }
 @media (max-width: 767px) {
-  .m01-shell::before {
+  .m01-shell.art-ready::before {
     background-image:
       linear-gradient(90deg, #0b1422ed 15%, #0b142288 70%),
       url("/art/northstar-investigation-portrait-v1.webp");

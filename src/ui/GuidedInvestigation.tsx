@@ -12,13 +12,13 @@ import { GuidedReport } from "./GuidedReport";
 import { SourceIcon } from "./SourceIcon";
 import { Observation } from "./Observation";
 import { investigationFlow, toggleReference } from "./investigationFlow";
+import { sourceLabels, type KnownSourceId } from "./caseLanguage";
 
 const enquiries = [
   {
     id: "Q-C",
     record: "EV-04",
     question: "Was overnight work approved?",
-    source: "Work register",
     sourceId: "change_record",
     purpose:
       "Look for permission matching this account, computer, time and task.",
@@ -28,7 +28,6 @@ const enquiries = [
     id: "Q-D",
     record: "EV-03",
     question: "Is this a known work computer?",
-    source: "Device registry",
     sourceId: "registry",
     purpose:
       "Check whether this client maps to a registered organisation device.",
@@ -38,14 +37,20 @@ const enquiries = [
     id: "Q-F",
     record: "EV-05",
     question: "What did the account do afterward?",
-    source: "Application audit",
     sourceId: "application_audit",
     purpose:
       "Follow this session’s recorded activity through the current step.",
     limit:
       "An empty result covers only the recorded interval. Later activity requires another check.",
   },
-] as const;
+] as const satisfies readonly {
+  id: QueryId;
+  record: string;
+  question: string;
+  sourceId: KnownSourceId;
+  purpose: string;
+  limit: string;
+}[];
 const interpretations = [
   ["misuse_weakened", "Unauthorised use looks less likely"],
   ["approved_work_weakened", "Approved work looks less likely"],
@@ -278,7 +283,8 @@ export function GuidedInvestigation({
                         </h2>
                         <p>{q.purpose}</p>
                         <small>
-                          {q.source} · account U-01 / session S-01 ·{" "}
+                          {sourceLabels[q.sourceId]} · account U-01 / session
+                          S-01 ·{" "}
                           {cached
                             ? `existing snapshot through step ${acquired.snapshotCutoff}`
                             : `collect through step ${view.tick}`}

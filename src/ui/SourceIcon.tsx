@@ -1,5 +1,8 @@
+import type { KnownSourceId } from "./caseLanguage";
+
 // Source identity only: appearance never depends on a finding or private truth.
-const sourcePaths: Record<string, string> = {
+// Typed against the source labels so a new source cannot silently borrow an icon.
+const sourcePaths: Record<KnownSourceId, string> = {
   identity: "M8 7a4 4 0 1 0 8 0 4 4 0 0 0-8 0M4 21v-3a8 8 0 0 1 16 0v3",
   registry: "M3 4h18v12H3zM8 21h8M12 16v5",
   change_record: "M6 3h12v18H6zM9 7h6M9 11h6M9 15h4",
@@ -8,6 +11,9 @@ const sourcePaths: Record<string, string> = {
   directory_callback:
     "M4 4h5l2 5-3 2a15 15 0 0 0 5 5l2-3 5 2v5C10 22 2 14 4 4z",
 };
+// Neutral marker for an unlisted source; never borrows another source's icon.
+const genericSourcePath =
+  "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 8v5M12 16h.01";
 export function SourceIcon({ source }: { source: string }) {
   return (
     <svg
@@ -20,7 +26,7 @@ export function SourceIcon({ source }: { source: string }) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d={sourcePaths[source] ?? sourcePaths.change_record} />
+      <path d={sourcePaths[source as KnownSourceId] ?? genericSourcePath} />
     </svg>
   );
 }

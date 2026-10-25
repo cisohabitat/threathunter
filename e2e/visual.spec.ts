@@ -13,6 +13,19 @@ async function portable(page: Page) {
   await page.getByRole("button", { name: "Export save", exact: true }).click();
   return JSON.parse(await readFile(await (await download).path(), "utf8"));
 }
+// A sticky header must never sit over a heading or record scrolled into view.
+async function clearOfHeader(target: Locator) {
+  const [top, headerBottom] = await target.evaluate((e) => {
+    const header = document.querySelector(".utility-header")!;
+    return [
+      e.getBoundingClientRect().top,
+      getComputedStyle(header).position === "sticky"
+        ? header.getBoundingClientRect().bottom
+        : -Infinity,
+    ];
+  });
+  expect(top).toBeGreaterThanOrEqual(headerBottom - 1);
+}
 async function uncovered(control: Locator) {
   await control.scrollIntoViewIfNeeded();
   expect(
@@ -59,6 +72,12 @@ for (const width of [320, 390, 1440]) {
       })
       .click();
     await saved(page);
+    await clearOfHeader(page.locator(".guided-case h1"));
+    await expect(
+      page
+        .getByRole("region", { name: "Save and readiness", exact: true })
+        .getByText(/^(Case|Text) ready/),
+    ).toHaveCount(1);
     const before = await portable(page);
     const record = page.locator(".flow-beat .flow-observation");
     await expect(record.locator(".record-heading")).toContainText(
@@ -137,6 +156,10 @@ for (const width of [320, 390, 1440]) {
     await expect(
       page.getByRole("combobox", { name: /^What I knew then/ }),
     ).toBeVisible();
+    await expect(
+      evidence.locator(".record").first().locator(".record-coverage"),
+    ).toHaveCount(1);
+    await expect(evidence.getByText(/^Collected through step/)).toHaveCount(0);
     expect(await portable(page)).toEqual(closed);
     expect(
       await page.evaluate(
@@ -145,3 +168,40 @@ for (const width of [320, 390, 1440]) {
     ).toBe(true);
   });
 }
+
+test("case screens add no investigation-art fetch after the home art fails", async ({
+  page,
+}) => {
+  const requested: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/art/northstar-investigation-"))
+      requested.push(request.url());
+  });
+  await page.route("**/art/northstar-investigation-*", (route) =>
+    route.abort(),
+  );
+  await page.goto("/");
+  const begin = page.getByRole("button", { name: /^Begin investigation/ });
+  await expect(begin).toBeEnabled({ timeout: 30000 });
+  await expect(
+    page
+      .getByRole("region", { name: "Save and readiness", exact: true })
+      .getByText("Case ready · optional sound below", { exact: true }),
+  ).toHaveCount(1, { timeout: 30000 });
+  const homeRequests = requested.length;
+  await begin.click();
+  await saved(page);
+  await page
+    .getByRole("button", {
+      name: "Compare usual sign-ins · 1 step →",
+      exact: true,
+    })
+    .click();
+  await saved(page);
+  expect(
+    await page
+      .locator(".m01-shell")
+      .evaluate((e) => getComputedStyle(e, "::before").backgroundImage),
+  ).not.toContain("northstar-investigation");
+  expect(requested).toHaveLength(homeRequests);
+});

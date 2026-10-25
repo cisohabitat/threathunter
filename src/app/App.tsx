@@ -155,7 +155,11 @@ export default function App({
         <a href="#main" className="skip-link">
           Skip to main content
         </a>
-        <div className={`app-shell m01-shell${guided ? " guided-play" : ""}`}>
+        <div
+          className={`app-shell m01-shell${guided ? " guided-play" : ""}${
+            artReady && !artFailed ? " art-ready" : ""
+          }`}
+        >
           <UtilityHeader>
             <header className="topbar">
               <button

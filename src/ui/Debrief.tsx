@@ -314,6 +314,7 @@ export function Debrief({
               <article
                 className="record"
                 id={anchor(refKey(r.ref))}
+                tabIndex={-1}
                 key={refKey(r.ref)}
               >
                 <div className="record-top">
@@ -321,17 +322,13 @@ export function Debrief({
                     {cited.has(refKey(r.ref))
                       ? "Cited in your finding"
                       : "Not cited in your finding"}
+                    {alternative.has(refKey(r.ref))
+                      ? " · used to test another explanation"
+                      : ""}
                   </span>
                 </div>
                 <Observation record={r} />
                 <CompareButton reference={r.ref} />
-                <small>
-                  Collected through step {r.snapshotCutoff} · delivered at step{" "}
-                  {r.deliveredTick}
-                  {alternative.has(refKey(r.ref))
-                    ? " · used to test another explanation"
-                    : ""}
-                </small>
               </article>
             ))}
         </ComparisonProvider>
@@ -437,11 +434,13 @@ export function Debrief({
                       event.preventDefault();
                       setEvidenceOpen(true);
                       setThrough(data.closeTick);
-                      requestAnimationFrame(() =>
-                        document
-                          .getElementById(anchor(refKey(ref)))
-                          ?.scrollIntoView({ block: "center" }),
-                      );
+                      requestAnimationFrame(() => {
+                        const record = document.getElementById(
+                          anchor(refKey(ref)),
+                        );
+                        record?.focus({ preventScroll: true });
+                        record?.scrollIntoView({ block: "center" });
+                      });
                     }}
                   >
                     {recordTitles[ref.recordId]} ·{" "}

@@ -1,6 +1,6 @@
 import { SourceIcon } from "./SourceIcon";
 import type { PublicRecord } from "../domain/contracts";
-import { recordTitles, sourceLabels } from "./caseLanguage";
+import { recordTitles, sourceLabel } from "./caseLanguage";
 
 export function Observation({ record }: { record: PublicRecord }) {
   return (
@@ -14,7 +14,7 @@ export function Observation({ record }: { record: PublicRecord }) {
         </span>
         <div>
           <p className="eyebrow">{recordTitles[record.ref.recordId]}</p>
-          <p className="record-source">{sourceLabels[record.sourceId]}</p>
+          <p className="record-source">{sourceLabel(record.sourceId)}</p>
         </div>
       </header>
       <p className="record-observation">{record.observation}</p>

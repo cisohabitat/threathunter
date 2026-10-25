@@ -135,6 +135,17 @@ test("direct evidence actions and four reporting steps produce the reference exp
     "",
   );
   await expect(page.locator("#known-record-0")).toBeInViewport();
+  await expect(page.locator("#known-record-0")).toBeFocused();
+  expect(
+    await page.locator("#known-record-0").evaluate((e) => {
+      const header = document.querySelector(".utility-header")!;
+      return (
+        getComputedStyle(header).position !== "sticky" ||
+        e.getBoundingClientRect().top >=
+          header.getBoundingClientRect().bottom - 1
+      );
+    }),
+  ).toBe(true);
   await page.reload();
   await page.getByRole("button", { name: "Resume investigation" }).click();
   await page.getByText("Your reasoning and lessons", { exact: true }).click();
