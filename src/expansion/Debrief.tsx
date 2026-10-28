@@ -26,7 +26,16 @@ export function Debrief({
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const [through, setThrough] = useState(d.closeTick),
     [related, setRelated] = useState<Ref[] | null>(null),
-    [revealed, setRevealed] = useState(false);
+    [revealed, setRevealed] = useState(false),
+    [evidenceOpen, setEvidenceOpen] = useState(false);
+  const evidenceId = `${p.missionId}-decision-evidence`;
+  // Open the reconstruction before scrolling to it; reading never commands.
+  function showEvidence() {
+    setEvidenceOpen(true);
+    requestAnimationFrame(() =>
+      document.getElementById(evidenceId)?.scrollIntoView({ block: "start" }),
+    );
+  }
   const records = useMemo(
     () =>
       d.records.filter(
@@ -57,7 +66,39 @@ export function Debrief({
           .
         </p>
       </section>
-      <section className="panel">
+      <section className="panel debrief-next">
+        <h3>Take it to the next investigation</h3>
+        <button className="quiet-edit" onClick={showEvidence}>
+          Review the evidence ↓
+        </button>
+        <ul>
+          {d.takeaways.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+        <details>
+          <summary>Optional transfer question</summary>
+          <p>
+            Which additional source would strengthen the conclusion in a similar
+            investigation, and which target, capability or time limit would
+            still remain?
+          </p>
+        </details>
+        <button disabled={busy} onClick={replay}>
+          Try another approach · same conditions
+        </button>
+        <p>
+          Replay uses the same authored world and conditions after a reveal; it
+          is a learning exercise, not a blind test.
+        </p>
+      </section>
+      <details
+        className="panel evidence-reconstruction"
+        id={evidenceId}
+        open={evidenceOpen}
+        onToggle={(event) => setEvidenceOpen(event.currentTarget.open)}
+      >
+        <summary>Evidence reconstruction · records and timeline</summary>
         <h3>Known at your decision</h3>
         <label>
           What I knew then
@@ -115,8 +156,9 @@ export function Debrief({
           <summary>Your investigation timeline</summary>
           <HistoryTimeline items={d.history.filter((h) => h.tick <= through)} />
         </details>
-      </section>
-      <section className="panel">
+      </details>
+      <details className="panel">
+        <summary>Evidence-linked feedback and optional quality</summary>
         <h3>Evidence-linked feedback</h3>
         {d.quality.reasons.map((r) => (
           <div key={r.id}>
@@ -129,6 +171,7 @@ export function Debrief({
                 onClick={() => {
                   setThrough(d.closeTick);
                   setRelated(r.refs);
+                  showEvidence();
                 }}
               >
                 Inspect observations for {r.id.replaceAll(".", " ")}
@@ -148,49 +191,53 @@ export function Debrief({
             {d.quality.decision} × 30% · report {d.quality.report} × 15%.
           </p>
         </details>
-      </section>
-      <div className="mechanic-columns">
-        <section className="panel">
-          <h3>Could have been checked</h3>
-          {p.queries
-            .filter(
-              (q) =>
-                !d.acquisitions.some(
-                  (a) => a.queryId === q.id && a.deliveredTick <= d.closeTick,
-                ),
-            )
-            .map((q) => (
-              <p key={q.id}>
-                <strong>{q.label}.</strong> {q.can} {q.cannot}
+      </details>
+      <details className="panel investigation-limits">
+        <summary>Other questions and visibility limits</summary>
+        <div className="mechanic-columns">
+          <section className="panel">
+            <h3>Could have been checked</h3>
+            {p.queries
+              .filter(
+                (q) =>
+                  !d.acquisitions.some(
+                    (a) => a.queryId === q.id && a.deliveredTick <= d.closeTick,
+                  ),
+              )
+              .map((q) => (
+                <p key={q.id}>
+                  <strong>{q.label}.</strong> {q.can} {q.cannot}
+                </p>
+              ))}
+            <p>
+              There is no secretly optimal click order. Each useful source
+              answers a distinct evidence question.
+            </p>
+          </section>
+          <section className="panel">
+            <h3>Not observable then</h3>
+            {d.records
+              .filter((r) => r.coverage !== "covered")
+              .map((r) => (
+                <p key={keyOf(r.ref)}>{r.text}</p>
+              ))}
+            {d.pendingChecks.map((c) => (
+              <p key={c.id}>
+                A verified check for {c.targetId} was still pending at
+                submission (due step {c.dueTick}). Its later result cannot
+                support the original finding.
               </p>
             ))}
-          <p>
-            There is no secretly optimal click order. Each useful source answers
-            a distinct evidence question.
-          </p>
-        </section>
-        <section className="panel">
-          <h3>Not observable then</h3>
-          {d.records
-            .filter((r) => r.coverage !== "covered")
-            .map((r) => (
-              <p key={keyOf(r.ref)}>{r.text}</p>
-            ))}
-          {d.pendingChecks.map((c) => (
-            <p key={c.id}>
-              A verified check for {c.targetId} was still pending at submission
-              (due step {c.dueTick}). Its later result cannot support the
-              original finding.
+            <p>
+              A missing source, person identity or motive cannot be filled in by
+              guessing the authored world.
             </p>
-          ))}
-          <p>
-            A missing source, person identity or motive cannot be filled in by
-            guessing the authored world.
-          </p>
-        </section>
-      </div>
-      <section className="panel">
-        <h3>After your handoff · operational outcome</h3>
+          </section>
+        </div>
+      </details>
+      <details className="panel">
+        <summary>After your handoff · operational outcome</summary>
+        <h3>After your handoff</h3>
         <p>
           {d.objectiveOccurred
             ? "The bounded out-of-scope objective completed in the simulation."
@@ -248,30 +295,7 @@ export function Debrief({
             ))}
           </>
         ) : null}
-      </section>
-      <section className="panel">
-        <h3>Take it to the next investigation</h3>
-        <ul>
-          {d.takeaways.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
-        <details>
-          <summary>Optional transfer question</summary>
-          <p>
-            Which additional source would strengthen the conclusion in a similar
-            investigation, and which target, capability or time limit would
-            still remain?
-          </p>
-        </details>
-        <button disabled={busy} onClick={replay}>
-          Try another approach · same conditions
-        </button>
-        <p>
-          Replay uses the same authored world and conditions after a reveal; it
-          is a learning exercise, not a blind test.
-        </p>
-      </section>
+      </details>
     </section>
   );
 }

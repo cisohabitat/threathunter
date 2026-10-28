@@ -78,7 +78,8 @@ async function seed(page: Page, mission: string, closed: boolean) {
       .getByRole("button", { name: new RegExp(`${mission} ·`) })
       .click();
   }
-  if (mission === "M01" && closed)
+  // Closed debriefs in every family keep the reconstruction behind a disclosure.
+  if (closed)
     await page
       .getByText("Evidence reconstruction · records and timeline", {
         exact: true,

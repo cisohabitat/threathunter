@@ -251,3 +251,5 @@ Phase 4 presentation contract: P1 and expansion use `UtilityHeader` like M01; do
 Phase 5 measurement: compare startup changes with `npm run profile:startup -- --samples=10 --fresh-browser --label=...` and interleaved A/B builds; keep every report. `roadmap-startup-baseline.json`/`roadmap-startup-ab.json` pin the current median (~2.1 s on an uncontended host) and the rejected Zod jitless experiment. Do not cite these as reference-device acceptance.
 
 Phase 6 wording: all families use **Begin investigation**, **Confirm and close case**, **Export save**, **Import save** and **Play temporarily without saving**; records say "received at step". Keep these identical across M01, P1 and expansion, and update e2e/verifier selectors together with any change.
+
+Phase 7 debriefs: P1 and expansion debriefs, like M01, lead with the finding/takeaway; reconstruction (`.evidence-reconstruction`), outcome and limits are disclosures opened on demand, and feedback links open the reconstruction before scrolling. Tests must open these disclosures explicitly. Expansion review Edit actions only navigate to a Case File step.

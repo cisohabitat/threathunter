@@ -227,6 +227,9 @@ async function report(
     .click();
   await saved(area, mission);
   await area
+    .getByText("Evidence-linked feedback and optional quality", { exact: true })
+    .click();
+  await area
     .getByText("Optional in-game quality breakdown", { exact: true })
     .click();
   await expect(area).toContainText("Total: 100/100", { timeout: 10000 });
@@ -318,6 +321,20 @@ test("expansion announces deliveries and moves focus to review and debrief", asy
     area.getByRole("heading", { name: "Review your finding", exact: true }),
   ).toBeFocused();
   expect(await portable(page, area)).toBe(before);
+  // Review Edit returns to the matching Case File step without a command.
+  await area
+    .getByRole("button", { name: "Edit unknowns", exact: true })
+    .click();
+  await expect(
+    area
+      .getByRole("navigation", { name: "M02 Case File steps", exact: true })
+      .getByRole("button", { name: "Unknowns", exact: true }),
+  ).toHaveAttribute("aria-current", "step");
+  expect(await portable(page, area)).toBe(before);
+  await area
+    .getByRole("navigation", { name: "M02 investigation", exact: true })
+    .getByRole("button", { name: "Review finding", exact: true })
+    .click();
   await area
     .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
@@ -328,6 +345,16 @@ test("expansion announces deliveries and moves focus to review and debrief", asy
   });
   await expect(debrief.locator("h2").first()).toBeFocused();
   await expect(area.locator("h1")).toHaveCount(1);
+  // The debrief leads with the finding; reconstruction opens on demand.
+  const closed = await portable(page, area);
+  const evidence = debrief.locator(".evidence-reconstruction");
+  await expect(evidence).not.toHaveAttribute("open");
+  await debrief
+    .getByRole("button", { name: "Review the evidence ↓", exact: true })
+    .click();
+  await expect(evidence).toHaveAttribute("open", "");
+  await expect(evidence.getByLabel("What I knew then")).toBeVisible();
+  expect(await portable(page, area)).toBe(closed);
 });
 
 test("M08 runs its complete text, future-only collection and loaded voice pack offline without changing save bytes during listening", async ({
@@ -369,6 +396,9 @@ test("M08 runs its complete text, future-only collection and loaded voice pack o
   await query(area, "M08", "Read the enabled future observation window");
   await query(area, "M08", "Read the enabled future observation window");
   await report(area, "M08", fixture, true);
+  await area
+    .getByText("After your handoff · operational outcome", { exact: true })
+    .click();
   await area
     .getByRole("button", {
       name: "Reveal simulation reconstruction",

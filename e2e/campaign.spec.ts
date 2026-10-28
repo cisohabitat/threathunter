@@ -156,6 +156,14 @@ async function report(area: Locator, mission: "M04" | "M07") {
     )
     .click();
   await expect(debrief.locator(".score")).toHaveText("100/100");
+  // Evidence-linked feedback opens the reconstruction before scrolling to it.
+  const reconstruction = debrief.locator(".evidence-reconstruction");
+  await expect(reconstruction).not.toHaveAttribute("open");
+  await debrief
+    .getByRole("button", { name: "Review related observations" })
+    .first()
+    .click();
+  await expect(reconstruction).toHaveAttribute("open", "");
 }
 async function portable(page: Page, area: Locator) {
   const pending = page.waitForEvent("download");
@@ -249,6 +257,7 @@ test("M07 proves a future collection window without backfilling history and clos
   await report(area, "M07");
   const exported = JSON.parse(await portable(page, area));
   expect(exported.manifest.missionId).toBe("M07");
+  // report() leaves the reconstruction open after following feedback.
   await area.getByLabel("What I knew then").fill("0");
   await expect(
     area

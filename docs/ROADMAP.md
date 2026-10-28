@@ -66,9 +66,13 @@ Authorised by the user ("all") on 28 October 2026, with phases 7–10.
 
 Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally.
 
-## Phase 7 — Debrief and review parity
+## Phase 7 — Debrief and review parity · done
 
-- P1/expansion debriefs lead with the finding and a takeaway; evidence reconstruction, outcome and limits expand on demand, and feedback links open the reconstruction before scrolling. Reading and disclosure stay free and leave saves unchanged.
+- Done: P1 and expansion debriefs lead with the finding and one takeaway plus **Review the evidence ↓**; the evidence reconstruction, operational outcome, other questions/visibility limits and (expansion) evidence-linked feedback expand on demand. Feedback links open the reconstruction before scrolling to it. Replay stays visible.
+- Done: the expansion review lists explanation, evidence, unknowns and next step with quiet **Edit** actions that return to the matching Case File step without a command.
+- Done: e2e specs open the new disclosures; new checks cover review Edit (unchanged portable save), "Review the evidence ↓" (unchanged closed save) and P1 feedback links opening the reconstruction.
+
+Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally.
 
 ## Phase 8 — Shared controller code
 

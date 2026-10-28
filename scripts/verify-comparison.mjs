@@ -81,7 +81,7 @@ try {
       const pending = page.waitForEvent("download");
       await area
         .getByRole("button", {
-          name: mission === "M01" ? "Export save" : "Export save",
+          name: "Export save",
           exact: true,
         })
         .click();

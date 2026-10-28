@@ -1,6 +1,6 @@
 import { PlayPrimer } from "../ui/PlayPrimer";
 import { BackupImport } from "../ui/BackupImport";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { AudioPanel } from "../ui/AudioPanel";
 import { UtilityHeader } from "../ui/UtilityHeader";
@@ -193,6 +193,11 @@ export default function Expansion({
       reviewHeading.current?.focus({ preventScroll: true });
       reviewHeading.current?.scrollIntoView({ block: "start" });
     });
+  }
+  // Free navigation back to one Case File step; never commands the engine.
+  function editReport(step: number) {
+    navigate("Case File");
+    setReportStep(step);
   }
   async function restore(file: File | undefined) {
     if (!file) return;
@@ -792,23 +797,37 @@ export default function Expansion({
                     <h2 ref={reviewHeading} tabIndex={-1}>
                       Review your finding
                     </h2>
-                    <p>
+                    <ReviewItem
+                      label="Edit explanation"
+                      onEdit={() => editReport(0)}
+                    >
                       {dispositionLabels[v.finding.disposition]} · confidence{" "}
                       {v.finding.confidence} · scope {v.finding.targetId}.
-                    </p>
-                    <p>
-                      {v.finding.evidence.length} cited observations,{" "}
-                      {v.finding.alternativeEvidence.length} alternative checks
-                      and {v.finding.limitations.length} recorded limitations.{" "}
+                    </ReviewItem>
+                    <ReviewItem
+                      label="Edit evidence"
+                      onEdit={() => editReport(1)}
+                    >
+                      {v.finding.evidence.length} cited observations and{" "}
+                      {v.finding.alternativeEvidence.length} alternative checks.
+                    </ReviewItem>
+                    <ReviewItem
+                      label="Edit unknowns"
+                      onEdit={() => editReport(2)}
+                    >
+                      {v.finding.limitations.length} recorded limitations.{" "}
                       {v.pendingChecks.length} check(s) remain pending.
-                    </p>
-                    <p>
+                    </ReviewItem>
+                    <ReviewItem
+                      label="Edit next step"
+                      onEdit={() => editReport(3)}
+                    >
                       Next action: {handoffLabels[v.finding.handoff]}. Owner:{" "}
                       {v.finding.owner === "none"
                         ? "none · explained closure"
                         : v.finding.owner}
                       . Follow-up: {followupLabels[v.finding.followup]}.
-                    </p>
+                    </ReviewItem>
                     {!v.finding.evidence.length ||
                     v.finding.targetId === "unselected" ||
                     !v.finding.scopeAcknowledged ? (
@@ -1599,5 +1618,23 @@ export default function Expansion({
         </div>
       </LazyMotion>
     </ComparisonProvider>
+  );
+}
+function ReviewItem({
+  label,
+  onEdit,
+  children,
+}: {
+  label: string;
+  onEdit: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="review-item">
+      <p>{children}</p>
+      <button className="quiet-edit" aria-label={label} onClick={onEdit}>
+        Edit
+      </button>
+    </div>
   );
 }

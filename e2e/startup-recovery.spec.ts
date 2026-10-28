@@ -33,7 +33,7 @@ for (const slot of ["M02", "M04", "free"] as const) {
       campaign ? `[data-mission="${slot}"]` : `[data-expansion="${slot}"]`,
     );
     const begin = area.getByRole("button", {
-      name: campaign ? "Begin investigation" : "Begin investigation",
+      name: "Begin investigation",
       exact: true,
     });
     await expect(area.getByRole("alert")).toContainText(
@@ -76,7 +76,7 @@ for (const slot of ["M02", "M04", "free"] as const) {
     const pending = page.waitForEvent("download");
     await area
       .getByRole("button", {
-        name: campaign ? "Export save" : "Export save",
+        name: "Export save",
         exact: true,
       })
       .click();
