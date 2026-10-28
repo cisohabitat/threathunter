@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { readinessOf, useReadinessMarks } from "../persistence/readiness";
+import {
+  useCommittedRefresh,
+  useUnloadGuard,
+  useWriterLock,
+} from "../persistence/useMissionGuards";
 import { packages } from "./content";
 import type { Action, Debrief, View, World } from "./contracts";
 import {
@@ -39,52 +44,19 @@ export function useExpansion(mission: storage.Slot) {
     setView(project(state));
     setDebrief(state.debrief ? structuredClone(state.debrief) : null);
   };
-  useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => {
-      if (engine.current && engine.current.view.revision !== durable.current) {
-        event.preventDefault();
-        event.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, []);
-  useEffect(() => {
-    if (!navigator.locks) {
-      setReadOnly(false);
-      return;
-    }
-    const controller = new AbortController();
-    let disposed = false,
-      release: (() => void) | undefined;
-    navigator.locks
-      .request(
-        `threat-hunter-expansion-${mission}`,
-        { signal: controller.signal },
-        async (lock) => {
-          if (disposed || !lock) return;
-          setReadOnly(false);
-          await new Promise<void>((resolve) => {
-            release = resolve;
-          });
-        },
-      )
-      .catch(() => {
-        if (!disposed) {
-          setWriterAvailable(false);
-          setReadOnly(false);
-        }
-      });
-    return () => {
-      disposed = true;
-      controller.abort();
-      release?.();
-    };
-  }, [mission]);
-  useEffect(() => {
-    if (!readOnly || temporary) return;
-    return storage.subscribe(mission, () => setRefresh((v) => v + 1));
-  }, [mission, readOnly, temporary]);
+  useUnloadGuard(
+    () =>
+      Boolean(engine.current) &&
+      engine.current!.view.revision !== durable.current,
+  );
+  useWriterLock(
+    `threat-hunter-expansion-${mission}`,
+    setReadOnly,
+    setWriterAvailable,
+  );
+  useCommittedRefresh(mission, readOnly && !temporary, storage.subscribe, () =>
+    setRefresh((v) => v + 1),
+  );
   useEffect(() => {
     if (temporary) return;
     let alive = true;

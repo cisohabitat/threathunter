@@ -253,3 +253,5 @@ Phase 5 measurement: compare startup changes with `npm run profile:startup -- --
 Phase 6 wording: all families use **Begin investigation**, **Confirm and close case**, **Export save**, **Import save** and **Play temporarily without saving**; records say "received at step". Keep these identical across M01, P1 and expansion, and update e2e/verifier selectors together with any change.
 
 Phase 7 debriefs: P1 and expansion debriefs, like M01, lead with the finding/takeaway; reconstruction (`.evidence-reconstruction`), outcome and limits are disclosures opened on demand, and feedback links open the reconstruction before scrolling. Tests must open these disclosures explicitly. Expansion review Edit actions only navigate to a Case File step.
+
+Phase 8: P1/expansion controllers share `useUnloadGuard`, `useWriterLock` and `useCommittedRefresh` from `persistence/useMissionGuards.ts`; keep lock-name prefixes and per-family storage modules unchanged. Campaign and expansion storage remain deliberately separate modules.

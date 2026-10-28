@@ -74,9 +74,12 @@ Verification: lint, format check, types, 280 units, build, budgets and all 200 C
 
 Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally.
 
-## Phase 8 — Shared controller code
+## Phase 8 — Shared controller code · done
 
-- Extract the duplicated P1/expansion Web Lock and save-notification effects into shared hooks, keeping lock names, read-only enforcement, ownership-transfer reload and per-mission notifications. Storage modules stay separate unless the merge can be proven byte-identical by the existing storage and adversarial suites.
+- Done: `persistence/useMissionGuards.ts` holds the previously duplicated P1/expansion unload warning, Web Lock and committed-refresh effects. Each family still supplies its own lock name (`threat-hunter-campaign-<mission>`, `threat-hunter-expansion-<slot>`), storage subscription and refresh, so lock names, read-only enforcement, ownership-transfer reload and per-mission notifications are unchanged.
+- Decided: the two storage modules stay separate. They own different databases, key and row shapes behind full-row compare-and-swap; a generic store would touch the highest-stakes code for little benefit, and AGENTS.md treats those contracts as frozen. Their validator clients were already unified in phase 2.
+
+Verification: lint, format check, types, 280 units (including campaign/expansion storage and adversarial suites), build, budgets and all 200 Chromium checks (lock transfer, read-only tabs, unload guards) passed locally.
 
 ## Phase 9 — Content validation at load
 
