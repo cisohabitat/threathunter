@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useFocusOnMount } from "../ui/useFocusOnMount";
 import { keyOf, type Debrief, type MissionId, type Ref } from "./contracts";
 import { packages } from "./content";
 import { claimLabels, handoffLabels } from "./labels";
@@ -18,6 +19,7 @@ export function CampaignDebrief({
   busy: boolean;
   replay: () => Promise<void>;
 }) {
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const [through, setThrough] = useState(data.closeTick),
     [related, setRelated] = useState<Ref[] | null>(null);
   const records = useMemo(
@@ -39,7 +41,9 @@ export function CampaignDebrief({
   return (
     <section className="debrief" aria-label={`${missionId} hunt debrief`}>
       <p className="eyebrow">YOUR FINDING · FROZEN AT STEP {data.closeTick}</p>
-      <h2>{claimLabels[data.finding.disposition]}</h2>
+      <h2 ref={headingRef} tabIndex={-1}>
+        {claimLabels[data.finding.disposition]}
+      </h2>
       <section className="panel finding-verdict">
         <h3>What your observations support</h3>
         <p className="verdict-summary">

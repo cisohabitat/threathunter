@@ -16,7 +16,8 @@ import { Records, type Update } from "./Records";
 import { Mechanic } from "./Mechanic";
 import { Debrief } from "./Debrief";
 import type { Slot } from "./storage";
-import type { Finding } from "./contracts";
+import { keyOf, type Finding } from "./contracts";
+import { DeliveryAnnouncer } from "../ui/DeliveryAnnouncer";
 const screens = ["Leads", "Explore", "Case File", "Timeline"] as const;
 type Screen = (typeof screens)[number];
 const dispositionLabels = {
@@ -68,9 +69,15 @@ export default function Expansion({
     [duration, setDuration] = useState(1),
     [windowDuration, setWindowDuration] = useState(2),
     [notes, setNotes] = useState(""),
-    [notesFor, setNotesFor] = useState("");
+    [notesFor, setNotesFor] = useState(""),
+    [artFailed, setArtFailed] = useState(false);
   const notesDirty = Boolean(v && notes !== v.finding.notes);
+  // The opening lead stays first; the newest delivery is shown beside it.
+  const latest = v?.records.length
+    ? v.records.reduce((a, b) => (b.deliveredTick >= a.deliveredTick ? b : a))
+    : undefined;
   const heading = useRef<HTMLHeadingElement>(null),
+    reviewHeading = useRef<HTMLHeadingElement>(null),
     positions = useRef<Record<string, number>>({}),
     assistance = useRef<{
       total: number;
@@ -179,6 +186,11 @@ export default function Expansion({
       if (!accepted) return;
     }
     setReview(true);
+    // The confirmation renders above the workspace; bring it to the player.
+    requestAnimationFrame(() => {
+      reviewHeading.current?.focus({ preventScroll: true });
+      reviewHeading.current?.scrollIntoView({ block: "start" });
+    });
   }
   async function restore(file: File | undefined) {
     if (!file) return;
@@ -427,19 +439,32 @@ export default function Expansion({
               Export preserved recovery original
             </button>
           ) : null}
-          <main id={`main-${slot}`}>
+          <main id={`main-${slot}`} tabIndex={-1}>
+            {v ? (
+              <DeliveryAnnouncer
+                runId={v.runId}
+                records={v.records.map((r) => ({
+                  key: keyOf(r.ref),
+                  title: r.title,
+                }))}
+              />
+            ) : null}
             <div className="expansion-banner">
               <picture>
-                <source
-                  media="(max-width: 767px)"
-                  srcSet="/art/northstar-investigation-portrait-v1.webp"
-                />
+                {!artFailed ? (
+                  <source
+                    media="(max-width: 767px)"
+                    srcSet="/art/northstar-investigation-portrait-v1.webp"
+                  />
+                ) : null}
                 <img
-                  src="/art/northstar-investigation-landscape-v1.webp"
+                  src={
+                    artFailed
+                      ? "/art/northstar-night.svg"
+                      : "/art/northstar-investigation-landscape-v1.webp"
+                  }
                   alt=""
-                  onError={(e) => {
-                    e.currentTarget.src = "/art/northstar-night.svg";
-                  }}
+                  onError={() => setArtFailed(true)}
                 />
               </picture>
               <div>
@@ -621,6 +646,7 @@ export default function Expansion({
                   ))}
                   <button
                     className="primary"
+                    disabled={game.blocked}
                     onClick={() => void reviewFinding()}
                   >
                     Review finding
@@ -759,7 +785,9 @@ export default function Expansion({
                 ) : null}
                 {review ? (
                   <section className="panel" aria-label="Finding confirmation">
-                    <h2>Review your finding</h2>
+                    <h2 ref={reviewHeading} tabIndex={-1}>
+                      Review your finding
+                    </h2>
                     <p>
                       {dispositionLabels[v.finding.disposition]} · confidence{" "}
                       {v.finding.confidence} · scope {v.finding.targetId}.
@@ -811,6 +839,12 @@ export default function Expansion({
                       <section className="panel">
                         <h2>Your current observations</h2>
                         <p>{v.records[0].text}</p>
+                        {latest && latest !== v.records[0] ? (
+                          <p>
+                            <strong>Latest delivery · {latest.title}:</strong>{" "}
+                            {latest.text}
+                          </p>
+                        ) : null}
                         <button
                           disabled={game.blocked}
                           onClick={() => {

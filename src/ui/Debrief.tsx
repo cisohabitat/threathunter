@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useFocusOnMount } from "./useFocusOnMount";
 import { Observation } from "./Observation";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
@@ -43,6 +44,7 @@ export function Debrief({
   restart: () => Promise<void>;
   busy: boolean;
 }) {
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const [through, setThrough] = useState(data.closeTick);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const supported =
@@ -101,7 +103,7 @@ export function Debrief({
       <p className="eyebrow">
         CASE M01 · FINDING FROZEN AT STEP {data.closeTick}
       </p>
-      <h1>
+      <h1 ref={headingRef} tabIndex={-1}>
         Your finding.
         <br />
         <span>What it was built on.</span>

@@ -292,6 +292,37 @@ for (const mission of ids)
     );
     expect(archive).toEqual(data);
   });
+test("expansion announces deliveries and moves focus to review and debrief", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const { area } = await start(page, "M02");
+  const live = area.locator('[aria-live="polite"][aria-atomic="true"]');
+  await expect(live).toHaveText("");
+  await tab(area, "M02", "Explore");
+  await query(area, "M02", "Establish the task and business consequence");
+  await expect(live).toHaveText(/^New observation: /);
+  const before = await portable(page, area);
+  await area
+    .getByRole("navigation", { name: "M02 investigation", exact: true })
+    .getByRole("button", { name: "Review finding", exact: true })
+    .click();
+  await expect(
+    area.getByRole("heading", { name: "Review your finding", exact: true }),
+  ).toBeFocused();
+  expect(await portable(page, area)).toBe(before);
+  await area
+    .getByRole("button", { name: "Confirm and close case", exact: true })
+    .click();
+  await saved(area, "M02");
+  const debrief = area.getByRole("region", {
+    name: "M02 investigation debrief",
+    exact: true,
+  });
+  await expect(debrief.locator("h2").first()).toBeFocused();
+  await expect(area.locator("h1")).toHaveCount(1);
+});
+
 test("M08 runs its complete text, future-only collection and loaded voice pack offline without changing save bytes during listening", async ({
   page,
   context,

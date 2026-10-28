@@ -2,7 +2,8 @@ import { PlayPrimer } from "../ui/PlayPrimer";
 import { BackupImport } from "../ui/BackupImport";
 import { useEffect, useRef, useState } from "react";
 import { packages } from "./content";
-import { type Finding, type MissionId, type View } from "./contracts";
+import { keyOf, type Finding, type MissionId, type View } from "./contracts";
+import { DeliveryAnnouncer } from "../ui/DeliveryAnnouncer";
 import { useCampaign } from "./useCampaign";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { AudioPanel } from "../ui/AudioPanel";
@@ -967,6 +968,15 @@ export default function Campaign({
           </section>
         ) : null}
         <main id={`main-${missionId}`} tabIndex={-1}>
+          {game.view ? (
+            <DeliveryAnnouncer
+              runId={game.view.runId}
+              records={game.view.records.map((r) => ({
+                key: keyOf(r.ref),
+                title: r.title,
+              }))}
+            />
+          ) : null}
           <div className="campaign-banner">
             <picture>
               <source

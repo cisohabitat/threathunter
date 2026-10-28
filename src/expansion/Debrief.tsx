@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useFocusOnMount } from "../ui/useFocusOnMount";
 import { ComparisonPanel, ComparisonProvider } from "../comparison/Comparison";
 import { fromExpansion } from "../comparison/model";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
@@ -22,6 +23,7 @@ export function Debrief({
   replay: () => void;
   busy: boolean;
 }) {
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const [through, setThrough] = useState(d.closeTick),
     [related, setRelated] = useState<Ref[] | null>(null),
     [revealed, setRevealed] = useState(false);
@@ -37,9 +39,11 @@ export function Debrief({
   return (
     <section aria-label={`${p.missionId} investigation debrief`}>
       <p className="eyebrow">YOUR FINDING · FROZEN AT STEP {d.closeTick}</p>
-      <h1>{labels[d.finding.disposition]}</h1>
+      <h2 ref={headingRef} tabIndex={-1}>
+        {labels[d.finding.disposition]}
+      </h2>
       <section className="panel finding-verdict">
-        <h2>What your observations support</h2>
+        <h3>What your observations support</h3>
         <p>
           {d.quality.supported
             ? "Your cited observations meet a sufficient set for the selected finding within this case’s declared source and scope limits."
@@ -54,7 +58,7 @@ export function Debrief({
         </p>
       </section>
       <section className="panel">
-        <h2>Known at your decision</h2>
+        <h3>Known at your decision</h3>
         <label>
           What I knew then
           <input
@@ -113,7 +117,7 @@ export function Debrief({
         </details>
       </section>
       <section className="panel">
-        <h2>Evidence-linked feedback</h2>
+        <h3>Evidence-linked feedback</h3>
         {d.quality.reasons.map((r) => (
           <div key={r.id}>
             <p>
@@ -147,7 +151,7 @@ export function Debrief({
       </section>
       <div className="mechanic-columns">
         <section className="panel">
-          <h2>Could have been checked</h2>
+          <h3>Could have been checked</h3>
           {p.queries
             .filter(
               (q) =>
@@ -166,7 +170,7 @@ export function Debrief({
           </p>
         </section>
         <section className="panel">
-          <h2>Not observable then</h2>
+          <h3>Not observable then</h3>
           {d.records
             .filter((r) => r.coverage !== "covered")
             .map((r) => (
@@ -186,7 +190,7 @@ export function Debrief({
         </section>
       </div>
       <section className="panel">
-        <h2>After your handoff · operational outcome</h2>
+        <h3>After your handoff · operational outcome</h3>
         <p>
           {d.objectiveOccurred
             ? "The bounded out-of-scope objective completed in the simulation."
@@ -206,7 +210,7 @@ export function Debrief({
         </button>
         {revealed ? (
           <>
-            <h3>Actual world activity</h3>
+            <h4>Actual world activity</h4>
             <HistoryTimeline
               items={[...d.events]
                 .sort(
@@ -224,7 +228,7 @@ export function Debrief({
                   refs: [],
                 }))}
             />
-            <h3>Source collection</h3>
+            <h4>Source collection</h4>
             {d.collection.map((c) => (
               <p key={c.id}>
                 {c.sourceId.replaceAll("_", " ")} · recorded step{" "}
@@ -235,7 +239,7 @@ export function Debrief({
                 {c.availableAt} · {c.coverage}. Origin {c.originId}.
               </p>
             ))}
-            <h3>Player acquisitions</h3>
+            <h4>Player acquisitions</h4>
             {d.acquisitions.map((a) => (
               <p key={a.id}>
                 {a.queryId} · target {a.targetId} · cutoff {a.cutoffTick} ·
@@ -246,7 +250,7 @@ export function Debrief({
         ) : null}
       </section>
       <section className="panel">
-        <h2>Take it to the next investigation</h2>
+        <h3>Take it to the next investigation</h3>
         <ul>
           {d.takeaways.map((t) => (
             <li key={t}>{t}</li>

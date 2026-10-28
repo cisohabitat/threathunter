@@ -148,6 +148,7 @@ async function report(area: Locator, mission: "M04" | "M07") {
   await saved(area);
   const debrief = area.getByRole("region", { name: `${mission} hunt debrief` });
   await expect(debrief).toBeVisible();
+  await expect(debrief.locator("h2").first()).toBeFocused();
   await debrief
     .getByText(
       "Investigation quality · optional score and evidence-linked feedback",

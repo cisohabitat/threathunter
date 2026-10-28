@@ -27,14 +27,16 @@ Goal: remove plausible causes of the intermittent "Begin stays disabled" failure
 
 Verification: lint, format check, types, 280 units (seven new), build, budgets and all 188 Chromium desktop/phone checks passed locally.
 
-## Phase 3 — Accessibility and focus parity
+## Phase 3 — Accessibility and focus parity · done
 
 Goal: every family moves focus and announces changes the way M01 does.
 
-- Focus the debrief heading when a case closes (all three families).
-- Expansion: focus the review confirmation when it opens; disable Review while blocked; give `<main>` `tabIndex={-1}` for the skip link; single page `h1` while the debrief shows.
-- P1/expansion: announce new observations politely after an accepted acquisition.
-- Expansion "Your current observations" shows the latest delivery, not the first record; mobile art fallback drops the responsive `<source>` like M01.
+- Done: the debrief heading receives focus when a case closes in M01, P1 and expansion (`ui/useFocusOnMount.ts`).
+- Done: expansion Review focuses and scrolls to its confirmation; the navigation Review button is disabled while blocked; `<main>` takes `tabIndex={-1}` for the skip link; debrief headings are one level lower, so the page keeps a single `h1`.
+- Done: P1/expansion announce new deliveries through a polite `aria-live` region (`ui/DeliveryAnnouncer.tsx`, deliberately not `role="status"` so labelled save-status regions stay unique). The first render and a new run establish a silent baseline; reading and navigation announce nothing.
+- Done: the expansion Leads panel keeps the opening lead and adds the latest delivery; the mobile art fallback drops the responsive `<source>`, as M01 does.
+
+Verification: lint, format check, types, 280 units, build, budgets and all 190 Chromium desktop/phone checks passed locally. New checks (expansion announcement/review/debrief focus and single `h1`; P1 and M01 debrief focus) failed against the previous source.
 
 ## Phase 4 — Shared presentation across families
 

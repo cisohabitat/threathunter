@@ -146,6 +146,7 @@ for (const width of [320, 390, 1440]) {
       .click();
     await saved(page);
     await expect(page.locator(".debrief-next")).toBeVisible();
+    await expect(page.locator(".debrief > h1")).toBeFocused();
     const evidence = page.locator(".evidence-reconstruction");
     await expect(evidence).not.toHaveAttribute("open");
     const closed = await portable(page);
