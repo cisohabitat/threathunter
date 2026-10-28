@@ -1,0 +1,187 @@
+{
+  "capturedOn": "2026-10-28",
+  "purpose": "Roadmap phase 5: repeatable startup baseline and a rejected Zod jitless A/B",
+  "method": "scripts/profile-startup.mjs --samples=10 --fresh-browser against vite preview (port 4173); cache disabled; 390x844 mobile emulation; 4 Mbps / 100 ms RTT; 4x CPU. Readiness = enabled Begin + decoded art. After an initial pair, baseline and jitless builds were interleaved (baseline, jitless, baseline, jitless).",
+  "runs": [
+    {
+      "label": "baseline",
+      "bundle": "/assets/index-DVbZWaUn.js",
+      "bundleSha256": "a4ae0d9e18e21952213b4059571ff24c89286d49da842d409c371be91708896a",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2158,
+        "p90Ms": 2416,
+        "minMs": 2024,
+        "maxMs": 2436
+      },
+      "readyMs": [
+        2436,
+        2183,
+        2416,
+        2082,
+        2028,
+        2041,
+        2182,
+        2191,
+        2024,
+        2158
+      ]
+    },
+    {
+      "label": "baseline-shared",
+      "bundle": "/assets/index-DVbZWaUn.js",
+      "bundleSha256": "a4ae0d9e18e21952213b4059571ff24c89286d49da842d409c371be91708896a",
+      "method": "10 sequential fresh browser contexts in one browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2108,
+        "p90Ms": 2141,
+        "minMs": 2057,
+        "maxMs": 2154
+      },
+      "readyMs": [
+        2138,
+        2136,
+        2057,
+        2141,
+        2108,
+        2110,
+        2154,
+        2083,
+        2078,
+        2067
+      ]
+    },
+    {
+      "label": "zod-jitless",
+      "bundle": "/assets/index-DEF8H7B2.js",
+      "bundleSha256": "0df0dda36cbfbb25908696c5aa6795e0f8cbe94b1b11048e17774e381b7e534f",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2085,
+        "p90Ms": 2231,
+        "minMs": 1962,
+        "maxMs": 2256
+      },
+      "readyMs": [
+        2085,
+        1962,
+        2256,
+        2231,
+        2144,
+        2023,
+        2165,
+        1989,
+        2102,
+        2041
+      ]
+    },
+    {
+      "label": "baseline-2",
+      "bundle": "/assets/index-DVbZWaUn.js",
+      "bundleSha256": "a4ae0d9e18e21952213b4059571ff24c89286d49da842d409c371be91708896a",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2081,
+        "p90Ms": 2215,
+        "minMs": 1933,
+        "maxMs": 2253
+      },
+      "readyMs": [
+        2214,
+        1957,
+        1937,
+        2252,
+        2141,
+        2149,
+        2038,
+        1933,
+        2081,
+        2174
+      ]
+    },
+    {
+      "label": "jitless-2",
+      "bundle": "/assets/index-DEF8H7B2.js",
+      "bundleSha256": "0df0dda36cbfbb25908696c5aa6795e0f8cbe94b1b11048e17774e381b7e534f",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2169,
+        "p90Ms": 2324,
+        "minMs": 1978,
+        "maxMs": 2364
+      },
+      "readyMs": [
+        2186,
+        2076,
+        2254,
+        2169,
+        2061,
+        1978,
+        2097,
+        2364,
+        2304,
+        2324
+      ]
+    },
+    {
+      "label": "baseline-3",
+      "bundle": "/assets/index-DVbZWaUn.js",
+      "bundleSha256": "a4ae0d9e18e21952213b4059571ff24c89286d49da842d409c371be91708896a",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2135,
+        "p90Ms": 2418,
+        "minMs": 1959,
+        "maxMs": 2479
+      },
+      "readyMs": [
+        2297,
+        2212,
+        2011,
+        2310,
+        2418,
+        2479,
+        1979,
+        2135,
+        2082,
+        1959
+      ]
+    },
+    {
+      "label": "jitless-3",
+      "bundle": "/assets/index-DEF8H7B2.js",
+      "bundleSha256": "0df0dda36cbfbb25908696c5aa6795e0f8cbe94b1b11048e17774e381b7e534f",
+      "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+      "summary": {
+        "samples": 10,
+        "medianMs": 2175,
+        "p90Ms": 2273,
+        "minMs": 2049,
+        "maxMs": 2369
+      },
+      "readyMs": [
+        2240,
+        2174,
+        2049,
+        2176,
+        2150,
+        2369,
+        2234,
+        2127,
+        2123,
+        2273
+      ]
+    }
+  ],
+  "conclusion": "Baseline medians 2158/2081/2135 ms (shared-browser 2108 ms); jitless medians 2085/2169/2175 ms. No measurable improvement, so z.config({ jitless: true }) was not shipped. All samples are far below the historical 4.6-27 s captures; host contention at capture time, not the build, likely dominated earlier variance. Chromium emulation on a shared Linux host, not reference-device acceptance.",
+  "notAttempted": {
+    "workerPrefetch": "The worker chunk arrives in 30-65 ms and the profiler disables the HTTP cache, so a prefetch could not be measured and would save at most ~2-3%.",
+    "lazyPostBeginScreens": "Offline Begin requires those chunks before case-ready; with a ~2.1 s median the expected gain does not justify restructuring App.tsx now."
+  }
+}

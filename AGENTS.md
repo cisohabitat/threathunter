@@ -247,3 +247,5 @@ Phase 2 reliability contract: browser validators use `persistence/workerClient.t
 Phase 3 accessibility contract: debrief headings in all three families take focus on mount; expansion Review focuses its confirmation; P1/expansion announce deliveries via `DeliveryAnnouncer` (`aria-live`, never `role="status"`). Expansion debrief headings start at `h2` so the page keeps one `h1`.
 
 Phase 4 presentation contract: P1 and expansion use `UtilityHeader` like M01; do not reintroduce separately sticky bars or fixed clearance offsets. Only a visible `UtilityHeader` publishes the clearance variables. Display source/handoff/follow-up text through `campaign/labels.ts` and `expansion/labels.ts`; never render raw IDs with `replaceAll("_", " ")` in player-facing copy, and keep enum option values unchanged.
+
+Phase 5 measurement: compare startup changes with `npm run profile:startup -- --samples=10 --fresh-browser --label=...` and interleaved A/B builds; keep every report. `roadmap-startup-baseline.json`/`roadmap-startup-ab.json` pin the current median (~2.1 s on an uncontended host) and the rejected Zod jitless experiment. Do not cite these as reference-device acceptance.

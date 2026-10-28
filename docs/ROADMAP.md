@@ -48,13 +48,14 @@ Goal: P1 and expansion get the M01 presentation work instead of older patterns.
 
 Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally, including new header-clearance checks for M04/M02 at 390/1280px with a switch back to M01, and readable expansion source names.
 
-## Phase 5 — Startup performance
+## Phase 5 — Startup performance · done (measurement; no speed change shipped)
 
 Goal: reduce main-thread work before first interaction, measured with more than three samples.
 
-- Profile with more samples (fresh browser per sample, median/p90) so changes can be judged.
-- Prefetch the validation worker chunk during idle network time (no early worker execution; the rejected warm-up stays rejected).
-- Evaluate lazy-loading post-Begin M01 screens with idle prefetch, keeping offline Begin/save. Ship only if measured better; record rejected experiments.
+- Done: `profile:startup` accepts `--samples=N`, `--fresh-browser` and `--label=`, writes a median/p90 summary and honours `THREAT_HUNTER_CHROMIUM_PATH`. Defaults keep the original three-sample method.
+- Measured: on the current build (`/assets/index-DVbZWaUn.js`) ten fresh-browser cold loads at 4 Mbps / 100 ms / 4× CPU gave median **2158 ms**, p90 2416 ms; interleaved repeats gave 2081 and 2135 ms, and the shared-browser method 2108 ms ([baseline](verification/roadmap-startup-baseline.json), [A/B](verification/roadmap-startup-ab.json)). The historical 4.6–27 s captures were taken on a contended host; this does not pass the reference-device gate.
+- Rejected: Zod `jitless` mode (medians 2085/2169/2175 ms vs baseline 2158/2081/2135 ms) — no measurable gain, not shipped.
+- Not attempted: worker prefetch (30–65 ms fetch; unmeasurable with the cache-disabled method) and lazy post-Begin M01 screens (offline Begin needs them before case-ready; low expected gain at a ~2.1 s median). Revisit with named-device traces.
 
 ## Later — needs a decision or broader review
 

@@ -1,0 +1,737 @@
+{
+  "capturedAt": "2026-10-28T09:44:56.517Z",
+  "label": "baseline",
+  "summary": {
+    "samples": 10,
+    "medianMs": 2158,
+    "p90Ms": 2416,
+    "minMs": 2024,
+    "maxMs": 2436
+  },
+  "origin": "http://127.0.0.1:4173",
+  "buildBundle": "/assets/index-DVbZWaUn.js",
+  "htmlSha256": "78f07f54eb989ed2b1aaef67c766aef38b153cc399b718de85941373d0a4fae9",
+  "bundleSha256": "a4ae0d9e18e21952213b4059571ff24c89286d49da842d409c371be91708896a",
+  "browser": "153.0.8010.12",
+  "toolingReaderPath": "/assets/format-Dx3H4Lpr.js",
+  "toolingReaderPaths": [
+    "/assets/format-Dx3H4Lpr.js",
+    "/assets/format-CO5d0pih.js",
+    "/assets/format-BK71Xehu.js"
+  ],
+  "toolingReaderFetchedDuringColdReadiness": false,
+  "method": "10 sequential fresh browser contexts, each in a newly launched browser; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.",
+  "runs": [
+    {
+      "readyMs": 2436.2999999998137,
+      "longTasks": [
+        {
+          "startMs": 941.9000000003725,
+          "durationMs": 470
+        },
+        {
+          "startMs": 1429.7000000001863,
+          "durationMs": 165
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 209.40000000037253,
+          "responseEndMs": 626.5,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 212.29999999981374,
+          "responseEndMs": 891.7000000001863,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 212.70000000018626,
+          "responseEndMs": 508.79999999981374,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 213.1000000005588,
+          "responseEndMs": 415.90000000037253,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1953.6000000005588,
+          "responseEndMs": 2061.7999999998137,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 2102.7000000001863,
+          "responseEndMs": 2130,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2183.100000000559,
+      "longTasks": [
+        {
+          "startMs": 941.7999999998137,
+          "durationMs": 395
+        },
+        {
+          "startMs": 1347.9000000003725,
+          "durationMs": 151
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 246,
+          "responseEndMs": 657.6000000005588,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 252.5,
+          "responseEndMs": 905.5,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 255,
+          "responseEndMs": 540.5,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 261.29999999981374,
+          "responseEndMs": 453.20000000018626,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1774.2999999998137,
+          "responseEndMs": 1882,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1916.2999999998137,
+          "responseEndMs": 1947.5,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2416.2000000001863,
+      "longTasks": [
+        {
+          "startMs": 866.7000000001863,
+          "durationMs": 670
+        },
+        {
+          "startMs": 1547.1000000005588,
+          "durationMs": 165
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 170.70000000018626,
+          "responseEndMs": 580,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 171,
+          "responseEndMs": 462.79999999981374,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 171,
+          "responseEndMs": 826,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 171.1000000005588,
+          "responseEndMs": 366.90000000037253,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 2021.2000000001863,
+          "responseEndMs": 2127.7000000001863,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 2144.5,
+          "responseEndMs": 2208.7999999998137,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2082.2000000001863,
+      "longTasks": [
+        {
+          "startMs": 857.4000000003725,
+          "durationMs": 500
+        },
+        {
+          "startMs": 1366.4000000003725,
+          "durationMs": 156
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 176.09999999962747,
+          "responseEndMs": 575.2999999998137,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 181.5,
+          "responseEndMs": 830.7999999998137,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 183.20000000018626,
+          "responseEndMs": 471.29999999981374,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 184.40000000037253,
+          "responseEndMs": 381.20000000018626,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1754.7999999998137,
+          "responseEndMs": 1860.7000000001863,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1870.5999999996275,
+          "responseEndMs": 1942.0999999996275,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2028.0999999996275,
+      "longTasks": [
+        {
+          "startMs": 870.9000000003725,
+          "durationMs": 392
+        },
+        {
+          "startMs": 1271.0999999996275,
+          "durationMs": 151
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 186.70000000018626,
+          "responseEndMs": 584.5,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 187.59999999962747,
+          "responseEndMs": 836.7999999998137,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 192.29999999981374,
+          "responseEndMs": 489.70000000018626,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 193.40000000037253,
+          "responseEndMs": 393.20000000018626,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1652.9000000003725,
+          "responseEndMs": 1758.5,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1794.2000000001863,
+          "responseEndMs": 1818.5999999996275,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2041.2999999998137,
+      "longTasks": [
+        {
+          "startMs": 851.7999999998137,
+          "durationMs": 434
+        },
+        {
+          "startMs": 1296.1000000005588,
+          "durationMs": 153
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 166,
+          "responseEndMs": 561.4000000003725,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 166.40000000037253,
+          "responseEndMs": 816.4000000003725,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 172.6000000005588,
+          "responseEndMs": 460,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 174.29999999981374,
+          "responseEndMs": 367.1000000005588,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1667.5,
+          "responseEndMs": 1774.4000000003725,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1814.1000000005588,
+          "responseEndMs": 1843.6000000005588,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2182.399999999441,
+      "longTasks": [
+        {
+          "startMs": 901.5,
+          "durationMs": 536
+        },
+        {
+          "startMs": 1443.7000000001863,
+          "durationMs": 144
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 203.8999999994412,
+          "responseEndMs": 615.8999999994412,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 212,
+          "responseEndMs": 861.7000000001863,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 216.8999999994412,
+          "responseEndMs": 511.20000000018626,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 217.20000000018626,
+          "responseEndMs": 418,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1786.3999999994412,
+          "responseEndMs": 1897.8999999994412,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1910.0999999996275,
+          "responseEndMs": 1963.5999999996275,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2190.9000000003725,
+      "longTasks": [
+        {
+          "startMs": 900,
+          "durationMs": 526
+        },
+        {
+          "startMs": 1436.2000000001863,
+          "durationMs": 151
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 205.20000000018626,
+          "responseEndMs": 616.2000000001863,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 209.90000000037253,
+          "responseEndMs": 862.2999999998137,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 210.1000000005588,
+          "responseEndMs": 502.5,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 213.1000000005588,
+          "responseEndMs": 421.29999999981374,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1856.6000000005588,
+          "responseEndMs": 1967.7999999998137,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1989.4000000003725,
+          "responseEndMs": 2035.6000000005588,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2024,
+      "longTasks": [
+        {
+          "startMs": 848,
+          "durationMs": 478
+        },
+        {
+          "startMs": 1333,
+          "durationMs": 114
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 164.5,
+          "responseEndMs": 571.6000000005588,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 174.29999999981374,
+          "responseEndMs": 821.1000000005588,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 179,
+          "responseEndMs": 467.40000000037253,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 179.20000000018626,
+          "responseEndMs": 377.40000000037253,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1686.7000000001863,
+          "responseEndMs": 1797.2000000001863,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1817.1000000005588,
+          "responseEndMs": 1862.2000000001863,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    },
+    {
+      "readyMs": 2157.7999999998137,
+      "longTasks": [
+        {
+          "startMs": 888.4000000003725,
+          "durationMs": 492
+        },
+        {
+          "startMs": 1392.0999999996275,
+          "durationMs": 146
+        }
+      ],
+      "resources": [
+        {
+          "path": "/art/northstar-investigation-portrait-v1.webp",
+          "startMs": 197.29999999981374,
+          "responseEndMs": 603.2999999998137,
+          "transferBytes": 55888,
+          "encodedBytes": 55588,
+          "decodedBytes": 55588
+        },
+        {
+          "path": "/assets/index-DVbZWaUn.js",
+          "startMs": 202.59999999962747,
+          "responseEndMs": 852.7000000001863,
+          "transferBytes": 177876,
+          "encodedBytes": 177576,
+          "decodedBytes": 565735
+        },
+        {
+          "path": "/assets/schemas-D_1oD1ou.js",
+          "startMs": 204.90000000037253,
+          "responseEndMs": 490.29999999981374,
+          "transferBytes": 26141,
+          "encodedBytes": 25841,
+          "decodedBytes": 92308
+        },
+        {
+          "path": "/assets/index-Chl6X9CZ.css",
+          "startMs": 205.09999999962747,
+          "responseEndMs": 396.5,
+          "transferBytes": 11113,
+          "encodedBytes": 10813,
+          "decodedBytes": 51366
+        },
+        {
+          "path": "/favicon.ico",
+          "startMs": 1810,
+          "responseEndMs": 1916.4000000003725,
+          "transferBytes": 300,
+          "encodedBytes": 0,
+          "decodedBytes": 0
+        },
+        {
+          "path": "/assets/validationWorker-Bqov0ZbC.js",
+          "startMs": 1932.7999999998137,
+          "responseEndMs": 1992.7999999998137,
+          "transferBytes": 38639,
+          "encodedBytes": 38339,
+          "decodedBytes": 141001
+        }
+      ],
+      "contentEncodings": {
+        "/": "identity",
+        "/art/northstar-investigation-portrait-v1.webp": "identity",
+        "/assets/index-Chl6X9CZ.css": "gzip",
+        "/assets/schemas-D_1oD1ou.js": "gzip",
+        "/assets/index-DVbZWaUn.js": "gzip",
+        "/favicon.ico": "identity"
+      }
+    }
+  ],
+  "limits": "Shared Linux host and Chromium emulation, not a reference phone. Worker ResourceTiming may contain inconsistent start/end timestamps; retain raw values, do not subtract them as execution time. Server compression is observed, not assumed. No human/device acceptance implied."
+}

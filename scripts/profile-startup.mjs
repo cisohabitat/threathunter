@@ -8,6 +8,12 @@ const origin = process.env.THREAT_HUNTER_TEST_URL ?? "http://127.0.0.1:4173";
 const output =
   process.argv.find((arg) => arg.startsWith("--output="))?.slice(9) ??
   "docs/verification/startup-profile.json";
+const option = (name) =>
+  process.argv.find((arg) => arg.startsWith(`--${name}=`))?.split("=")[1];
+// Defaults keep the original three-sample, shared-browser method.
+const samples = Number(option("samples") ?? 3);
+const freshBrowser = process.argv.includes("--fresh-browser");
+const label = option("label") ?? "";
 const html = await readFile("dist/index.html", "utf8");
 const entry = html.match(/<script[^>]+src="([^"]+)"/)[1];
 const manifest = JSON.parse(await readFile("dist/.vite/manifest.json", "utf8"));
@@ -17,10 +23,22 @@ const toolingReaderPaths = [
   "src/campaign/format.ts",
   "src/expansion/format.ts",
 ].map((key) => "/" + manifest[key].file);
-const browser = await chromium.launch();
+// Same optional override as playwright.config.ts for a mismatched local Chromium.
+const launch = () =>
+  chromium.launch(
+    process.env.THREAT_HUNTER_CHROMIUM_PATH
+      ? { executablePath: process.env.THREAT_HUNTER_CHROMIUM_PATH }
+      : {},
+  );
+let browser = await launch();
+const browserVersion = browser.version();
 const runs = [];
 try {
-  for (let sample = 0; sample < 3; sample++) {
+  for (let sample = 0; sample < samples; sample++) {
+    if (freshBrowser && sample > 0) {
+      await browser.close();
+      browser = await launch();
+    }
     const context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       isMobile: true,
@@ -103,23 +121,35 @@ try {
       await context.close();
     }
   }
+  const ready = runs.map((run) => run.readyMs).sort((a, b) => a - b);
+  const at = (q) =>
+    ready[Math.min(ready.length - 1, Math.ceil(q * ready.length) - 1)];
+  const summary = {
+    samples: ready.length,
+    medianMs: Math.round(at(0.5)),
+    p90Ms: Math.round(at(0.9)),
+    minMs: Math.round(ready[0]),
+    maxMs: Math.round(ready.at(-1)),
+  };
+  console.log(`Summary ${label}: ${JSON.stringify(summary)}`);
   await writeFile(
     output,
     JSON.stringify(
       {
         capturedAt: new Date().toISOString(),
+        label,
+        summary,
         origin,
         buildBundle: entry,
         htmlSha256: createHash("sha256").update(html).digest("hex"),
         bundleSha256: createHash("sha256")
           .update(await readFile("dist" + entry))
           .digest("hex"),
-        browser: browser.version(),
+        browser: browserVersion,
         toolingReaderPath,
         toolingReaderPaths,
         toolingReaderFetchedDuringColdReadiness: false,
-        method:
-          "Three sequential fresh browser contexts; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained.",
+        method: `${samples} sequential fresh browser contexts${freshBrowser ? ", each in a newly launched browser" : " in one browser"}; cache disabled; 390x844; 4 Mbps down / 1 Mbps up / 100 ms RTT; 4x CPU throughout. Readiness requires enabled Begin and decoded art. ResourceTiming and Long Tasks observation enabled; no CPU profiler. Every sample retained; summary uses nearest-rank percentiles.`,
         runs,
         limits:
           "Shared Linux host and Chromium emulation, not a reference phone. Worker ResourceTiming may contain inconsistent start/end timestamps; retain raw values, do not subtract them as execution time. Server compression is observed, not assumed. No human/device acceptance implied.",
