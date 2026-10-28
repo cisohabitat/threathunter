@@ -97,7 +97,7 @@ After the application is loaded, all active-case text and rules are local. Offli
 
 GitHub Actions is configured to run lint, typecheck, unit tests, build and browser smoke tests. Local passing checks are separate from GitHub CI status; the [baseline b3e309b run](https://github.com/cisohabitat/threathunter/actions/runs/39349995606) passed, including Chromium, Firefox and WebKit. New commits require their own observed result.
 
-See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), and [implementation status](docs/IMPLEMENTATION_STATUS.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. The user explicitly deferred review-first sequencing so M04/M07 development can proceed. Their new rules and fixtures are documented separately; this is not P0/P1 release acceptance.
+See the [full GDD acceptance checklist](docs/GDD_ACCEPTANCE.md), [creative handoff](docs/creative/README.md), [human/device test protocol](docs/verification/HUMAN_TEST_PROTOCOL.md), [implementation status](docs/IMPLEMENTATION_STATUS.md) and the phased [improvement roadmap](docs/ROADMAP.md). Reviewed voice, artwork/device acceptance, accessibility and human playtesting remain mandatory before completed-P0 sign-off. The user explicitly deferred review-first sequencing so M04/M07 development can proceed. Their new rules and fixtures are documented separately; this is not P0/P1 release acceptance.
 
 ## Keeping documentation current
 
