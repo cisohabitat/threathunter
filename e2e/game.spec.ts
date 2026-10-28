@@ -170,6 +170,11 @@ test("guidance can be hidden, restored and remembered without advancing time", a
   ).toHaveCount(0);
   await expect(page.locator(".step-badge")).toContainText("STEP 0");
   await page.reload();
+  // Act on the settled home page; opening Play settings during save
+  // inspection is covered separately by the delayed-validator regression.
+  await expect(
+    page.getByRole("button", { name: "Resume investigation" }),
+  ).toBeVisible({ timeout: 30000 });
   await page.getByText(/^Play settings ·/).click();
   await expect(
     page.getByRole("button", { name: /Independent investigation/ }),
