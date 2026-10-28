@@ -655,3 +655,38 @@ test("P1 unfinished notes survive navigation and block replacement until explici
     "Keep this unfinished note",
   );
 });
+
+test("a screen chosen while the first P1 save is pending stays selected", async ({
+  page,
+}) => {
+  // Hold P1 commit replies so navigation happens before the first save ends.
+  await page.addInitScript(() => {
+    const Native = window.Worker;
+    window.Worker = class extends Native {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        if (!String(url).includes("p1Worker")) return;
+        const post = this.postMessage.bind(this);
+        this.postMessage = (message: { op?: string }) => {
+          if (message?.op === "commit") setTimeout(() => post(message), 1500);
+          else post(message);
+        };
+      }
+    } as typeof Worker;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: /M04 ·/ }).click({ timeout: 30000 });
+  const area = shell(page);
+  const begin = area.getByRole("button", { name: "Begin proactive hunt" });
+  await expect(begin).toBeEnabled({ timeout: 30000 });
+  await begin.click();
+  const nav = area.getByRole("navigation", { name: "M04 investigation" });
+  await nav.getByRole("button", { name: "Case File", exact: true }).click();
+  await saved(area);
+  await expect(
+    nav.getByRole("button", { name: "Case File", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    area.getByRole("button", { name: "Review finding", exact: true }),
+  ).toBeVisible();
+});

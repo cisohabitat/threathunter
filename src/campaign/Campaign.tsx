@@ -1031,8 +1031,10 @@ export default function Campaign({
               <button
                 className="primary"
                 disabled={game.blocked}
-                onClick={async () => {
-                  await game.start();
+                onClick={() => {
+                  // The case appears before its first save finishes; choose the
+                  // opening screen now so a later choice is never overridden.
+                  void game.start();
                   navigate("Investigate");
                 }}
               >
