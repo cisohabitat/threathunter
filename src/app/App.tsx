@@ -460,14 +460,16 @@ export default function App({
                   <p className="first-case-label">
                     START HERE · THE MIDNIGHT LOGIN · 10–15 MINUTES
                   </p>
-                  <details
-                    className="play-settings"
-                    open={settingsOpen}
-                    onToggle={(event) =>
-                      setSettingsOpen(event.currentTarget.open)
-                    }
-                  >
-                    <summary>
+                  <details className="play-settings" open={settingsOpen}>
+                    {/* Toggle synchronously from the click: the native toggle
+                        event is asynchronous and can land on the element the
+                        run-keyed remount just replaced. */}
+                    <summary
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setSettingsOpen((open) => !open);
+                      }}
+                    >
                       Play settings ·{" "}
                       {guided
                         ? "guided investigation"

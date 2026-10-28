@@ -236,7 +236,7 @@ Visual presentation: M01 uses a compact sticky utility header that becomes norma
 
 `UtilityHeader` publishes `--utility-header-height` and, only while sticky, `--utility-header-sticky` (used as `html` `scroll-padding-top`). Derive header clearance from these variables, never fixed pixel margins. The `.m01-shell` backdrop shows investigation art only under `.art-ready` (home picture loaded its non-fallback variant); never fetch art the home picture did not. Keep artwork readiness visually hidden rather than `display: none`. Debrief evidence links focus their target record. Source labels, icons and guided enquiry labels share the typed `caseLanguage` source table; unknown sources show their ID and a neutral icon.
 
-The M01 tree remounts when save inspection loads (run-keyed `ComparisonProvider`). Keep home disclosure state such as Play settings in `App`, outside that key; `game.spec.ts` delays the validator to guard it.
+The M01 tree remounts when save inspection loads (run-keyed `ComparisonProvider`). Keep home disclosure state such as Play settings in `App`, outside that key, and toggle it synchronously from the summary click (the native `toggle` event can land on a replaced element); `game.spec.ts` delays the validator and checks keyboard activation.
 
 ## Improvement roadmap
 

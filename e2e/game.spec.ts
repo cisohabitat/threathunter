@@ -208,4 +208,11 @@ test("play settings stay open when the saved case finishes loading", async ({
   await expect(
     page.getByRole("button", { name: /Independent investigation/ }),
   ).toBeVisible();
+  // Keyboard activation still toggles the disclosure.
+  const summary = page.getByText(/^Play settings ·/);
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(settings).not.toHaveAttribute("open", "");
+  await page.keyboard.press("Enter");
+  await expect(settings).toHaveAttribute("open", "");
 });
