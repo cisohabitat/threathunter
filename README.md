@@ -67,6 +67,7 @@ Open the Vite URL. Start a case, inspect the lead, acquire sources, cite deliver
 
 ```sh
 npm run lint
+npm run format:check
 npm run typecheck
 npm test
 npm run build
@@ -75,6 +76,8 @@ npx playwright install --with-deps chromium firefox webkit
 npm run test:e2e
 npm run test:e2e:cross
 ```
+
+`npm run format` applies Prettier; recorded evidence under `docs/`, authored content JSON and `index.html` are excluded so their hashed or historical bytes never change. If a preinstalled Chromium does not match the pinned Playwright build (for example in a sandbox), set `THREAT_HUNTER_CHROMIUM_PATH` to its executable instead of reinstalling.
 
 Engine and persistence tests cover all ten Appendix B golden traces, source cutoffs, verification delivery, static/dynamic caching, command idempotency, scope, same-tick response priority, sparse-twin fairness, replay, import corruption and stale writes. See the [current verification ledger](docs/verification/RESULTS.md) for executed results, browser-engine coverage, production measurements and remaining device gaps. Browser tests cover case completion, reload/resume, offline continuation, free navigation, guided acquisition/citation, remembered assistance preferences, direct evidence roles, a complete reference-scored finding, historical evidence cutoffs, offline full-pack audio, mute/skip/transcript controls, audio-failure fallback, save invariance, injected quota failure/retry, damaged-save recovery, incompatible-save restart, writer handoff, old-save upgrades (including failed writes), receipt durability and 320px reflow on Chromium desktop and phone emulation. Emulation does not establish physical iOS/Android compatibility.
 

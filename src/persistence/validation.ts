@@ -41,11 +41,15 @@ function request(
   if (typeof Worker === "undefined") {
     // Detach before awaiting module loading, as postMessage does in a browser.
     const captured = state
-      ? exportOnly ? structuredClone(state) : markCommitted(state)
+      ? exportOnly
+        ? structuredClone(state)
+        : markCommitted(state)
       : undefined;
     return import("./format").then((format) => {
       if (!captured)
-        return { state: text === undefined ? undefined : format.importSave(text) };
+        return {
+          state: text === undefined ? undefined : format.importSave(text),
+        };
       if (exportOnly) return { text: format.serializeSave(captured) };
       const envelope = format.exportSave(captured);
       format.importSave(JSON.stringify(envelope));

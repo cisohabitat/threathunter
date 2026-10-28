@@ -28,7 +28,11 @@ it("M01 tooling preparation captures commit/export input before lazy loading", a
     envelope: m01Format.exportSave(committed),
   });
   const exporting = m01.createRun("export-original", "B");
-  await capturesInput(exporting, prepareExport, m01Format.serializeSave(exporting));
+  await capturesInput(
+    exporting,
+    prepareExport,
+    m01Format.serializeSave(exporting),
+  );
 });
 
 it("P1 tooling preparation captures commit/export input before lazy loading", async () => {

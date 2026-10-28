@@ -632,13 +632,11 @@ test("P1 unfinished notes survive navigation and block replacement until explici
   await saved(area);
   await expect(control.getByRole("checkbox")).toBeEnabled();
   await control.getByRole("checkbox").check();
-  await control
-    .locator('input[type="file"]')
-    .setInputFiles({
-      name: "earlier.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(initial),
-    });
+  await control.locator('input[type="file"]').setInputFiles({
+    name: "earlier.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(initial),
+  });
   await saved(area);
   await expect(
     area.getByRole("textbox", {

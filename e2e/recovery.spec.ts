@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ context }) => {
-  await context.addInitScript(() => localStorage.setItem("threat-hunter-guidance-v1", "independent"));
+  await context.addInitScript(() =>
+    localStorage.setItem("threat-hunter-guidance-v1", "independent"),
+  );
 });
 
 test("damaged current save recovers pending checks from the previous commit exactly once", async ({

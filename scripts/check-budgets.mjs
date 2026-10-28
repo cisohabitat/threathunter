@@ -13,13 +13,13 @@ assert(workers.length === 1, "Expected the preloaded save-validation worker");
 const preloads = [
   ...html.matchAll(/<link[^>]+rel="modulepreload"[^>]+href="([^"]+)"/g),
 ].map((m) => m[1]);
-const core = [...new Set(["/index.html", entry, ...preloads, ...workers, ...css])].map(
-  (path) => ({
-    path,
-    bytes: statSync("dist" + path).size,
-    gzipBytes: gzipSync(readFileSync("dist" + path)).length,
-  }),
-);
+const core = [
+  ...new Set(["/index.html", entry, ...preloads, ...workers, ...css]),
+].map((path) => ({
+  path,
+  bytes: statSync("dist" + path).size,
+  gzipBytes: gzipSync(readFileSync("dist" + path)).length,
+}));
 const manifest = JSON.parse(readFileSync("dist/.vite/manifest.json", "utf8"));
 const roots = Object.keys(manifest).filter((k) => manifest[k].isEntry);
 assert(roots.length === 1, "Expected one application entry");
@@ -33,18 +33,29 @@ function graph(key, seen = new Set()) {
 }
 const initialFiles = graph(roots[0]);
 const toolingReaders = [
-  "src/persistence/format.ts", "src/campaign/format.ts", "src/expansion/format.ts",
+  "src/persistence/format.ts",
+  "src/campaign/format.ts",
+  "src/expansion/format.ts",
 ].map((key) => {
   const reader = manifest[key];
-  assert(reader?.isDynamicEntry, `Expected the isolated tooling save reader: ${key}`);
-  assert(!initialFiles.has(reader.file), `${key} leaked into the initial interface graph`);
+  assert(
+    reader?.isDynamicEntry,
+    `Expected the isolated tooling save reader: ${key}`,
+  );
+  assert(
+    !initialFiles.has(reader.file),
+    `${key} leaked into the initial interface graph`,
+  );
   return reader;
 });
 function profile(name, module, workerPattern) {
   const paths = new Set(initialFiles);
   if (module) for (const p of graph(module)) paths.add(p);
   for (const reader of toolingReaders)
-    assert(!paths.has(reader.file), `${name} statically loads a tooling-only save reader`);
+    assert(
+      !paths.has(reader.file),
+      `${name} statically loads a tooling-only save reader`,
+    );
   for (const name of readdirSync("dist/assets"))
     if (workerPattern.test(name)) paths.add("assets/" + name);
   const bytes = [...paths]

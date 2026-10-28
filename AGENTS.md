@@ -240,4 +240,4 @@ The M01 tree remounts when save inspection loads (run-keyed `ComparisonProvider`
 
 ## Improvement roadmap
 
-`docs/ROADMAP.md` phases post-review improvements (tooling, startup/save reliability, accessibility parity, shared presentation, startup performance). Land each phase as its own verified commit and update its status there. Items under "Later" need a decision before implementation; none of them relax frozen engines, formats, workers or deferred human/device gates.
+`docs/ROADMAP.md` phases post-review improvements (tooling, startup/save reliability, accessibility parity, shared presentation, startup performance). Land each phase as its own verified commit and update its status there. Items under "Later" need a decision before implementation; none of them relax frozen engines, formats, workers or deferred human/device gates. Phase 1 added `format:check` to CI: run it with lint/types. Never reformat `docs/`, authored content JSON or `index.html`; they are in `.prettierignore`. Use `THREAT_HUNTER_CHROMIUM_PATH` for a mismatched local Chromium rather than temporary configs.

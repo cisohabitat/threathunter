@@ -86,7 +86,9 @@ try {
   const acknowledgeMs = await page.evaluate(async () => {
     const values = [];
     for (let i = 0; i < 100; i++) {
-      const button = document.querySelectorAll(".case-stages button")[(i + 1) % 2];
+      const button = document.querySelectorAll(".case-stages button")[
+        (i + 1) % 2
+      ];
       const start = performance.now();
       button.click();
       await new Promise((resolve) =>
@@ -102,28 +104,47 @@ try {
   // event-to-durable-label latency. Require an observed Working transition.
   await page.evaluate(() => {
     window.durableTimings = [];
-    let started = null, saving = false;
-    document.addEventListener("click", (event) => {
-      const text = event.target.closest?.("button")?.textContent.trim();
-      if (!/^(Approved work explains it|It looks like unauthorised use)/.test(text ?? "")) return;
-      started = performance.now();
+    let started = null,
       saving = false;
-    }, true);
+    document.addEventListener(
+      "click",
+      (event) => {
+        const text = event.target.closest?.("button")?.textContent.trim();
+        if (
+          !/^(Approved work explains it|It looks like unauthorised use)/.test(
+            text ?? "",
+          )
+        )
+          return;
+        started = performance.now();
+        saving = false;
+      },
+      true,
+    );
     new MutationObserver(() => {
       if (started === null) return;
-      const text = document.querySelector('[aria-label="Save and readiness"] [role="status"]')?.textContent;
+      const text = document.querySelector(
+        '[aria-label="Save and readiness"] [role="status"]',
+      )?.textContent;
       if (text === "Working…") saving = true;
       if (saving && text === "Saved on this device") {
         window.durableTimings.push(performance.now() - started);
         started = null;
       }
-    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+    }).observe(document.body, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+    });
   });
   for (let i = 0; i < 10; i++) {
     const t = performance.now();
     await page
       .getByRole("button", {
-        name: i % 2 === 0 ? /^Approved work explains it/ : /^It looks like unauthorised use/,
+        name:
+          i % 2 === 0
+            ? /^Approved work explains it/
+            : /^It looks like unauthorised use/,
       })
       .click();
     await page
@@ -131,7 +152,10 @@ try {
       .filter({ hasText: "Saved on this device" })
       .waitFor();
     commitMs.push(performance.now() - t);
-    await page.waitForFunction((count) => window.durableTimings.length === count, i + 1);
+    await page.waitForFunction(
+      (count) => window.durableTimings.length === count,
+      i + 1,
+    );
   }
   const browserCommitMs = await page.evaluate(() => window.durableTimings);
   await page
@@ -158,7 +182,9 @@ try {
     path: "docs/verification/screens/08-debrief-tablet-portrait.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Threat Hunter Silent Intrusion home" }).click();
+  await page
+    .getByRole("button", { name: "Threat Hunter Silent Intrusion home" })
+    .click();
   await page.setViewportSize({ width: 1440, height: 900 });
   await capture(page, {
     path: "docs/verification/screens/09-home-desktop.png",
@@ -182,8 +208,8 @@ try {
   const p95 = (values) =>
     [...values].sort((a, b) => a - b)[Math.ceil(values.length * 0.95) - 1];
   await writeFile(
-    process.argv.find((arg) => arg.startsWith("--output="))?.slice(9)
-      ?? "docs/verification/performance.json",
+    process.argv.find((arg) => arg.startsWith("--output="))?.slice(9) ??
+      "docs/verification/performance.json",
     JSON.stringify(
       {
         buildBundle: entry,
@@ -211,7 +237,8 @@ try {
         },
         browserDurableCommands: {
           samples: browserCommitMs.length,
-          method: "Captured DOM click to observed Working then Saved label; same ten commands, in-page clock, CPU throttle removed after cold load. Excludes Playwright actionability/IPC; still a lab measurement.",
+          method:
+            "Captured DOM click to observed Working then Saved label; same ten commands, in-page clock, CPU throttle removed after cold load. Excludes Playwright actionability/IPC; still a lab measurement.",
           valuesMs: browserCommitMs,
           p95Ms: p95(browserCommitMs),
         },

@@ -4,13 +4,16 @@ Source: a code review of `main` at `517d22d` covering player experience across t
 
 Each phase lands as its own commit with its own verification. Status is updated here as phases complete; an item stays open until its regression check exists.
 
-## Phase 1 — Tooling and test hygiene
+## Phase 1 — Tooling and test hygiene · done
 
 Goal: a reproducible, consistent contributor loop before changing behaviour.
 
-- Exclude authored content/manifest JSON from Prettier (as `m01.json` already is) so formatting never churns hashed content; format the remaining drifted code files.
-- Add `format:check` and run it in CI alongside lint/types.
-- Give Playwright one shared expect timeout instead of ad-hoc per-call waits, and document that local runs need browsers matching the pinned `@playwright/test`.
+- Done: authored content/manifest JSON, recorded evidence under `docs/` and `index.html` are excluded from Prettier, so formatting never churns hashed or historical bytes; the drifted code files (validators, scripts, three e2e specs, one unit test) are formatted with no logic change.
+- Done: `format`/`format:check` scripts; CI runs `format:check` after lint.
+- Done: `THREAT_HUNTER_CHROMIUM_PATH` points both Chromium projects at a preinstalled browser when it differs from the pinned Playwright build.
+- Not done: a global Playwright expect timeout was rejected — raising timeouts across every assertion would loosen timing, which AGENTS.md forbids. Slow waits stay explicit per assertion.
+
+Verification: lint, format check, types, 273 units, build, budgets and the 38 reformatted-spec Chromium checks (startup, recovery, campaign) passed locally.
 
 ## Phase 2 — Startup and save reliability
 

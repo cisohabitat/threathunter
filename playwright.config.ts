@@ -1,4 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
+// Optional local override when preinstalled Chromium differs from the pinned build.
+const chromium = process.env.THREAT_HUNTER_CHROMIUM_PATH
+  ? {
+      launchOptions: {
+        executablePath: process.env.THREAT_HUNTER_CHROMIUM_PATH,
+      },
+    }
+  : {};
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -10,10 +18,14 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    { name: "desktop", use: { ...devices["Desktop Chrome"], ...chromium } },
     {
       name: "phone",
-      use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
+      use: {
+        ...devices["iPhone 13"],
+        defaultBrowserType: "chromium",
+        ...chromium,
+      },
     },
   ],
 });

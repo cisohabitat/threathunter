@@ -35,9 +35,12 @@ export async function request(
   if (typeof Worker === "undefined") {
     if (typeof window !== "undefined") throw new ValidatorUnavailable();
     if (op === "ready") return {};
-    const captured = op === "import" ? input as string
-      : op === "export" ? structuredClone(input as State)
-      : acknowledge(input as State, (input as State).view.revision);
+    const captured =
+      op === "import"
+        ? (input as string)
+        : op === "export"
+          ? structuredClone(input as State)
+          : acknowledge(input as State, (input as State).view.revision);
     // Tooling-only fallback: browser Worker failures reject above.
     const { exportSave, importSave } = await import("./format");
     if (op === "import") return { state: importSave(captured as string) };

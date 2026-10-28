@@ -4,3 +4,9 @@ package-lock.json
 dist/
 node_modules/
 test-results/
+# Recorded evidence and authored content: never reformat hashed or historical bytes.
+docs/
+src/expansion/content/
+src/expansion/public.json
+src/presentation/art.json
+index.html
