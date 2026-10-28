@@ -769,6 +769,7 @@ export default function Campaign({
         <section
           className="save-strip"
           aria-label={`${missionId} save and recovery`}
+          data-readiness={game.readiness}
         >
           <span role="status">{game.busy ? "Working…" : game.status}</span>
           <div>
@@ -1002,10 +1003,12 @@ export default function Campaign({
             </>
           ) : null}
           {!game.view ? (
-            <section className="panel">
+            // Until inspection finishes a saved case may replace this panel,
+            // so its actions stay disabled rather than move under the pointer.
+            <section className="panel" aria-busy={game.busy}>
               <h2>Your starting question</h2>
               <PlayPrimer />
-              <button onClick={() => onOpenMission("M01")}>
+              <button disabled={game.busy} onClick={() => onOpenMission("M01")}>
                 New here? Learn with The Midnight Login →
               </button>
               <p>{pack.briefing}</p>

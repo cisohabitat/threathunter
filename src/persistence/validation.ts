@@ -1,6 +1,7 @@
 import type { SaveEnvelope } from "./format";
 import type { EngineState } from "../engine/engine";
 import { markCommitted } from "./acknowledgement";
+import { createWorkerClient } from "./workerClient";
 
 export class ValidationUnavailableError extends Error {
   constructor() {
@@ -11,25 +12,30 @@ export class ValidationUnavailableError extends Error {
   }
 }
 type Result = { state?: EngineState; envelope?: SaveEnvelope; text?: string };
-let worker: Worker | null = null;
-let sequence = 0;
-const pending = new Map<
-  number,
-  {
-    resolve: (result: Result) => void;
-    reject: (error: Error) => void;
-    timer: ReturnType<typeof setTimeout>;
-  }
->();
-function stop() {
-  worker?.terminate();
-  worker = null;
-  for (const job of pending.values()) {
-    clearTimeout(job.timer);
-    job.reject(new ValidationUnavailableError());
-  }
-  pending.clear();
-}
+const client = createWorkerClient<
+  Result,
+  { text?: string; state?: EngineState; exportOnly: boolean }
+>({
+  create: () =>
+    new Worker(new URL("./validationWorker.ts", import.meta.url), {
+      type: "module",
+    }),
+  unavailable: () => new ValidationUnavailableError(),
+  read: (reply) => {
+    const failure = reply.error as
+      { name: string; message: string } | undefined;
+    if (failure) {
+      const error = new Error(failure.message);
+      error.name = failure.name;
+      return error;
+    }
+    return {
+      state: reply.state as EngineState | undefined,
+      envelope: reply.envelope as SaveEnvelope | undefined,
+      text: reply.text as string | undefined,
+    };
+  },
+});
 function request(
   text?: string,
   state?: EngineState,
@@ -56,51 +62,7 @@ function request(
       return { state: captured, envelope };
     });
   }
-  return new Promise((resolve, reject) => {
-    try {
-      if (!worker) {
-        worker = new Worker(new URL("./validationWorker.ts", import.meta.url), {
-          type: "module",
-        });
-        const activeWorker = worker;
-        const fail = () => {
-          if (worker === activeWorker) stop();
-        };
-        worker.onerror = fail;
-        worker.onmessageerror = fail;
-        worker.onmessage = (
-          event: MessageEvent<{
-            id: number;
-            state?: EngineState;
-            envelope?: SaveEnvelope;
-            text?: string;
-            error?: { name: string; message: string };
-          }>,
-        ) => {
-          const job = pending.get(event.data.id);
-          if (!job) return;
-          clearTimeout(job.timer);
-          pending.delete(event.data.id);
-          if (event.data.error) {
-            const error = new Error(event.data.error.message);
-            error.name = event.data.error.name;
-            job.reject(error);
-          } else
-            job.resolve({
-              state: event.data.state,
-              envelope: event.data.envelope,
-              text: event.data.text,
-            });
-        };
-      }
-      const id = ++sequence;
-      pending.set(id, { resolve, reject, timer: setTimeout(stop, 20000) });
-      worker.postMessage({ id, text, state, exportOnly });
-    } catch {
-      stop();
-      reject(new ValidationUnavailableError());
-    }
-  });
+  return client.send({ text, state, exportOnly });
 }
 export async function prepareSaveValidation() {
   await request();

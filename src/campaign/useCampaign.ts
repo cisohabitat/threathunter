@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { readinessOf, useReadinessMarks } from "../persistence/readiness";
 import { packages } from "./content";
 import type { Action, Debrief, MissionId, View, World } from "./contracts";
 import { createRun, processCommand, project, type State } from "./engine";
@@ -75,8 +76,8 @@ export function useCampaign(mission: MissionId) {
   }, [mission]);
   useEffect(() => {
     if (!readOnly || temporary) return;
-    return storage.subscribe(() => setRefresh((v) => v + 1));
-  }, [readOnly, temporary]);
+    return storage.subscribe(mission, () => setRefresh((v) => v + 1));
+  }, [mission, readOnly, temporary]);
   useEffect(() => {
     if (temporary) return;
     let alive = true;
@@ -364,6 +365,14 @@ export function useCampaign(mission: MissionId) {
       setError(String(e));
     }
   }
+  const readiness = readinessOf({
+    busy,
+    temporary,
+    error,
+    writerAvailable,
+    readOnly,
+  });
+  useReadinessMarks(mission, readiness);
   return {
     resetKey,
     backupIds,
@@ -392,6 +401,7 @@ export function useCampaign(mission: MissionId) {
     download,
     blocked:
       busy || (!temporary && (readOnly || !writerAvailable || Boolean(error))),
+    readiness,
     playTemporarily: () => {
       setTemporary(true);
       setError("");

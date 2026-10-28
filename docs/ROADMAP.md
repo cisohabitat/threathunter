@@ -15,14 +15,17 @@ Goal: a reproducible, consistent contributor loop before changing behaviour.
 
 Verification: lint, format check, types, 273 units, build, budgets and the 38 reformatted-spec Chromium checks (startup, recovery, campaign) passed locally.
 
-## Phase 2 — Startup and save reliability
+## Phase 2 — Startup and save reliability · done
 
 Goal: remove plausible causes of the intermittent "Begin stays disabled" failure and the WebKit learning-link race, and make the next failure diagnosable.
 
-- Validator clients start each 20-second deadline when a job is dispatched to the worker, not when it is queued, and run jobs one at a time. A slow journey/archive inspection can no longer time out (and cancel) a case's own inspection. Keep the per-job deadline, terminate-on-timeout and fresh-worker retry contract. Share one client implementation across M01, P1 and expansion validators.
-- Save-change BroadcastChannel messages carry their mission/slot; P1 and expansion controllers ignore other missions' commits instead of restarting their own inspection. Journey still treats any message as stale.
-- P1/expansion pre-start actions stay disabled and keep a stable layout until save inspection completes, so a startup content swap cannot consume a premature click.
-- Expose why a case cannot begin yet (inspecting, waiting for another tab, validation unavailable) as public readiness state, and record `performance` marks for startup milestones.
+- Done: `persistence/workerClient.ts` is the one browser client for the M01, P1 and expansion validators. Messages are still posted immediately (input captured at call time); the 20-second deadline applies only to the oldest outstanding job and starts once earlier jobs reply, so a case inspection queued behind journey/archive checks can no longer time out on their behalf. A deadline or worker error still terminates the worker, rejects every pending job and uses a fresh worker on retry. Five unit checks cover queued deadlines, overdue rejection, fresh-worker retry, per-job errors and late replies.
+- Done: P1/expansion save notifications post `{ mission }`; controllers ignore other missions' commits instead of restarting their inspection. Unscoped messages (older builds) still refresh; Journey still treats any message as stale. Unit-checked for both families.
+- Done: P1/expansion pre-start actions (learning link, assistance choice) are disabled and the panel is `aria-busy` while inspection runs, so a saved case replacing the panel cannot consume a premature click. The expansion context line no longer says "Preparing…" after inspection ends.
+- Done: P1/expansion save regions expose `data-readiness` (`busy`, `temporary`, `validation-error`, `no-writer`, `waiting-for-other-tab`, `ready`) and record `threat-hunter:<mission>:<readiness>` performance marks. No world data is exposed. An e2e regression delays the expansion validator and requires busy → ready, a disabled-then-enabled learning link and navigation to M01; it failed before the change.
+- Not established: whether either fix caused the historical live M02 failure. The next occurrence should be read from `data-readiness` and the marks.
+
+Verification: lint, format check, types, 280 units (seven new), build, budgets and all 188 Chromium desktop/phone checks passed locally.
 
 ## Phase 3 — Accessibility and focus parity
 

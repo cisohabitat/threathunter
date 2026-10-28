@@ -1,17 +1,8 @@
 import { acknowledge, type State } from "./engine";
 import type { Envelope } from "./format";
+import { createWorkerClient } from "../persistence/workerClient";
 
 type Result = { state?: State; envelope?: Envelope; text?: string };
-let worker: Worker | null = null,
-  sequence = 0;
-const pending = new Map<
-  number,
-  {
-    resolve: (value: Result) => void;
-    reject: (error: Error) => void;
-    timer: ReturnType<typeof setTimeout>;
-  }
->();
 export class ValidatorUnavailable extends Error {
   constructor() {
     super(
@@ -19,15 +10,20 @@ export class ValidatorUnavailable extends Error {
     );
   }
 }
-function stop() {
-  worker?.terminate();
-  worker = null;
-  for (const job of pending.values()) {
-    clearTimeout(job.timer);
-    job.reject(new ValidatorUnavailable());
-  }
-  pending.clear();
-}
+const client = createWorkerClient<
+  Result,
+  { op: "ready" | "import" | "commit" | "export"; text?: string; state?: State }
+>({
+  create: () =>
+    new Worker(new URL("./expansionWorker.ts", import.meta.url), {
+      type: "module",
+    }),
+  unavailable: () => new ValidatorUnavailable(),
+  read: (reply) =>
+    typeof reply.error === "string"
+      ? new Error(reply.error)
+      : (reply as unknown as Result),
+});
 export async function request(
   op: "ready" | "import" | "commit" | "export",
   input?: string | State,
@@ -51,39 +47,8 @@ export async function request(
     importSave(JSON.stringify(envelope));
     return { state, envelope };
   }
-  return new Promise((resolve, reject) => {
-    try {
-      if (!worker) {
-        worker = new Worker(new URL("./expansionWorker.ts", import.meta.url), {
-          type: "module",
-        });
-        const owner = worker;
-        const fail = () => {
-          if (owner === worker) stop();
-        };
-        worker.onerror = fail;
-        worker.onmessageerror = fail;
-        worker.onmessage = (
-          event: MessageEvent<Result & { id: number; error?: string }>,
-        ) => {
-          const job = pending.get(event.data.id);
-          if (!job) return;
-          clearTimeout(job.timer);
-          pending.delete(event.data.id);
-          if (event.data.error) job.reject(new Error(event.data.error));
-          else job.resolve(event.data);
-        };
-      }
-      const id = ++sequence;
-      pending.set(id, { resolve, reject, timer: setTimeout(stop, 20000) });
-      worker.postMessage({
-        id,
-        op,
-        ...(typeof input === "string" ? { text: input } : { state: input }),
-      });
-    } catch {
-      stop();
-      reject(new ValidatorUnavailable());
-    }
+  return client.send({
+    op,
+    ...(typeof input === "string" ? { text: input } : { state: input }),
   });
 }

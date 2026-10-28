@@ -23,20 +23,28 @@ class CampaignDB extends Dexie {
 }
 export const database = new CampaignDB();
 const activeKey = (mission: Slot) => `active:${mission}`;
-export function subscribe(notify: () => void) {
+/**
+ * Notifies only for commits to `mission`. Messages without a mission (from an
+ * older build in another tab) still notify, which is the previous behaviour.
+ */
+export function subscribe(mission: Slot, notify: () => void) {
   try {
     const channel = new BroadcastChannel("threat-hunter-expansion-changes");
-    channel.onmessage = notify;
+    channel.onmessage = (event: MessageEvent<unknown>) => {
+      const data = event.data as { mission?: unknown } | null;
+      if (typeof data === "object" && data?.mission !== mission) return;
+      notify();
+    };
     return () => channel.close();
   } catch {
     return () => {};
   }
 }
-function changed() {
+function changed(mission: Slot) {
   if (typeof window === "undefined") return;
   try {
     const channel = new BroadcastChannel("threat-hunter-expansion-changes");
-    channel.postMessage("changed");
+    channel.postMessage({ mission });
     channel.close();
   } catch {
     /* Transactions and Web Locks still enforce ownership. */
@@ -100,7 +108,7 @@ export async function commit(state: State, expectedRevision: number | null) {
       previous: current?.current ?? null,
     });
   });
-  changed();
+  changed(slotOf(state));
   return prepared.state;
 }
 export async function recover(mission: Slot, original: Row, state: State) {
@@ -121,7 +129,7 @@ export async function recover(mission: Slot, original: Row, state: State) {
       previous: null,
     });
   });
-  changed();
+  changed(mission);
   return prepared.state;
 }
 export async function archiveCompleted(state: State) {
@@ -147,7 +155,7 @@ export async function archiveCompleted(state: State) {
     );
     await database.rows.delete(id);
   });
-  changed();
+  changed(slotOf(state));
 }
 export async function archives(mission: Slot) {
   return database.rows
@@ -229,7 +237,7 @@ export async function replaceImported(
       previous: original.current,
     });
   });
-  changed();
+  changed(slot);
   return prepared.state;
 }
 export async function replacementBackups(slot: Slot) {

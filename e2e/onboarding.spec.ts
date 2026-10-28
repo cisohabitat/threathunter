@@ -612,6 +612,43 @@ for (const path of ["/case/m04", "/case/m02", "/hunt/free"]) {
   });
 }
 
+test("case pre-start actions wait for save inspection and expose readiness", async ({
+  page,
+}) => {
+  // Hold the validator so inspection is still running when the page renders.
+  await page.route(/expansionWorker/, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await route.continue();
+  });
+  await page.goto("/case/m02");
+  const region = page.getByRole("region", {
+    name: "M02 save and readiness",
+    exact: true,
+  });
+  const learn = page.getByRole("button", {
+    name: "New here? Learn with The Midnight Login →",
+    exact: true,
+  });
+  await expect(region).toHaveAttribute("data-readiness", "busy");
+  await expect(learn).toBeDisabled();
+  await expect(region).toHaveAttribute("data-readiness", "ready", {
+    timeout: 30000,
+  });
+  await expect(learn).toBeEnabled();
+  expect(
+    await page.evaluate(() =>
+      performance
+        .getEntriesByType("mark")
+        .map((mark) => mark.name)
+        .filter((name) => name.startsWith("threat-hunter:M02:"))
+        // Development StrictMode repeats mount effects; collapse repeats.
+        .filter((name, index, names) => name !== names[index - 1]),
+    ),
+  ).toEqual(["threat-hunter:M02:busy", "threat-hunter:M02:ready"]);
+  await learn.click();
+  await expect(page).toHaveURL(/\/case\/m01$/);
+});
+
 test("overall interpretation is separate from record selection and report sections edit directly", async ({
   page,
 }) => {

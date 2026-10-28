@@ -224,12 +224,15 @@ export default function Expansion({
           <section
             className="expansion-context"
             aria-label={`${slot} save and readiness`}
+            data-readiness={game.readiness}
           >
             <p role="status">{game.busy ? "Working…" : game.status}</p>
             <p>
               {v
                 ? `${v.missionId} · step ${v.tick} · ${v.pendingChecks.length} pending check(s) · ${v.phase === "closed" ? "Finding closed" : "Investigation open"}`
-                : "Preparing the mission’s validated save and text-complete workspace."}
+                : game.busy
+                  ? "Preparing the mission’s validated save and text-complete workspace."
+                  : "Begin a new investigation or import this mission’s save."}
             </p>
             <div className="actions">
               {v ? (
@@ -457,10 +460,15 @@ export default function Expansion({
               </div>
             </div>
             {!v ? (
-              <section className="panel">
+              // Until inspection finishes a saved case may replace this panel,
+              // so its actions stay disabled rather than move under the pointer.
+              <section className="panel" aria-busy={game.busy}>
                 <h2>Your starting question</h2>
                 <PlayPrimer />
-                <button onClick={() => onOpenMission("M01")}>
+                <button
+                  disabled={game.busy}
+                  onClick={() => onOpenMission("M01")}
+                >
                   New here? Learn with The Midnight Login →
                 </button>
                 {slot !== "free" ? (
@@ -484,11 +492,16 @@ export default function Expansion({
                 )}
                 <fieldset>
                   <legend>How would you like to play?</legend>
-                  <button aria-pressed={guided} onClick={() => guidance(true)}>
+                  <button
+                    aria-pressed={guided}
+                    disabled={game.busy}
+                    onClick={() => guidance(true)}
+                  >
                     Guided investigation · recommended
                   </button>
                   <button
                     aria-pressed={!guided}
+                    disabled={game.busy}
                     onClick={() => guidance(false)}
                   >
                     Independent investigation
