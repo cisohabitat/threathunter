@@ -216,7 +216,7 @@ test("a browser without Web Locks plays only explicitly in memory and never writ
     page.getByText("Autosave is read-only in this browser.", { exact: false }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Continue explicitly without saving" })
+    .getByRole("button", { name: "Play temporarily without saving" })
     .click();
   await page.getByText(/^Play settings ·/).click();
   await page.getByRole("button", { name: /Independent investigation/ }).click();

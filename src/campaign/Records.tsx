@@ -33,7 +33,7 @@ export function RecordCard({
       <p>{record.text}</p>
       <small>
         {record.targetId} · collected through step {record.cutoffTick} ·
-        delivered at step {record.deliveredTick} · {record.coverage} collection
+        received at step {record.deliveredTick} · {record.coverage} collection
       </small>
       {record.eventTick !== null ? (
         <p className="muted">

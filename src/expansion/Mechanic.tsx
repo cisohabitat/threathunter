@@ -119,7 +119,8 @@ export function Mechanic({
                   {r.text}
                   <small>
                     {" "}
-                    Through step {r.cutoffTick}; delivered {r.deliveredTick}.
+                    Through step {r.cutoffTick}; received at step{" "}
+                    {r.deliveredTick}.
                   </small>
                 </p>
               ))
@@ -138,7 +139,8 @@ export function Mechanic({
                   {r.text}
                   <small>
                     {" "}
-                    Through step {r.cutoffTick}; delivered {r.deliveredTick}.
+                    Through step {r.cutoffTick}; received at step{" "}
+                    {r.deliveredTick}.
                   </small>
                 </p>
               ))
@@ -179,7 +181,7 @@ export function Mechanic({
               {r.text}
               <small>
                 {" "}
-                Through step {r.cutoffTick}; delivered {r.deliveredTick}.
+                Through step {r.cutoffTick}; received at step {r.deliveredTick}.
               </small>
             </p>
           ))}
@@ -195,7 +197,8 @@ export function Mechanic({
                   {r.text}
                   <small>
                     {" "}
-                    Through step {r.cutoffTick}; delivered {r.deliveredTick}.
+                    Through step {r.cutoffTick}; received at step{" "}
+                    {r.deliveredTick}.
                   </small>
                 </p>
               ))
@@ -300,7 +303,7 @@ function ClaimColumn({
             <strong>{l.role.replaceAll("_", " ")}:</strong> {r.text}
             <small>
               {" "}
-              Through step {r.cutoffTick}; delivered {r.deliveredTick}.
+              Through step {r.cutoffTick}; received at step {r.deliveredTick}.
             </small>
           </p>
         ) : null;

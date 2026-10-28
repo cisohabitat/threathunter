@@ -17,8 +17,9 @@ export function PlayPrimer() {
       </ol>
       <p>
         Save useful records with <strong>Cite in finding</strong>. Finish in
-        <strong> Case File → Review finding → Confirm and close</strong>. “Not
-        enough information” is a valid conclusion. Reading does not use time.
+        <strong> Case File → Review finding → Confirm and close case</strong>.
+        “Not enough information” is a valid conclusion. Reading does not use
+        time.
       </p>
     </aside>
   );

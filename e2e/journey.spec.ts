@@ -115,7 +115,7 @@ test("saved progress is read-only and low scores permit case-to-case continuatio
     .getByRole("button", { name: "Review finding", exact: true })
     .click();
   await hunt
-    .getByRole("button", { name: "Confirm and close hunt", exact: true })
+    .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
   const continuation = hunt.getByRole("region", {
     name: "Continue your investigation journey",
@@ -137,7 +137,7 @@ test("saved progress is read-only and low scores permit case-to-case continuatio
   await expect(
     page
       .locator('[data-mission="M07"]')
-      .getByRole("button", { name: "Begin proactive hunt", exact: true }),
+      .getByRole("button", { name: "Begin investigation", exact: true }),
   ).toBeEnabled({ timeout: 30000 });
   expect(await rows(page)).toBe(closed);
   await page
@@ -168,7 +168,7 @@ test("saved progress is read-only and low scores permit case-to-case continuatio
     .click();
   const finalHunt = page.locator('[data-mission="M07"]');
   await finalHunt
-    .getByRole("button", { name: "Begin proactive hunt", exact: true })
+    .getByRole("button", { name: "Begin investigation", exact: true })
     .click();
   await finalHunt
     .getByRole("navigation", { name: "M07 investigation" })
@@ -178,7 +178,7 @@ test("saved progress is read-only and low scores permit case-to-case continuatio
     .getByRole("button", { name: "Review finding", exact: true })
     .click();
   await finalHunt
-    .getByRole("button", { name: "Confirm and close hunt", exact: true })
+    .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
   await expect(
     finalHunt.getByRole("region", {
@@ -277,7 +277,7 @@ test("temporary closure does not invent a durable completion", async ({
     .getByRole("button", { name: "Review finding", exact: true })
     .click();
   await hunt
-    .getByRole("button", { name: "Confirm and close hunt", exact: true })
+    .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
   await expect(
     hunt.getByRole("region", {

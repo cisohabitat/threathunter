@@ -104,7 +104,7 @@ try {
     .click();
   const hunt = page.locator('[data-mission="M04"]');
   await hunt
-    .getByRole("button", { name: "Begin proactive hunt", exact: true })
+    .getByRole("button", { name: "Begin investigation", exact: true })
     .click();
   const saved04 = () =>
     hunt
@@ -120,13 +120,11 @@ try {
     .getByRole("button", { name: "Review finding", exact: true })
     .click();
   await hunt
-    .getByRole("button", { name: "Confirm and close hunt", exact: true })
+    .getByRole("button", { name: "Confirm and close case", exact: true })
     .click();
   await saved04();
   const pending = page.waitForEvent("download");
-  await hunt
-    .getByRole("button", { name: "Export hunt save", exact: true })
-    .click();
+  await hunt.getByRole("button", { name: "Export save", exact: true }).click();
   const p1Server = await createServer({
     server: { middlewareMode: true },
     appType: "custom",
@@ -162,7 +160,7 @@ try {
     .click();
   const next = page.locator('[data-mission="M07"]');
   await next
-    .getByRole("button", { name: "Begin proactive hunt", exact: true })
+    .getByRole("button", { name: "Begin investigation", exact: true })
     .waitFor();
   await next
     .getByRole("button", { name: "Threat Hunter · home", exact: true })

@@ -13,7 +13,7 @@ async function open(page: Page, mission: "M04" | "M07", world?: string) {
     .click({ timeout: 30000 });
   const area = shell(page, mission);
   await expect(
-    area.getByRole("button", { name: "Begin proactive hunt" }),
+    area.getByRole("button", { name: "Begin investigation" }),
   ).toBeEnabled({ timeout: 30000 });
   if (world) {
     const text = await page.evaluate(
@@ -34,7 +34,7 @@ async function open(page: Page, mission: "M04" | "M07", world?: string) {
       buffer: Buffer.from(text),
     });
   } else
-    await area.getByRole("button", { name: "Begin proactive hunt" }).click();
+    await area.getByRole("button", { name: "Begin investigation" }).click();
   await saved(area);
   await area
     .getByRole("navigation", { name: `${mission} investigation` })
@@ -144,7 +144,7 @@ async function report(area: Locator, mission: "M04" | "M07") {
     .getByRole("button", { name: "Review finding", exact: true })
     .click();
   await saved(area);
-  await area.getByRole("button", { name: "Confirm and close hunt" }).click();
+  await area.getByRole("button", { name: "Confirm and close case" }).click();
   await saved(area);
   const debrief = area.getByRole("region", { name: `${mission} hunt debrief` });
   await expect(debrief).toBeVisible();
@@ -159,9 +159,7 @@ async function report(area: Locator, mission: "M04" | "M07") {
 }
 async function portable(page: Page, area: Locator) {
   const pending = page.waitForEvent("download");
-  await area
-    .getByRole("button", { name: "Export hunt save", exact: true })
-    .click();
+  await area.getByRole("button", { name: "Export save", exact: true }).click();
   return (await readFile((await (await pending).path())!)).toString();
 }
 test("M04 earns its relationship discovery, preserves billing, closes at 100 and archives a replay", async ({
@@ -328,10 +326,10 @@ for (const mission of ["M04", "M07"] as const)
     const other = mission === "M04" ? "M07" : "M04";
     await page.getByRole("button", { name: new RegExp(`${other} ·`) }).click();
     await expect(
-      shell(page, other).getByRole("button", { name: "Begin proactive hunt" }),
+      shell(page, other).getByRole("button", { name: "Begin investigation" }),
     ).toBeEnabled();
     await shell(page, other)
-      .getByRole("button", { name: "Begin proactive hunt" })
+      .getByRole("button", { name: "Begin investigation" })
       .click();
     await saved(shell(page, other));
     await shell(page, other)
@@ -458,12 +456,12 @@ test("P1 without Web Locks requires explicit temporary play and leaves durable s
     { timeout: 30000 },
   );
   await expect(
-    area.getByRole("button", { name: "Begin proactive hunt" }),
+    area.getByRole("button", { name: "Begin investigation" }),
   ).toBeDisabled();
   await area
     .getByRole("button", { name: "Play temporarily without saving" })
     .click();
-  await area.getByRole("button", { name: "Begin proactive hunt" }).click();
+  await area.getByRole("button", { name: "Begin investigation" }).click();
   await tab(area, "Investigate");
   await area
     .locator(".question")
@@ -607,9 +605,7 @@ test("P1 unfinished notes survive navigation and block replacement until explici
   test.setTimeout(90000);
   const area = await open(page, "M04", "B");
   const pending = page.waitForEvent("download");
-  await area
-    .getByRole("button", { name: "Export hunt save", exact: true })
-    .click();
+  await area.getByRole("button", { name: "Export save", exact: true }).click();
   const initial = await readFile(await (await pending).path(), "utf8");
   await tab(area, "Case File");
   await area
@@ -677,7 +673,7 @@ test("a screen chosen while the first P1 save is pending stays selected", async 
   await page.goto("/");
   await page.getByRole("button", { name: /M04 ·/ }).click({ timeout: 30000 });
   const area = shell(page);
-  const begin = area.getByRole("button", { name: "Begin proactive hunt" });
+  const begin = area.getByRole("button", { name: "Begin investigation" });
   await expect(begin).toBeEnabled({ timeout: 30000 });
   await begin.click();
   const nav = area.getByRole("navigation", { name: "M04 investigation" });

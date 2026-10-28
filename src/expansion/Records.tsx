@@ -40,7 +40,7 @@ export function RecordCard({
       <p>{r.text}</p>
       <p className="muted">
         {sourceLabel(p, r.sourceId)} · scope {r.entityIds.join(" / ")} · through
-        step {r.cutoffTick} · delivered {r.deliveredTick} ·{" "}
+        step {r.cutoffTick} · received at step {r.deliveredTick} ·{" "}
         {r.eventTick === null
           ? "No event step specified"
           : `event step ${r.eventTick}`}{" "}

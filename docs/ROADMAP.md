@@ -57,10 +57,27 @@ Goal: reduce main-thread work before first interaction, measured with more than 
 - Rejected: Zod `jitless` mode (medians 2085/2169/2175 ms vs baseline 2158/2081/2135 ms) — no measurable gain, not shipped.
 - Not attempted: worker prefetch (30–65 ms fetch; unmeasurable with the cache-disabled method) and lazy post-Begin M01 screens (offline Begin needs them before case-ready; low expected gain at a ~2.1 s median). Revisit with named-device traces.
 
-## Later — needs a decision or broader review
+## Phase 6 — Consistent action wording · done
 
-- Merge the near-identical P1/expansion storage modules and controller hooks behind the existing storage/adversarial suites (high-stakes persistence code).
-- Align action terminology across families ("Export save", "Confirm and close case", temporary play wording) together with PlayPrimer copy and e2e selectors.
-- P1/expansion debrief progressive disclosure and itemised review with quiet Edit actions, matching M01.
-- Move content-package Zod validation from module load to build/tests (touches frozen engine/content modules; needs a compatibility decision).
-- Release-and-reacquire Web Locks on `pagehide`/`pageshow` if diagnostics show a back/forward-cached page holding a mission lock.
+Authorised by the user ("all") on 28 October 2026, with phases 7–10.
+
+- Done: every family uses M01's labels — **Begin investigation**, **Confirm and close case**, **Export save**, **Import save** and **Play temporarily without saving** — and the shared primer now names the exact close button. Record cards in P1/expansion say "received at step", like M01. Content titles, region names and enum values are unchanged.
+- Done: e2e specs and lab verifier scripts use the new labels; README updated.
+
+Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally.
+
+## Phase 7 — Debrief and review parity
+
+- P1/expansion debriefs lead with the finding and a takeaway; evidence reconstruction, outcome and limits expand on demand, and feedback links open the reconstruction before scrolling. Reading and disclosure stay free and leave saves unchanged.
+
+## Phase 8 — Shared controller code
+
+- Extract the duplicated P1/expansion Web Lock and save-notification effects into shared hooks, keeping lock names, read-only enforcement, ownership-transfer reload and per-mission notifications. Storage modules stay separate unless the merge can be proven byte-identical by the existing storage and adversarial suites.
+
+## Phase 9 — Content validation at load
+
+- Measure the cost of validating authored packages when modules load. Move validation to build/tests only if it is measurably faster and the same checks still run in CI; frozen M01 engine bytes stay unchanged.
+
+## Phase 10 — Back/forward cache and Web Locks
+
+- Determine whether a page in the back/forward cache can keep a mission Web Lock. Add release/re-acquire handling only if a held lock can be demonstrated; otherwise record the finding.

@@ -22,7 +22,7 @@ try {
       .click({ timeout: 30000 });
     const area = page.locator(`[data-mission="${mission}"]`);
     await area
-      .getByRole("button", { name: "Begin proactive hunt", exact: true })
+      .getByRole("button", { name: "Begin investigation", exact: true })
       .click({ timeout: 30000 });
     await area
       .getByRole("status")
@@ -31,7 +31,7 @@ try {
     const portable = async () => {
       const pending = page.waitForEvent("download");
       await area
-        .getByRole("button", { name: "Export hunt save", exact: true })
+        .getByRole("button", { name: "Export save", exact: true })
         .click();
       return readFile(await (await pending).path(), "utf8");
     };

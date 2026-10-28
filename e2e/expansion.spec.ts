@@ -95,9 +95,7 @@ async function collect(area: Locator, mission: string, primary: string) {
 }
 async function portable(page: Page, area: Locator) {
   const pending = page.waitForEvent("download");
-  await area
-    .getByRole("button", { name: "Export investigation save", exact: true })
-    .click();
+  await area.getByRole("button", { name: "Export save", exact: true }).click();
   return readFile(await (await pending).path(), "utf8");
 }
 async function report(
@@ -595,7 +593,7 @@ test("missing Web Locks permits explicit temporary play and export without share
   );
   await area
     .getByRole("button", {
-      name: "Continue as a temporary session",
+      name: "Play temporarily without saving",
       exact: true,
     })
     .click();
@@ -695,7 +693,7 @@ test("case routes refresh and browser history restores loaded investigations wit
   await expect(
     page
       .locator('[data-mission="M04"]')
-      .getByRole("button", { name: "Begin proactive hunt", exact: true }),
+      .getByRole("button", { name: "Begin investigation", exact: true }),
   ).toBeEnabled({ timeout: 30000 });
   await page.goto("/hunt/free");
   await expect(

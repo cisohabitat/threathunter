@@ -78,7 +78,7 @@ try {
     await page
       .getByRole("button", { name: new RegExp(`${mission} ·`) })
       .click();
-    await area.getByRole("button", { name: "Begin proactive hunt" }).waitFor();
+    await area.getByRole("button", { name: "Begin investigation" }).waitFor();
     await page.waitForFunction(
       (m) =>
         !document.querySelector(`[data-mission="${m}"] input[type="file"]`)
@@ -167,7 +167,7 @@ try {
     const portable = async () => {
       const pending = page.waitForEvent("download");
       await area
-        .getByRole("button", { name: "Export hunt save", exact: true })
+        .getByRole("button", { name: "Export save", exact: true })
         .click();
       return readFile(await (await pending).path(), "utf8");
     };
@@ -309,7 +309,7 @@ try {
     await area
       .getByRole("button", { name: "Review finding", exact: true })
       .click();
-    await area.getByRole("button", { name: "Confirm and close hunt" }).click();
+    await area.getByRole("button", { name: "Confirm and close case" }).click();
     await saved();
     const finalState = readSave(await portable());
     assert.equal(finalState.view.phase, "closed");

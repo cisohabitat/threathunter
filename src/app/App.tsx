@@ -333,7 +333,7 @@ export default function App({
                 disabled={game.busy || game.readOnly}
                 onClick={game.enableTemporary}
               >
-                Continue explicitly without saving
+                Play temporarily without saving
               </button>
               <p>
                 Export progress before leaving. Temporary progress does not

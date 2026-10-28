@@ -168,7 +168,7 @@ test("quota failure retains actions and retry saves them without applying them t
     }),
   ).toBe(0);
   await page
-    .getByRole("button", { name: "Continue explicitly without saving" })
+    .getByRole("button", { name: "Play temporarily without saving" })
     .click();
   await expect(
     page.getByText("Last saved revision: 0.", { exact: false }),
@@ -343,7 +343,7 @@ test("rejected Web Locks access offers temporary play without a durable write", 
     page.getByRole("button", { name: "Begin investigation" }),
   ).toBeDisabled();
   await page
-    .getByRole("button", { name: "Continue explicitly without saving" })
+    .getByRole("button", { name: "Play temporarily without saving" })
     .click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(

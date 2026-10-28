@@ -638,7 +638,7 @@ function CaseFile({
               })
             }
           >
-            Confirm and close hunt
+            Confirm and close case
           </button>
           <button onClick={() => setReview(false)}>Keep investigating</button>
         </section>
@@ -783,11 +783,11 @@ export default function Campaign({
             <div>
               {game.view ? (
                 <button onClick={() => void game.download()}>
-                  Export hunt save
+                  Export save
                 </button>
               ) : (
                 <label className="file-button">
-                  Import hunt save
+                  Import save
                   <input
                     type="file"
                     accept="application/json"
@@ -1048,7 +1048,7 @@ export default function Campaign({
                   navigate("Investigate");
                 }}
               >
-                Begin proactive hunt
+                Begin investigation
               </button>
             </section>
           ) : game.debrief ? (

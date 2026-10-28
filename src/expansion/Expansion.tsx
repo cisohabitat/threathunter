@@ -255,11 +255,11 @@ export default function Expansion({
                     disabled={game.busy}
                     onClick={() => void game.download()}
                   >
-                    Export investigation save
+                    Export save
                   </button>
                 ) : (
                   <label>
-                    Import this mission’s save
+                    Import save
                     <input
                       type="file"
                       accept="application/json,.json"
@@ -342,7 +342,7 @@ export default function Expansion({
                 </button>
               ) : null}
               <button disabled={game.busy} onClick={game.playTemporarily}>
-                Continue as a temporary session
+                Play temporarily without saving
               </button>
               {!v ? (
                 <button disabled={game.busy} onClick={game.reloadSaved}>

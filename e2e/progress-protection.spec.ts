@@ -145,7 +145,7 @@ test("M01 temporary actions warn before unloading without writing a durable case
   await page.goto("/");
   await page
     .getByRole("button", {
-      name: "Continue explicitly without saving",
+      name: "Play temporarily without saving",
       exact: true,
     })
     .click();
@@ -214,7 +214,7 @@ for (const mission of ["M04", "M07"] as const) {
     await expect(replay).toBeDisabled();
     const download = page.waitForEvent("download");
     await area
-      .getByRole("button", { name: "Export hunt save", exact: true })
+      .getByRole("button", { name: "Export save", exact: true })
       .click();
     expect(
       JSON.parse(await readFile(await (await download).path(), "utf8")).runId,
@@ -238,7 +238,7 @@ for (const mission of ["M04", "M07"] as const) {
       .getByRole("button", { name: "Review finding", exact: true })
       .click();
     await area
-      .getByRole("button", { name: "Confirm and close hunt", exact: true })
+      .getByRole("button", { name: "Confirm and close case", exact: true })
       .click();
     await expect(replay).toBeDisabled();
     await expect(acknowledgement).not.toBeChecked();

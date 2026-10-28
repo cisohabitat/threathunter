@@ -100,7 +100,7 @@ try {
     const portable = async () => {
       const pending = page.waitForEvent("download");
       await area
-        .getByRole("button", { name: "Export investigation save", exact: true })
+        .getByRole("button", { name: "Export save", exact: true })
         .click();
       return readFile(await (await pending).path(), "utf8");
     };
@@ -198,9 +198,7 @@ try {
   const timelineCount = await area.locator(".timeline li").count();
   assert.ok(timelineCount <= 50);
   const pending = page.waitForEvent("download");
-  await area
-    .getByRole("button", { name: "Export investigation save", exact: true })
-    .click();
+  await area.getByRole("button", { name: "Export save", exact: true }).click();
   const exported = await readFile(await (await pending).path(), "utf8");
   assert.equal(JSON.parse(exported).commands.length, 1000);
   await page.reload();

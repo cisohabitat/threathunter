@@ -307,7 +307,7 @@ test("blocked validator startup preserves an existing case and offers a raw reco
     before,
   );
   await page
-    .getByRole("button", { name: "Continue explicitly without saving" })
+    .getByRole("button", { name: "Play temporarily without saving" })
     .click();
   await page.getByRole("button", { name: "Begin investigation" }).click();
   await expect(
