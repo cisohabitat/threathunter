@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CompareButton } from "../comparison/Comparison";
 import { keyOf, type Finding, type PublicRecord } from "./contracts";
 import type { PublicMission } from "./public";
+import { sourceLabel } from "./labels";
 export type Update = (change: (f: Finding) => Finding) => void;
 export function RecordCard({
   record: r,
@@ -38,8 +39,8 @@ export function RecordCard({
       </div>
       <p>{r.text}</p>
       <p className="muted">
-        {r.sourceId.replaceAll("_", " ")} · scope {r.entityIds.join(" / ")} ·
-        through step {r.cutoffTick} · delivered {r.deliveredTick} ·{" "}
+        {sourceLabel(p, r.sourceId)} · scope {r.entityIds.join(" / ")} · through
+        step {r.cutoffTick} · delivered {r.deliveredTick} ·{" "}
         {r.eventTick === null
           ? "No event step specified"
           : `event step ${r.eventTick}`}{" "}

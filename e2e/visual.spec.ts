@@ -206,3 +206,65 @@ test("case screens add no investigation-art fetch after the home art fails", asy
   ).not.toContain("northstar-investigation");
   expect(requested).toHaveLength(homeRequests);
 });
+
+for (const [path, mission] of [
+  ["/case/m04", "M04"],
+  ["/case/m02", "M02"],
+] as const)
+  for (const width of [390, 1280])
+    test(`${mission} uses the shared utility header with measured clearance at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(path);
+      const shell = page.locator(
+        `[data-mission="${mission}"], [data-expansion="${mission}"]`,
+      );
+      const header = shell.locator(".utility-header");
+      await expect(header).toHaveCount(1);
+      await expect(shell.getByRole("button", { name: /^Begin/ })).toBeEnabled({
+        timeout: 30000,
+      });
+      // Sticky headers publish their height; tall ones scroll away and publish 0.
+      const [height, sticky, published] = await header.evaluate((e) => [
+        Math.ceil(e.getBoundingClientRect().height),
+        getComputedStyle(e).position === "sticky",
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--utility-header-sticky")
+          .trim(),
+      ]);
+      expect(published).toBe(sticky ? `${height}px` : "0px");
+      if (width === 1280) expect(sticky).toBe(true);
+      const mute = shell.getByRole("button", { name: "Mute all", exact: true });
+      if (sticky) {
+        await page.evaluate(() =>
+          window.scrollTo(0, document.body.scrollHeight),
+        );
+        await expect(mute).toBeInViewport();
+      }
+      await uncovered(mute);
+      // Switching to M01 republishes the visible header's own clearance.
+      await shell
+        .getByRole("button", {
+          name: "New here? Learn with The Midnight Login →",
+        })
+        .click();
+      await expect(page).toHaveURL(/\/case\/m01$/);
+      const m01 = page.locator(".m01-shell .utility-header");
+      await expect(m01).toBeVisible();
+      await expect
+        .poll(() =>
+          m01.evaluate((e) => {
+            const own =
+              getComputedStyle(e).position === "sticky"
+                ? `${Math.ceil(e.getBoundingClientRect().height)}px`
+                : "0px";
+            return (
+              getComputedStyle(document.documentElement)
+                .getPropertyValue("--utility-header-sticky")
+                .trim() === own
+            );
+          }),
+        )
+        .toBe(true);
+    });

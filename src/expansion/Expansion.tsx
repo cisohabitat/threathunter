@@ -3,6 +3,7 @@ import { BackupImport } from "../ui/BackupImport";
 import { useEffect, useRef, useState } from "react";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { AudioPanel } from "../ui/AudioPanel";
+import { UtilityHeader } from "../ui/UtilityHeader";
 import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { ComparisonPanel, ComparisonProvider } from "../comparison/Comparison";
@@ -17,6 +18,7 @@ import { Mechanic } from "./Mechanic";
 import { Debrief } from "./Debrief";
 import type { Slot } from "./storage";
 import { keyOf, type Finding } from "./contracts";
+import { followupLabels, handoffLabels, sourceLabel } from "./labels";
 import { DeliveryAnnouncer } from "../ui/DeliveryAnnouncer";
 const screens = ["Leads", "Explore", "Case File", "Timeline"] as const;
 type Screen = (typeof screens)[number];
@@ -214,72 +216,94 @@ export default function Expansion({
           <a className="skip-link" href={`#main-${slot}`}>
             Skip to investigation
           </a>
-          <header className="topbar">
-            <button
-              className="wordmark"
-              onClick={() => {
-                audio.playMuted();
-                onExit();
-              }}
+          <UtilityHeader>
+            <header className="topbar">
+              <button
+                className="wordmark"
+                onClick={() => {
+                  audio.playMuted();
+                  onExit();
+                }}
+              >
+                <span aria-hidden="true">⌖</span>
+                <span>
+                  THREAT HUNTER<small>SILENT INTRUSION · HOME</small>
+                </span>
+              </button>
+              <span className="build-tag">
+                {slot === "free"
+                  ? "SEEDED FREE HUNT"
+                  : p.missionId + " · " + p.trigger}
+              </span>
+            </header>
+            <section
+              className="expansion-context"
+              aria-label={`${slot} save and readiness`}
+              data-readiness={game.readiness}
             >
-              <span aria-hidden="true">⌖</span>
-              <span>
-                THREAT HUNTER<small>SILENT INTRUSION · HOME</small>
-              </span>
-            </button>
-            <span className="build-tag">
-              {slot === "free"
-                ? "SEEDED FREE HUNT"
-                : p.missionId + " · " + p.trigger}
-            </span>
-          </header>
-          <section
-            className="expansion-context"
-            aria-label={`${slot} save and readiness`}
-            data-readiness={game.readiness}
-          >
-            <p role="status">{game.busy ? "Working…" : game.status}</p>
-            <p>
-              {v
-                ? `${v.missionId} · step ${v.tick} · ${v.pendingChecks.length} pending check(s) · ${v.phase === "closed" ? "Finding closed" : "Investigation open"}`
-                : game.busy
-                  ? "Preparing the mission’s validated save and text-complete workspace."
-                  : "Begin a new investigation or import this mission’s save."}
-            </p>
-            <div className="actions">
-              {v ? (
-                <button
-                  disabled={game.busy}
-                  onClick={() => void game.download()}
-                >
-                  Export investigation save
-                </button>
-              ) : (
-                <label>
-                  Import this mission’s save
-                  <input
-                    type="file"
-                    accept="application/json,.json"
-                    disabled={
-                      game.busy ||
-                      (!game.temporary &&
-                        (game.readOnly ||
-                          !game.writerAvailable ||
-                          Boolean(game.issue)))
-                    }
-                    onChange={(e) => void restore(e.target.files?.[0])}
-                  />
-                </label>
-              )}
-              <span>
-                {game.busy
-                  ? "Preparing case…"
-                  : v
-                    ? "Case ready · optional voice below"
-                    : "Text workspace ready · choose or import a case"}
-              </span>
-            </div>
-          </section>
+              <p role="status">{game.busy ? "Working…" : game.status}</p>
+              <p>
+                {v
+                  ? `${v.missionId} · step ${v.tick} · ${v.pendingChecks.length} pending check(s) · ${v.phase === "closed" ? "Finding closed" : "Investigation open"}`
+                  : game.busy
+                    ? "Preparing the mission’s validated save and text-complete workspace."
+                    : "Begin a new investigation or import this mission’s save."}
+              </p>
+              <div className="actions">
+                {v ? (
+                  <button
+                    disabled={game.busy}
+                    onClick={() => void game.download()}
+                  >
+                    Export investigation save
+                  </button>
+                ) : (
+                  <label>
+                    Import this mission’s save
+                    <input
+                      type="file"
+                      accept="application/json,.json"
+                      disabled={
+                        game.busy ||
+                        (!game.temporary &&
+                          (game.readOnly ||
+                            !game.writerAvailable ||
+                            Boolean(game.issue)))
+                      }
+                      onChange={(e) => void restore(e.target.files?.[0])}
+                    />
+                  </label>
+                )}
+                <span>
+                  {game.busy
+                    ? "Preparing case…"
+                    : v
+                      ? "Case ready · optional voice below"
+                      : "Text workspace ready · choose or import a case"}
+                </span>
+              </div>
+            </section>
+            {slot !== "free" || v ? (
+              <AudioPanel
+                audio={audio}
+                debrief={null}
+                cues={cueMaps[audioMission]}
+                report={
+                  game.debrief
+                    ? {
+                        cue: findingCue(game.debrief),
+                        objectiveOccurred: game.debrief.objectiveOccurred,
+                      }
+                    : undefined
+                }
+              />
+            ) : (
+              <p className="muted">
+                The selected free hunt’s voiced briefing becomes available after
+                choosing or importing its seed.
+              </p>
+            )}
+          </UtilityHeader>
           {v ? (
             <BackupImport
               disabled={
@@ -293,26 +317,6 @@ export default function Expansion({
               download={game.download}
             />
           ) : null}
-          {slot !== "free" || v ? (
-            <AudioPanel
-              audio={audio}
-              debrief={null}
-              cues={cueMaps[audioMission]}
-              report={
-                game.debrief
-                  ? {
-                      cue: findingCue(game.debrief),
-                      objectiveOccurred: game.debrief.objectiveOccurred,
-                    }
-                  : undefined
-              }
-            />
-          ) : (
-            <p className="muted">
-              The selected free hunt’s voiced briefing becomes available after
-              choosing or importing its seed.
-            </p>
-          )}
           {game.readOnly ? (
             <p className="notice">
               Read-only: another tab owns this investigation. Close that writer
@@ -799,9 +803,11 @@ export default function Expansion({
                       {v.pendingChecks.length} check(s) remain pending.
                     </p>
                     <p>
-                      Next action: {v.finding.handoff.replaceAll("_", " ")}.
-                      Owner: {v.finding.owner}. Follow-up:{" "}
-                      {v.finding.followup.replaceAll("_", " ")}.
+                      Next action: {handoffLabels[v.finding.handoff]}. Owner:{" "}
+                      {v.finding.owner === "none"
+                        ? "none · explained closure"
+                        : v.finding.owner}
+                      . Follow-up: {followupLabels[v.finding.followup]}.
                     </p>
                     {!v.finding.evidence.length ||
                     v.finding.targetId === "unselected" ||
@@ -1107,7 +1113,7 @@ export default function Expansion({
                             {[...new Set(v.records.map((r) => r.sourceId))].map(
                               (id) => (
                                 <option key={id} value={id}>
-                                  {id.replaceAll("_", " ")}
+                                  {sourceLabel(p, id)}
                                 </option>
                               ),
                             )}
@@ -1324,19 +1330,13 @@ export default function Expansion({
                                   }))
                                 }
                               >
-                                <option value="close_explained">
-                                  Close this scoped explained lead
-                                </option>
-                                <option value="restrict_access">
-                                  Recommend the permitted session restriction
-                                </option>
-                                <option value="review_monitor">
-                                  Hand over remaining uncertainty for review
-                                </option>
-                                <option value="repair_collection">
-                                  Assign collection restoration and repeat
-                                  verification
-                                </option>
+                                {Object.entries(handoffLabels).map(
+                                  ([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  ),
+                                )}
                               </select>
                             </label>
                             <label>
@@ -1388,25 +1388,13 @@ export default function Expansion({
                                   }))
                                 }
                               >
-                                <option value="unselected">
-                                  Choose a concrete follow-up…
-                                </option>
-                                <option value="confirm_scope_and_control">
-                                  Confirm restriction and assess the named scope
-                                </option>
-                                <option value="verify_business_context">
-                                  Verify the outstanding business context
-                                </option>
-                                <option value="restore_and_retest">
-                                  Restore collection and repeat the defined test
-                                </option>
-                                <option value="review_new_evidence">
-                                  Review a new scoped observation or verified
-                                  response
-                                </option>
-                                <option value="routine_monitoring">
-                                  Routine monitoring for an explained lead
-                                </option>
+                                {Object.entries(followupLabels).map(
+                                  ([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  ),
+                                )}
                               </select>
                             </label>
                             <label>
@@ -1460,8 +1448,8 @@ export default function Expansion({
                               {f.followups.map((x) => (
                                 <p key={x.targetId}>
                                   {x.targetId} · {x.owner} ·{" "}
-                                  {x.trigger.replaceAll("_", " ")} · review
-                                  within {x.reviewWithinTicks} steps.
+                                  {followupLabels[x.trigger]} · review within{" "}
+                                  {x.reviewWithinTicks} steps.
                                 </p>
                               ))}
                             </fieldset>

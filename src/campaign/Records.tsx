@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { keyOf, type Finding, type PublicRecord } from "./contracts";
 import { CompareButton } from "../comparison/Comparison";
+import { sourceLabel } from "./labels";
 export function RecordCard({
   record,
   finding,
@@ -27,7 +28,7 @@ export function RecordCard({
     <article className="record" aria-label={record.title}>
       <div className="record-top">
         <strong>{record.title}</strong>
-        <span>{record.sourceId.replaceAll("_", " ")}</span>
+        <span>{sourceLabel(record.sourceId)}</span>
       </div>
       <p>{record.text}</p>
       <small>

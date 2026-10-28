@@ -7,6 +7,7 @@ import { DeliveryAnnouncer } from "../ui/DeliveryAnnouncer";
 import { useCampaign } from "./useCampaign";
 import { HistoryTimeline } from "../ui/HistoryTimeline";
 import { AudioPanel } from "../ui/AudioPanel";
+import { UtilityHeader } from "../ui/UtilityHeader";
 import { useMissionAudio } from "../presentation/sound/useMissionAudio";
 import { audioPacks, cueMaps, findingCue } from "./audio";
 import { CampaignDebrief } from "./Debrief";
@@ -21,6 +22,7 @@ import {
   handoffLabels,
   limitLabels,
   followupLabels,
+  sourceLabel,
 } from "./labels";
 import { Records, RecordCard } from "./Records";
 type Game = ReturnType<typeof useCampaign>;
@@ -245,7 +247,8 @@ function Investigation({ view, game }: { view: View; game: Game }) {
         ) : null}
         {view.windows.map((w) => (
           <p key={w.id}>
-            {w.sourceId} on {w.targetId}: steps {w.startsAt}–{w.endsAt}.{" "}
+            {sourceLabel(w.sourceId)} on {w.targetId}: steps {w.startsAt}–
+            {w.endsAt}.{" "}
             {view.tick > w.endsAt
               ? "The temporary window has ended; use its captured results and hand over permanent repair."
               : "The window is measured in accepted investigation steps."}
@@ -614,8 +617,11 @@ function CaseFile({
             {finding.alternativeEvidence.length} alternative observations.
           </p>
           <p>
-            {handoffLabels[finding.handoff]} · owner: {finding.owner} · review
-            within {finding.reviewWithinTicks} steps.
+            {handoffLabels[finding.handoff]} · owner:{" "}
+            {finding.owner === "none"
+              ? "none · explained closure"
+              : finding.owner}{" "}
+            · review within {finding.reviewWithinTicks} steps.
           </p>
           <p>{followupLabels[finding.followup]}</p>
           <p className="preserve-lines">{buffer.text}</p>
@@ -752,73 +758,90 @@ export default function Campaign({
         <a href={`#main-${missionId}`} className="skip-link">
           Skip to investigation
         </a>
-        <header className="topbar">
-          <button
-            className="wordmark"
-            onClick={() => {
-              audio.playMuted();
-              onExit();
-            }}
-          >
-            Threat Hunter · home
-          </button>
-          <span>{missionId} · INTERNAL CANDIDATE</span>
-          {game.view ? (
-            <span>STEP {game.view.tick} · no live countdown</span>
-          ) : null}
-        </header>
-        <section
-          className="save-strip"
-          aria-label={`${missionId} save and recovery`}
-          data-readiness={game.readiness}
-        >
-          <span role="status">{game.busy ? "Working…" : game.status}</span>
-          <div>
+        <UtilityHeader>
+          <header className="topbar">
+            <button
+              className="wordmark"
+              onClick={() => {
+                audio.playMuted();
+                onExit();
+              }}
+            >
+              Threat Hunter · home
+            </button>
+            <span>{missionId} · INTERNAL CANDIDATE</span>
             {game.view ? (
-              <button onClick={() => void game.download()}>
-                Export hunt save
-              </button>
-            ) : (
-              <label className="file-button">
-                Import hunt save
-                <input
-                  type="file"
-                  accept="application/json"
-                  disabled={
-                    game.busy ||
-                    (!game.temporary &&
-                      (game.readOnly ||
-                        !game.writerAvailable ||
-                        Boolean(game.issue)))
-                  }
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      if (file.size > 2 * 1024 * 1024) game.rejectOversized();
-                      else await game.restore(await file.text());
+              <span>STEP {game.view.tick} · no live countdown</span>
+            ) : null}
+          </header>
+          <section
+            className="save-strip"
+            aria-label={`${missionId} save and recovery`}
+            data-readiness={game.readiness}
+          >
+            <span role="status">{game.busy ? "Working…" : game.status}</span>
+            <div>
+              {game.view ? (
+                <button onClick={() => void game.download()}>
+                  Export hunt save
+                </button>
+              ) : (
+                <label className="file-button">
+                  Import hunt save
+                  <input
+                    type="file"
+                    accept="application/json"
+                    disabled={
+                      game.busy ||
+                      (!game.temporary &&
+                        (game.readOnly ||
+                          !game.writerAvailable ||
+                          Boolean(game.issue)))
                     }
-                  }}
-                />
-              </label>
-            )}
-            {game.storedAvailable ? (
-              <button
-                onClick={() => void game.download(`active:${missionId}`, true)}
-              >
-                Export stored recovery data
-              </button>
-            ) : null}
-            {game.originalAvailable ? (
-              <button
-                onClick={() =>
-                  void game.download(`original:${missionId}`, true)
-                }
-              >
-                Export recovery original
-              </button>
-            ) : null}
-          </div>
-        </section>
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) game.rejectOversized();
+                        else await game.restore(await file.text());
+                      }
+                    }}
+                  />
+                </label>
+              )}
+              {game.storedAvailable ? (
+                <button
+                  onClick={() =>
+                    void game.download(`active:${missionId}`, true)
+                  }
+                >
+                  Export stored recovery data
+                </button>
+              ) : null}
+              {game.originalAvailable ? (
+                <button
+                  onClick={() =>
+                    void game.download(`original:${missionId}`, true)
+                  }
+                >
+                  Export recovery original
+                </button>
+              ) : null}
+            </div>
+          </section>
+          <AudioPanel
+            audio={audio}
+            debrief={null}
+            cues={cueMaps[missionId]}
+            report={
+              game.debrief
+                ? {
+                    cue: findingCue(game.debrief),
+                    objectiveOccurred: game.debrief.objectiveOccurred,
+                  }
+                : undefined
+            }
+          />
+        </UtilityHeader>
         {game.view ? (
           <BackupImport
             disabled={
@@ -840,19 +863,6 @@ export default function Campaign({
             </button>
           </section>
         ) : null}
-        <AudioPanel
-          audio={audio}
-          debrief={null}
-          cues={cueMaps[missionId]}
-          report={
-            game.debrief
-              ? {
-                  cue: findingCue(game.debrief),
-                  objectiveOccurred: game.debrief.objectiveOccurred,
-                }
-              : undefined
-          }
-        />
         {game.readOnly && !game.temporary ? (
           <p className="notice">
             Read-only: another tab owns this mission’s save. You may

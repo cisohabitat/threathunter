@@ -29,3 +29,19 @@ export const followupLabels = {
     "Repeat privileged application verification and review delivery",
   routine_monitoring: "Continue routine monitoring of this scoped lead",
 };
+// Public source names (capabilities only); records keep their source IDs.
+export const sourceLabels: Record<string, string> = {
+  authentication: "Authentication records",
+  management_gateway: "Management gateway",
+  ownership: "Ownership and dependency register",
+  change_register: "Change register",
+  task_process: "Process telemetry",
+  billing_application: "Billing application audit",
+  collection_configuration: "Declared collection configuration",
+  delivery_health: "Delivery health",
+  collector_config: "Collector routing",
+  identity_authentication: "Identity authentication records",
+  cs_app: "Privileged application telemetry",
+};
+export const sourceLabel = (sourceId: string) =>
+  sourceLabels[sourceId] ?? sourceId.replaceAll("_", " ");

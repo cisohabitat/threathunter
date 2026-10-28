@@ -302,6 +302,15 @@ test("expansion announces deliveries and moves focus to review and debrief", asy
   await tab(area, "M02", "Explore");
   await query(area, "M02", "Establish the task and business consequence");
   await expect(live).toHaveText(/^New observation: /);
+  // Records show public source names, not raw source IDs.
+  await expect(
+    area
+      .locator(".record")
+      .filter({ hasText: "Scope and dependency catalogue" }),
+  ).not.toHaveCount(0);
+  await expect(area.locator(".record").first()).toContainText(
+    "Review briefing ·",
+  );
   const before = await portable(page, area);
   await area
     .getByRole("navigation", { name: "M02 investigation", exact: true })

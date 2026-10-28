@@ -38,13 +38,15 @@ Goal: every family moves focus and announces changes the way M01 does.
 
 Verification: lint, format check, types, 280 units, build, budgets and all 190 Chromium desktop/phone checks passed locally. New checks (expansion announcement/review/debrief focus and single `h1`; P1 and M01 debrief focus) failed against the previous source.
 
-## Phase 4 — Shared presentation across families
+## Phase 4 — Shared presentation across families · done
 
 Goal: P1 and expansion get the M01 presentation work instead of older patterns.
 
-- Wrap P1/expansion topbar, save strip and audio controls in `UtilityHeader`, removing the competing sticky bars and hard-coded clearance offsets.
-- Readable public source labels for P1/expansion records and filters instead of raw source IDs.
-- Readable review/handoff/follow-up labels in P1/expansion review summaries instead of `replaceAll("_", " ")` values.
+- Done: P1 and expansion wrap their topbar, save/readiness region and audio controls in `UtilityHeader`. Expansion's separately sticky context bar and P1's fixed 6rem help-anchor margin are gone; clearance comes from the measured header. Only a visible header publishes the clearance variables (hidden mounted cases no longer overwrite them) and only the last publisher clears them. At desktop widths both headers stay sticky with Mute reachable after scrolling; taller phone headers scroll away, as M01's oversized header does. The expansion readiness copy is visually hidden rather than `display: none`, and its save actions no longer squeeze the status text.
+- Done: P1 records and collection windows use public source names (`campaign/labels.ts`); expansion records and the source filter use names from the public query catalogue with a readable fallback (`expansion/labels.ts`).
+- Done: expansion review/follow-up summaries and their select options share one label map instead of `replaceAll("_", " ")`; "owner: none" reads as an explained closure in both families. Option values and saved findings are unchanged.
+
+Verification: lint, format check, types, 280 units, build, budgets and all 200 Chromium desktop/phone checks passed locally, including new header-clearance checks for M04/M02 at 390/1280px with a switch back to M01, and readable expansion source names.
 
 ## Phase 5 — Startup performance
 

@@ -1593,7 +1593,8 @@ summary {
 .campaign-shell [id*="-help-"]:focus {
   outline: 3px solid var(--color-accent, #64dce2);
   outline-offset: 5px;
-  scroll-margin-block: 6rem;
+  /* Header clearance comes from the measured UtilityHeader scroll padding. */
+  scroll-margin-block: 1rem;
 }
 .field-guide dt {
   font-weight: 650;
@@ -1892,10 +1893,8 @@ body {
 }
 
 /* Expansion workspaces retain the same opaque surface and focus tokens. */
+/* Lives inside UtilityHeader, which owns sticky positioning and clearance. */
 .expansion-context {
-  position: sticky;
-  top: 0;
-  z-index: 30;
   padding: 10px max(16px, env(safe-area-inset-left));
   background: var(--surface-1);
   border-block: 1px solid var(--stroke-subtle);
@@ -2021,8 +2020,15 @@ body {
     grid-column: 1;
     grid-row: auto;
   }
+  /* Readiness stays in the labelled region for assistive technology. */
   .expansion-context .actions span {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   .expansion-shell fieldset {
     padding: 12px;
@@ -2792,4 +2798,38 @@ html {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* P1/expansion content inside the shared utility header. */
+.utility-header .expansion-context {
+  border-block: 0;
+  padding-block: 6px;
+  /* Keep the status text readable beside wrapping save actions. */
+  grid-template-columns: minmax(0, 1fr) fit-content(50%);
+}
+.utility-header .expansion-context .actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* As in M01, readiness copy stays in the labelled region for assistive
+   technology without lengthening the toolbar. */
+.utility-header .expansion-context .actions > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.utility-header > .muted {
+  margin: 0;
+  padding: 4px 12px;
+  align-self: center;
+}
+@media (max-width: 740px) {
+  .utility-header .expansion-context {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
