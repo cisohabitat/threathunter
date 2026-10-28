@@ -81,10 +81,12 @@ Verification: lint, format check, types, 280 units, build, budgets and all 200 C
 
 Verification: lint, format check, types, 280 units (including campaign/expansion storage and adversarial suites), build, budgets and all 200 Chromium checks (lock transfer, read-only tabs, unload guards) passed locally.
 
-## Phase 9 — Content validation at load
+## Phase 9 — Content validation at load · decided: keep
 
-- Measure the cost of validating authored packages when modules load. Move validation to build/tests only if it is measurably faster and the same checks still run in CI; frozen M01 engine bytes stay unchanged.
+- Measured: an M02 case is ready at a median of 2258 ms (p90 2330 ms) cold at 4 Mbps / 100 ms / 4× CPU; warm package validation costs about 1 ms per package ([evidence](verification/roadmap-phase9-10.json)).
+- Decided: validation stays at module load. Parsing is not an identity transform — a validated package serialises differently from its raw JSON — and expansion fixture hashes are computed from the parsed package. Skipping validation at load would change those hashes and break existing saves. M01 engine bytes remain unchanged.
 
-## Phase 10 — Back/forward cache and Web Locks
+## Phase 10 — Back/forward cache and Web Locks · decided: no change
 
-- Determine whether a page in the back/forward cache can keep a mission Web Lock. Add release/re-acquire handling only if a held lock can be demonstrated; otherwise record the finding.
+- Measured in Chromium: while `/case/m02` is open it holds `threat-hunter-active-writer` and `threat-hunter-expansion-M02`; after it navigates away no lock is held; going Back reloads the page (navigation type `back_forward`, normal inspection) and re-acquires both locks ([evidence](verification/roadmap-phase9-10.json)).
+- Decided: no release/re-acquire handling, because Chromium never kept the lock. Firefox, WebKit and physical Safari were not tested here and remain open questions for the historical live M02 failure.

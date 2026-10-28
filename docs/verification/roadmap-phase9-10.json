@@ -1,0 +1,48 @@
+{
+  "capturedOn": "2026-10-28",
+  "phase9": {
+    "question": "Can authored-content validation move from module load to build/tests?",
+    "validationCostNode": {
+      "note": "vitest import timings include module transform; upper bounds",
+      "expansionContentImportMs": 122.3,
+      "campaignContentImportMs": 22.7,
+      "m01EngineImportMs": 32.5,
+      "voicePackImportMs": 7.8,
+      "warmValidatePackageM02Ms": 1.0
+    },
+    "caseReadyBaseline": {
+      "method": "Cold /case/m02 until data-readiness=ready; 10 fresh browsers; 390x844; 4 Mbps/100 ms/4x CPU; vite preview",
+      "medianMs": 2258,
+      "p90Ms": 2330,
+      "samplesMs": [
+        2221,
+        2260,
+        2330,
+        2438,
+        2233,
+        2258,
+        2223,
+        2302,
+        2262,
+        2152
+      ]
+    },
+    "identityCheck": "validatePackage(raw) serialises differently from the raw JSON for M02, so parsing is not an identity transform. Expansion fixture hashes are computed from the parsed package; skipping validation at load would change hashes and break existing saves.",
+    "decision": "Keep validation at module load. No variant was shipped or measured further because the compatibility risk is disqualifying."
+  },
+  "phase10": {
+    "question": "Can a back/forward-cached page keep a mission Web Lock?",
+    "method": "Chromium 1243 via Playwright against vite preview: page A opens /case/m02 until ready; page B in the same context queries navigator.locks; A navigates away, then back.",
+    "heldWhileOpen": [
+      "threat-hunter-active-writer",
+      "threat-hunter-expansion-M02"
+    ],
+    "heldAfterNavigatingAway": [],
+    "backNavigation": "type back_forward; readiness busy then normal inspection (page reloaded, not restored with prior state)",
+    "heldAfterReturn": [
+      "threat-hunter-active-writer",
+      "threat-hunter-expansion-M02"
+    ],
+    "decision": "No release/re-acquire handling added: Chromium did not keep the lock. Firefox/WebKit not tested here (not installed); physical Safari remains untested."
+  }
+}

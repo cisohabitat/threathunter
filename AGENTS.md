@@ -255,3 +255,5 @@ Phase 6 wording: all families use **Begin investigation**, **Confirm and close c
 Phase 7 debriefs: P1 and expansion debriefs, like M01, lead with the finding/takeaway; reconstruction (`.evidence-reconstruction`), outcome and limits are disclosures opened on demand, and feedback links open the reconstruction before scrolling. Tests must open these disclosures explicitly. Expansion review Edit actions only navigate to a Case File step.
 
 Phase 8: P1/expansion controllers share `useUnloadGuard`, `useWriterLock` and `useCommittedRefresh` from `persistence/useMissionGuards.ts`; keep lock-name prefixes and per-family storage modules unchanged. Campaign and expansion storage remain deliberately separate modules.
+
+Phases 9–10 decisions (`verification/roadmap-phase9-10.json`): keep content-package validation at module load — parsing is not an identity transform and expansion fixture hashes depend on the parsed package. Chromium releases mission Web Locks when a page navigates away and re-acquires them on Back, so no bfcache lock handling was added; Firefox/WebKit/Safari remain untested for this.
